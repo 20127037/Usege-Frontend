@@ -12,16 +12,16 @@ import com.group_1.usege.R;
 
 public class SyncingActivity extends AppCompatActivity {
 
-    TextView text_view_sync;
-    ImageView image_view_backward;
+    TextView textViewSync;
+    ImageView imageViewBackward;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_syncing);
 
-        text_view_sync = findViewById(R.id.txtView_sync);
-        text_view_sync.setOnClickListener(new View.OnClickListener() {
+        textViewSync = findViewById(R.id.txtView_sync);
+        textViewSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 clickOpenSetUpSyncingBottomSheetDialog();
@@ -36,8 +36,8 @@ public class SyncingActivity extends AppCompatActivity {
         setUpSyncingBottomSheetDialog.setContentView(viewDialog);
         setUpSyncingBottomSheetDialog.show();
 
-        image_view_backward = viewDialog.findViewById(R.id.image_view_backward);
-        image_view_backward.setOnClickListener(new View.OnClickListener() {
+        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+        imageViewBackward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setUpSyncingBottomSheetDialog.dismiss();
