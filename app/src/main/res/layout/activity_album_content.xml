@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_sheet_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:layout_width="match_parent"
@@ -8,6 +9,7 @@
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:padding="16dp"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,14 +18,52 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create an album"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold"
+            android:gravity="center_horizontal"
             />
 
 
 
 
     </RelativeLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textinput_album_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter album title"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textinput_album_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter album password"
+        android:layout_marginBottom="64px"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_create_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create album"
+        />
 
 </LinearLayout>
