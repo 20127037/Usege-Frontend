@@ -79,7 +79,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@drawable/button_border"
+            android:background="@drawable/confirm_button_border"
             android:layout_gravity="center"
             android:paddingHorizontal="60dp" />
 

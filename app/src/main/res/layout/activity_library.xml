@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".syncing.activities.SyncingActivity">
+    tools:context=".syncing.activities.LibraryActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,53 +48,38 @@
                 android:textSize="30sp"/>
 
             <ImageView
-                android:id="@+id/cloud_upload_icon"
+                android:id="@+id/icon_cloud_upload"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_toEndOf="@id/library_title"
                 android:src="@drawable/baseline_cloud_upload" />
 
             <ImageView
-                android:id="@+id/picture_icon"
+                android:id="@+id/icon_picture"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginRight="20dp"
-                android:layout_toLeftOf="@id/list_icon"
-                android:src="@drawable/baseline_image" />
+                android:layout_toLeftOf="@id/icon_list"
+                android:src="@drawable/baseline_format_card" />
 
             <ImageView
-                android:id="@+id/list_icon"
+                android:id="@+id/icon_list"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/baseline_format_list_bulleted" />
         </RelativeLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/background"
-            android:layout_gravity="center"
-            android:layout_marginTop="60dp"
-            android:layout_marginBottom="20dp"/>
+        <LinearLayout
+            android:id="@+id/layout_display_images"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Here is a little bit empty"
-            android:textSize="18sp"
-            android:layout_gravity="center"/>
 
-        <TextView
-            android:id="@+id/txtView_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Let's sync with your local data"
-            android:textSize="20dp"
-            android:textColor="@color/blue"
-            android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="80dp"/>
+        </LinearLayout>
+
+
     </LinearLayout>
 
 </ScrollView>
