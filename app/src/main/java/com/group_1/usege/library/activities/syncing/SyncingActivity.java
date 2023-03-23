@@ -1,4 +1,4 @@
-package com.group_1.usege.syncing.activities;
+package com.group_1.usege.library.activities.syncing;
 
 import android.os.Bundle;
 import android.view.View;
