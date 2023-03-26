@@ -61,7 +61,6 @@ public class ImageListFragment extends Fragment {
 
         LinearLayout layoutImageList = (LinearLayout) inflater.inflate(R.layout.fragment_image_list, null);
 
-        totalImage = layoutImageList.findViewById(R.id.total_image);
         rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
 
         recycleAdapter = new RecycleAdapter(lstImage, context, "list");

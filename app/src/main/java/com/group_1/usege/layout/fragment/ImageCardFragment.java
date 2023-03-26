@@ -61,7 +61,6 @@ public class ImageCardFragment  extends Fragment {
 
         View layoutImageCard = inflater.inflate(R.layout.fragment_image_card, null);
 
-        totalImage = layoutImageCard.findViewById(R.id.total_image);
         rcvPhoto = layoutImageCard.findViewById(R.id.rcv_photo);
 
         recycleAdapter = new RecycleAdapter(lstImage, context, "card");
