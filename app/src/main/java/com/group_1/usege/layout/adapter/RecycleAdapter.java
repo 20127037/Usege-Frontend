@@ -68,13 +68,15 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
         // Load ảnh ra layout
         Image image = lstImage.get(position);
+
         Uri uri = image.getUri();
         Glide.with(context)
                 .load(uri)
                 .into(holder.imgView);
 
         if (displayView.equals("list")) {
-            holder.description.setText(image.getDescription());
+            String newDescription = setUpDescription(image.getDescription());
+            holder.description.setText(newDescription);
         }
     }
 
@@ -101,5 +103,16 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
             }
 
         }
+    }
+
+    public String setUpDescription(String curDescription) {
+        String newDescription = curDescription;
+
+        if (curDescription.length() > 16) {
+            newDescription = curDescription.substring(0, 16);
+            newDescription += "...";
+        }
+
+        return newDescription;
     }
 }

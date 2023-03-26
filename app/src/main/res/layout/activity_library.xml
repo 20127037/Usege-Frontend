@@ -58,6 +58,7 @@
                 android:id="@+id/icon_card"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:alpha="0.5"
                 android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@id/icon_list"
                 android:src="@drawable/baseline_format_card" />
@@ -66,6 +67,7 @@
                 android:id="@+id/icon_list"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:alpha="0.5"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/baseline_format_list_bulleted" />
         </RelativeLayout>

@@ -7,11 +7,23 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 public class Image implements Parcelable {
-    private String date = "";
-    private Float size = 0F;
-    private String description = "";
-    private String location = "";
+    private String date;
+    private Float size;
+    private String description;
+    private String location;
     private Uri uri;
+
+    public static final Creator<Image> CREATOR = new Creator<Image>() {
+        @Override
+        public Image createFromParcel(Parcel in) {
+            return new Image(in);
+        }
+
+        @Override
+        public Image[] newArray(int size) {
+            return new Image[size];
+        }
+    };
 
     public String getLocation() {
         return location;

@@ -1,6 +1,7 @@
 package com.group_1.usege.syncing.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -37,9 +38,8 @@ public class LibraryActivity extends AppCompatActivity {
     ImageView imageViewBackward, imgViewUpload, imgViewCard, imgViewList;
     Button btnConfirm;
     List<Image> imgList = new ArrayList<>();
-    private boolean firstAccess = true;
-
-    private int displayView = 1;
+    private String displayView = "card";
+    private Boolean firstAccess = true;
     private static final int Read_Permission = 101;
 
     @Override
@@ -55,35 +55,21 @@ public class LibraryActivity extends AppCompatActivity {
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
 
-        imgViewUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickOpenSetUpSyncingBottomSheetDialog();
-            }
+        imgViewCard.setEnabled(false);
+        imgViewList.setEnabled(false);
+
+        imgViewUpload.setOnClickListener(v -> clickOpenSetUpSyncingBottomSheetDialog());
+
+        imgViewCard.setOnClickListener(v -> {
+            displayView = "card";
+            firstAccess = true;
+            updateViewDisplay();
         });
 
-        imgViewCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imgViewList.setAlpha(0.5F);
-                imgViewCard.setAlpha(1F);
-
-                firstAccess = true;
-                displayView = 1;
-                updateViewDisplay();
-            }
-        });
-
-        imgViewList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imgViewList.setAlpha(1F);
-                imgViewCard.setAlpha(0.5F);
-
-                firstAccess = true;
-                displayView = 2;
-                updateViewDisplay();
-            }
+        imgViewList.setOnClickListener(v -> {
+            displayView = "list";
+            firstAccess = true;
+            updateViewDisplay();
         });
     }
 
@@ -124,29 +110,32 @@ public class LibraryActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateViewDisplay() {
-        // Image Card fragment thay thế
-        // 1 - CARD VIEW
-        // 2 - LIST VIEW
-        if (displayView == 1) {
+
+        if (displayView.equals("card")) {
             if (firstAccess == true) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
+                firstAccess = false;
+
                 ft = getSupportFragmentManager().beginTransaction();
                 imageCardFragment = ImageCardFragment.newInstance(imgList);
                 ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-
-                firstAccess = false;
             }
             else {
                 imageCardFragment.recycleAdapter.notifyDataSetChanged();
             }
         }
-        else if (displayView == 2) {
+        else if (displayView.equals("list")) {
             if (firstAccess == true) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
+                firstAccess = false;
+
                 ft = getSupportFragmentManager().beginTransaction();
                 imageListFragment = ImageListFragment.newInstance(imgList);
                 ft.replace(R.id.layout_display_images, imageListFragment).commit();
-
-                firstAccess = false;
             }
             else {
                 imageListFragment.recycleAdapter.notifyDataSetChanged();
@@ -164,21 +153,26 @@ public class LibraryActivity extends AppCompatActivity {
                         int countOfImages = data.getClipData().getItemCount();
 
                         for (int i = 0; i < countOfImages; i++) {
-                            Image image = new Image("", 0F, "Favorite", "", data.getClipData().getItemAt(i).getUri());
+                            // Thêm dữ liệu vào đây
+                            // Đây là dữ liệu mẫu
+                            Image image = new Image("", 0F, "A favorite image", "", data.getClipData().getItemAt(i).getUri());
                             imgList.add(image);
                         }
 
                     } else {
                         Uri imageURL = data.getData();
-
-                        Image image = new Image("", 0F, "Favorite", "", imageURL);
+                        // Thêm dữ liệu vào đây
+                        // Đây là dữ liệu mẫu
+                        Image image = new Image("", 0F, "The beautiful place", "", imageURL);
                         imgList.add(image);
                     }
+
+                    setStatusOfWidgets();
                 }
                 else {
                     Toast.makeText(this, "You haven't pick any images", Toast.LENGTH_LONG).show();
                 }
-                //sendUriList(uriList, uriList.size());
+
                 // Update Fragment View
                 updateViewDisplay();
             });
@@ -189,6 +183,21 @@ public class LibraryActivity extends AppCompatActivity {
 
             ActivityCompat.requestPermissions(this,
                     new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+        }
+    }
+
+    public void setStatusOfWidgets() {
+        if (imgList.size() > 0) {
+            //imgViewCard.setAlpha(1F);
+            //imgViewList.setAlpha(1F);
+            imgViewCard.setEnabled(true);
+            imgViewList.setEnabled(true);
+        }
+        else {
+            imgViewCard.setAlpha(0.5F);
+            imgViewList.setAlpha(0.5F);
+            imgViewCard.setEnabled(false);
+            imgViewList.setEnabled(false);
         }
     }
 }
