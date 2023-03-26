@@ -1,5 +1,6 @@
 package com.group_1.usege.album;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,5 +36,25 @@ public class create_album extends AppCompatActivity {
                 }
             }
         });
+
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        btnExpandSheet.setText("Close sheet");
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        btnExpandSheet.setText("Expand sheet");
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
     }
 }

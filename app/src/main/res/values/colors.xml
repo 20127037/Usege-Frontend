@@ -82,4 +82,8 @@
     <color name="navy">#000080</color>
     <color name="black">#000000</color>
 
+
+    <color name="main">#45af7d</color>
+    <color name="confirmation">#3A8392</color>
+
 </resources>

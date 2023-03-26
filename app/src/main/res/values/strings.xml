@@ -2,4 +2,7 @@
     <string name="app_name">Usege</string>
     <string name="title_activity_login"><b>Login</b></string>
     <string name="title_email"><b>Email</b></string>
+    <string name="title_library"><b>Library</b></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
