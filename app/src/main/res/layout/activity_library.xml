@@ -55,7 +55,7 @@
                 android:src="@drawable/baseline_cloud_upload" />
 
             <ImageView
-                android:id="@+id/icon_picture"
+                android:id="@+id/icon_card"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginRight="20dp"

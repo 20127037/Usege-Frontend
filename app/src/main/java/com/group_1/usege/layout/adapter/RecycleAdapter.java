@@ -1,33 +1,32 @@
-package com.group_1.usege.syncing.activities;
+package com.group_1.usege.layout.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
+import com.group_1.usege.modle.Image;
 
-import java.io.IOException;
 import java.util.List;
 
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
 
-    private List<Uri> uriList;
+    private List<Image> lstImage;
     private Context context;
+    private String displayView = "";
 
-    public RecycleAdapter(List<Uri> uriList, Context context ) {
-        this.uriList = uriList;
+    public RecycleAdapter(List<Image> lstImage, Context context, String displayView) {
+        this.lstImage = lstImage;
         this.context = context;
+        this.displayView = displayView;
     }
 
     @NonNull
@@ -35,7 +34,13 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     public RecycleAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_photo, parent, false);
+        View view = null;
+        if (displayView.equals("card")) {
+            view = inflater.inflate(R.layout.item_photo, parent, false);
+        }
+        else if (displayView.equals("list")) {
+            view = inflater.inflate(R.layout.layout_item_list, parent, false);
+        }
 
         return new ViewHolder(view);
     }
@@ -57,27 +62,44 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 //        }
         //holder.imgView.setImageURI(uriList.get(position));
 
+//        Glide.with(context)
+//                .load(uriList.get(position))
+//                .into(holder.imgView);
+
+        // Load ảnh ra layout
+        Image image = lstImage.get(position);
+        Uri uri = image.getUri();
         Glide.with(context)
-                .load(uriList.get(position))
+                .load(uri)
                 .into(holder.imgView);
+
+        if (displayView.equals("list")) {
+            holder.description.setText(image.getDescription());
+        }
     }
 
     @Override
     public int getItemCount() {
-        if (uriList != null) {
-            return uriList.size();
+        if (lstImage != null) {
+            return lstImage.size();
         }
 
         return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         ImageView imgView;
+        TextView description;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            if (displayView.equals("card")) {
+                imgView = itemView.findViewById(R.id.image_view_photo);
+            }
+            else {
+                imgView = itemView.findViewById(R.id.image_view_thumbnail);
+                description = itemView.findViewById(R.id.text_view_description);
+            }
 
-            imgView = itemView.findViewById(R.id.image_view_photo);
         }
     }
 }

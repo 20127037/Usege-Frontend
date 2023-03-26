@@ -20,19 +20,26 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
+import com.group_1.usege.layout.fragment.EmptyFragment;
+import com.group_1.usege.layout.fragment.ImageCardFragment;
+import com.group_1.usege.layout.fragment.ImageListFragment;
+import com.group_1.usege.modle.Image;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LibraryActivity extends AppCompatActivity implements MainCallBacks{
+public class LibraryActivity extends AppCompatActivity {
 
     FragmentTransaction ft;
     ImageCardFragment imageCardFragment;
-    EmptyFragment emptyFragment;
-    ImageView imageViewBackward, imgViewUpload;
+    ImageListFragment imageListFragment;
+    EmptyFragment emptyFragment = new EmptyFragment();
+    ImageView imageViewBackward, imgViewUpload, imgViewCard, imgViewList;
     Button btnConfirm;
-    List<Uri> uriList = new ArrayList<>();
+    List<Image> imgList = new ArrayList<>();
+    private boolean firstAccess = true;
 
+    private int displayView = 1;
     private static final int Read_Permission = 101;
 
     @Override
@@ -44,11 +51,38 @@ public class LibraryActivity extends AppCompatActivity implements MainCallBacks{
         emptyFragment = EmptyFragment.newInstance();
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
 
+        imgViewCard = findViewById(R.id.icon_card);
+        imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
+
         imgViewUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 clickOpenSetUpSyncingBottomSheetDialog();
+            }
+        });
+
+        imgViewCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
+
+                firstAccess = true;
+                displayView = 1;
+                updateViewDisplay();
+            }
+        });
+
+        imgViewList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
+
+                firstAccess = true;
+                displayView = 2;
+                updateViewDisplay();
             }
         });
     }
@@ -85,12 +119,39 @@ public class LibraryActivity extends AppCompatActivity implements MainCallBacks{
                 // Đóng bottommsheet
                 setUpSyncingBottomSheetDialog.dismiss();
 
-                // Library fragment thay thế
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance();
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+
             }
         });
+    }
+
+    public void updateViewDisplay() {
+        // Image Card fragment thay thế
+        // 1 - CARD VIEW
+        // 2 - LIST VIEW
+        if (displayView == 1) {
+            if (firstAccess == true) {
+                ft = getSupportFragmentManager().beginTransaction();
+                imageCardFragment = ImageCardFragment.newInstance(imgList);
+                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+
+                firstAccess = false;
+            }
+            else {
+                imageCardFragment.recycleAdapter.notifyDataSetChanged();
+            }
+        }
+        else if (displayView == 2) {
+            if (firstAccess == true) {
+                ft = getSupportFragmentManager().beginTransaction();
+                imageListFragment = ImageListFragment.newInstance(imgList);
+                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+
+                firstAccess = false;
+            }
+            else {
+                imageListFragment.recycleAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -103,18 +164,23 @@ public class LibraryActivity extends AppCompatActivity implements MainCallBacks{
                         int countOfImages = data.getClipData().getItemCount();
 
                         for (int i = 0; i < countOfImages; i++) {
-                            uriList.add(data.getClipData().getItemAt(i).getUri());
+                            Image image = new Image("", 0F, "Favorite", "", data.getClipData().getItemAt(i).getUri());
+                            imgList.add(image);
                         }
 
                     } else {
                         Uri imageURL = data.getData();
-                        uriList.add(imageURL);
+
+                        Image image = new Image("", 0F, "Favorite", "", imageURL);
+                        imgList.add(image);
                     }
                 }
                 else {
                     Toast.makeText(this, "You haven't pick any images", Toast.LENGTH_LONG).show();
                 }
-                sendUriList(uriList, uriList.size());
+                //sendUriList(uriList, uriList.size());
+                // Update Fragment View
+                updateViewDisplay();
             });
 
     private void requestPermission() {
@@ -124,10 +190,5 @@ public class LibraryActivity extends AppCompatActivity implements MainCallBacks{
             ActivityCompat.requestPermissions(this,
                     new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
         }
-    }
-
-    @Override
-    public void sendUriList(List<Uri> uriList, int size) {
-        imageCardFragment.receiveUriList(uriList, size);
     }
 }

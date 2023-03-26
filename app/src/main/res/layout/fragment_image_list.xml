@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".syncing.activities.ImageListFragment"
+    tools:context=".layout.fragment.ImageListFragment"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -64,8 +64,8 @@
         android:textStyle="bold"
         />
 
-    <ListView
-        android:id="@+id/list_photo"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
