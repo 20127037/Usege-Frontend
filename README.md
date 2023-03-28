@@ -9,8 +9,12 @@ Install amlify cli
 Configure amplify
 `amplify configure --profile amplify`
 
-Login to the AWS console using the provided **amplify** account (Teams)
-
+Insert following information from the **frontend** credentials
+```
+region: ap-southeast-1
+accessKeyId: <provided>
+secrectAccessKey: <provided>
+```
 
 ## Pull amplify image to your repository
 
