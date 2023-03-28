@@ -49,6 +49,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -184,8 +185,13 @@ public class LibraryActivity extends AppCompatActivity {
 
         backwardButton.setOnClickListener(v -> filteringBottomSheetDialog.dismiss());
         openDatePickerButton.setOnClickListener(v -> {
-            DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> creationDateEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, 2002, 1, 29);
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            List<String> dayComponents = Arrays.asList(currentDate.split("-"));
+            DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+                if (monthOfYear < 10) creationDateEditText.setText(dayOfMonth + "/" + "0" + (monthOfYear + 1) + "/" + year);
+                else creationDateEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            };
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, Integer.parseInt(dayComponents.get(0)), Integer.parseInt(dayComponents.get(1)) - 1, Integer.parseInt(dayComponents.get(2)));
             datePickerDialog.show();
         });
 
@@ -219,9 +225,7 @@ public class LibraryActivity extends AppCompatActivity {
             if (!location.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(location));
 
             if (clonedImgList.size() > 0) {
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+                updateViewDisplay();
             }
             else {
                 ft = getSupportFragmentManager().beginTransaction();
@@ -229,11 +233,11 @@ public class LibraryActivity extends AppCompatActivity {
                 ft.replace(R.id.layout_display_images, emptyFilteringResultFragment).commit();
                 imgViewCard.setEnabled(false);
                 imgViewList.setEnabled(false);
+                imgViewList.setAlpha((float)0.5);
+                imgViewCard.setAlpha((float)0.5);
             }
             imgViewUpload.setEnabled(false);
             imgViewUpload.setAlpha((float)0.5);
-            imgViewList.setAlpha((float)0.5);
-            imgViewCard.setAlpha((float)0.5);
             filterButton.setColorFilter(Color.parseColor("#45af7d"), PorterDuff.Mode.SRC_ATOP);
             filterButton.setAlpha((float) 1);
         });
@@ -274,12 +278,14 @@ public class LibraryActivity extends AppCompatActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     public void updateViewDisplay() {
-        if (!filtered) clonedImgList = new ArrayList<>(imgList);
+        if (!filtered) {
+            clonedImgList = new ArrayList<>(imgList);
+        }
 
         if (displayView.equals("card")) {
+            imgViewList.setAlpha(0.5F);
+            imgViewCard.setAlpha(1F);
             if (firstAccess == true) {
-                imgViewList.setAlpha(0.5F);
-                imgViewCard.setAlpha(1F);
                 firstAccess = false;
 
                 ft = getSupportFragmentManager().beginTransaction();
@@ -288,13 +294,16 @@ public class LibraryActivity extends AppCompatActivity {
             }
             else {
 //                imageCardFragment.recycleAdapter.notifyDataSetChanged();
-                imageCardFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageCardFragment.getContext(), "card"));
+//                imageCardFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageCardFragment.getContext(), "card"));
+                ft = getSupportFragmentManager().beginTransaction();
+                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
             }
         }
         else if (displayView.equals("list")) {
+            imgViewList.setAlpha(1F);
+            imgViewCard.setAlpha(0.5F);
             if (firstAccess == true) {
-                imgViewList.setAlpha(1F);
-                imgViewCard.setAlpha(0.5F);
                 firstAccess = false;
 
                 ft = getSupportFragmentManager().beginTransaction();
@@ -303,7 +312,10 @@ public class LibraryActivity extends AppCompatActivity {
             }
             else {
 //                imageListFragment.recycleAdapter.notifyDataSetChanged();
-                imageListFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageListFragment.getContext(), "list"));
+//                imageListFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageListFragment.getContext(), "list"));
+                ft = getSupportFragmentManager().beginTransaction();
+                imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageListFragment).commit();
             }
         }
     }
