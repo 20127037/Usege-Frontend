@@ -1,4 +1,4 @@
-package com.group_1.usege.layout.fragment;
+package com.group_1.usege.syncing.fragment;
 
 import android.content.Context;
 import android.os.Bundle;

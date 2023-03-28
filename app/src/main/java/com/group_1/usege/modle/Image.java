@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 public class Image implements Parcelable {
     private String date;
-    private Float size;
+    private long size;
     private String description;
     private String location;
     private Uri uri;
@@ -49,11 +49,11 @@ public class Image implements Parcelable {
         this.date = date;
     }
 
-    public Float getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(Float size) {
+    public void setSize(long size) {
         this.size = size;
     }
 
@@ -69,7 +69,7 @@ public class Image implements Parcelable {
         // Nothing
     }
 
-    public Image(String date, Float size, String description, String location, Uri uri) {
+    public Image(String date, long size, String description, String location, Uri uri) {
         this.date = date;
         this.size = size;
         this.description = description;
@@ -79,7 +79,7 @@ public class Image implements Parcelable {
 
     protected Image(Parcel in) {
         date = in.readString();
-        size = in.readFloat();
+        size = in.readLong();
         description = in.readString();
         location = in.readString();
         uri = in.readParcelable(Uri.class.getClassLoader());
