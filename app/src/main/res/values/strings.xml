@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Usege</string>
     <string name="title_activity_login"><b>Login</b></string>
+    <string name="title_activity_create_account"><b>Create an account</b></string>
     <string name="title_email"><b>Email</b></string>
     <string name="title_password"><b>Password</b></string>
     <string name="title_sign_in"><b>Login</b></string>
+    <string name="title_submit"><b>Submit</b></string>
+    <string name="title_forget_password"><b>Forget password</b></string>
+    <string name="title_sign_up"><b>Sign up</b></string>
+    <string name="title_whether_do_not_have_account"><b>Don't have an account?</b></string>
 </resources>
