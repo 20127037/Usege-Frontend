@@ -14,6 +14,7 @@ Insert following information from the **frontend** credentials
 region: ap-southeast-1
 accessKeyId: <provided>
 secrectAccessKey: <provided>
+profileName: amplify
 ```
 
 ## Pull amplify image to your repository
