@@ -45,6 +45,7 @@ import com.group_1.usege.modle.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SignatureException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -201,10 +202,19 @@ public class LibraryActivity extends AppCompatActivity {
             String creationDate = creationDateEditText.getText().toString();
             String location = selectedLocationTextView.getText().toString();
 
-            filtered = true;
-            filteringBottomSheetDialog.dismiss();
-
             if (!creationDate.isEmpty()) {
+                if (creationDate.contains("/")) {
+                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
+                    Toast.makeText(this, "Please use '/' symbol", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                List<String> dayComponents = Arrays.asList(creationDate.split("/"));
+                if(dayComponents.get(1).length() < 2) {
+                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
+                    Toast.makeText(this, "Please re-format the month with 2 digits", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 try {
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     formatter.setLenient(false);
@@ -216,6 +226,9 @@ public class LibraryActivity extends AppCompatActivity {
                     return;
                 }
             }
+
+            filtered = true;
+            filteringBottomSheetDialog.dismiss();
 
             clonedImgList = new ArrayList<>(imgList);
 
