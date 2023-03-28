@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.group_1.usege.GlideAppModule;
 import com.group_1.usege.R;
 import com.group_1.usege.modle.Image;
 

@@ -28,6 +28,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
+import com.group_1.usege.api.googlemaps.ApiService;
+import com.group_1.usege.api.googlemaps.CallApi;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
@@ -40,6 +42,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class LibraryActivity extends AppCompatActivity {
 
     FragmentTransaction ft;
@@ -49,6 +54,7 @@ public class LibraryActivity extends AppCompatActivity {
     ImageView imageViewBackward, imgViewUpload, imgViewCard, imgViewList;
     Button btnConfirm;
     List<Image> imgList = new ArrayList<>();
+    private CallApi callApi = new CallApi();
     private String displayView = "card";
     private Boolean firstAccess = true;
     private static final int Read_Permission = 101;
@@ -282,11 +288,12 @@ public class LibraryActivity extends AppCompatActivity {
     public String convertToString(float[] latLong) {
         String location = "";
         if (latLong != null) {
-            location = String.valueOf(latLong[0]) + ", " + String.valueOf(latLong[1]);
+            location = String.valueOf(latLong[0]) + "," + String.valueOf(latLong[1]);
         }
 
         return location;
     }
+
 
     public Image getInformationOfImage(Uri imageURI) {
         String imagePath = null;
@@ -313,9 +320,14 @@ public class LibraryActivity extends AppCompatActivity {
         // Lấy vị trí
         float latLong[] = getLocationOfImage(exif);
         String location = convertToString(latLong);
+        String address = "";
+        if (location.length() > 0) {
+            address = callApi.callApiGetAddress(location);
+        }
+        Log.d("Location", "Address: " + address);
 
-        // Lưu thông tin vào Image
-        Image image = new Image(dateTime, sizeOfImage, "A favarite image", location, imageURI);
+                // Lưu thông tin vào Image
+        Image image = new Image(dateTime, sizeOfImage, "A favarite image", address, imageURI);
 
         return image;
     }
