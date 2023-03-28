@@ -1,9 +1,12 @@
 package com.group_1.usege.syncing.activities;
 
+import static android.os.FileUtils.*;
+
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -30,13 +34,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
+
 import com.group_1.usege.layout.adapter.RecycleAdapter;
 import com.group_1.usege.syncing.fragment.EmptyFilteringResultFragment;
+
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
@@ -52,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
 import java.util.List;
 
 public class LibraryActivity extends AppCompatActivity {
@@ -60,12 +68,14 @@ public class LibraryActivity extends AppCompatActivity {
     ImageCardFragment imageCardFragment;
     ImageListFragment imageListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
+
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
     private String displayView = "card";
     private Boolean firstAccess = true;
     private Boolean filtered = false;
+
     private static final int Read_Permission = 101;
 
     @Override
@@ -329,6 +339,7 @@ public class LibraryActivity extends AppCompatActivity {
                 ft = getSupportFragmentManager().beginTransaction();
                 imageListFragment = ImageListFragment.newInstance(clonedImgList);
                 ft.replace(R.id.layout_display_images, imageListFragment).commit();
+
             }
         }
     }
@@ -391,6 +402,7 @@ public class LibraryActivity extends AppCompatActivity {
             imgViewList.setEnabled(true);
             filterButton.setEnabled(true);
             filterButton.setAlpha((float)1);
+
         }
         else {
             imgViewCard.setAlpha(0.5F);
@@ -498,6 +510,7 @@ public class LibraryActivity extends AppCompatActivity {
         // Lấy các từ khóa đặc trưng của ảnh
         List<String> tags = getTagsOfImage(imagePath);
 
+
         // Lấy kích thước của ảnh
         long sizeOfImage = getSizeOfImage(imagePath);
 
@@ -509,6 +522,7 @@ public class LibraryActivity extends AppCompatActivity {
         String location = convertToString(latLong);
 
         // Lưu thông tin vào Image
+
         Image image = new Image(imageURI, tags,"A favarite image", dateTime, sizeOfImage, location);
 
         return image;

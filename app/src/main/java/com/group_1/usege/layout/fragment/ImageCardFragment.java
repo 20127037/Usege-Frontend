@@ -23,7 +23,9 @@ import java.util.List;
 public class ImageCardFragment  extends Fragment {
     FragmentTransaction ft;
     TextView totalImage;
+
     public RecyclerView rcvPhoto;
+
     public RecycleAdapter recycleAdapter;
     private List<Image> lstImage;
     private Context context = null;

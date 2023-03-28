@@ -14,7 +14,6 @@ public class Image implements Parcelable {
     private String description;
     private String date;
     private long size;
-
     private String location;
     private Uri uri;
 
