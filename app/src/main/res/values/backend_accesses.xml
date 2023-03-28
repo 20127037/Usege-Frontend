@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cognito_client_id">5bblk1i1g2h1t40qbl9s0std9d</string>
+    <string name="base_server_url">"http://localhost:1905/"</string>
+</resources>

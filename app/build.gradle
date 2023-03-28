@@ -40,5 +40,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'software.amazon.awssdk:cognitoidentityprovider:2.20.32'
+    implementation 'com.amplifyframework:aws-auth-cognito:2.5.0'
+    implementation 'com.amplifyframework:core:2.5.0'
+    implementation 'com.amplifyframework:rxbindings:2.5.0'
 }
