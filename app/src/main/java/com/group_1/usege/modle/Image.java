@@ -6,10 +6,15 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Image implements Parcelable {
+    private List<String> tags;
+    private String description;
     private String date;
     private long size;
-    private String description;
+
     private String location;
     private Uri uri;
 
@@ -42,7 +47,10 @@ public class Image implements Parcelable {
     }
 
     public String getDate() {
-        return date;
+        String day = date.split(" ")[0];
+        List<String> dayComponents = Arrays.asList(day.split(":"));
+        String reversedDay = dayComponents.get(2).concat("/").concat(dayComponents.get(1)).concat("/").concat(dayComponents.get(0));
+        return reversedDay;
     }
 
     public void setDate(String date) {
@@ -57,6 +65,8 @@ public class Image implements Parcelable {
         this.size = size;
     }
 
+    public List<String> getTags() { return tags; }
+
     public String getDescription() {
         return description;
     }
@@ -69,12 +79,14 @@ public class Image implements Parcelable {
         // Nothing
     }
 
-    public Image(String date, long size, String description, String location, Uri uri) {
+    public Image(Uri uri, List<String> tags, String description, String date, long size, String location) {
+        this.uri = uri;
+        this.tags = tags;
+        this.description = description;
         this.date = date;
         this.size = size;
-        this.description = description;
         this.location = location;
-        this.uri = uri;
+
     }
 
     protected Image(Parcel in) {

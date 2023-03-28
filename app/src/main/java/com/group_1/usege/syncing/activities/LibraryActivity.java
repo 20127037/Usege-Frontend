@@ -1,20 +1,24 @@
 package com.group_1.usege.syncing.activities;
 
-import static android.os.FileUtils.*;
-
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.FileUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,16 +32,20 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
+import com.group_1.usege.syncing.fragment.EmptyFilteringResultFragment;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.modle.Image;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class LibraryActivity extends AppCompatActivity {
@@ -46,11 +54,12 @@ public class LibraryActivity extends AppCompatActivity {
     ImageCardFragment imageCardFragment;
     ImageListFragment imageListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
-    ImageView imageViewBackward, imgViewUpload, imgViewCard, imgViewList;
-    Button btnConfirm;
-    List<Image> imgList = new ArrayList<>();
+    EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
+    ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
+    List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
     private String displayView = "card";
     private Boolean firstAccess = true;
+    private Boolean filtered = false;
     private static final int Read_Permission = 101;
 
     @Override
@@ -65,6 +74,7 @@ public class LibraryActivity extends AppCompatActivity {
         imgViewCard = findViewById(R.id.icon_card);
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
+        filterButton = findViewById(R.id.image_view_search);
 
         imgViewCard.setEnabled(false);
         imgViewList.setEnabled(false);
@@ -85,6 +95,9 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     public void clickOpenSetUpSyncingBottomSheetDialog() {
+        Button btnConfirm;
+        ImageView imageViewBackward;
+
         View viewDialog = getLayoutInflater().inflate(R.layout.layout_set_up_syncing, null);
 
         // Yêu cầu quyền truy cập
@@ -103,24 +116,137 @@ public class LibraryActivity extends AppCompatActivity {
             }
         });
 
-        btnConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        btnConfirm.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
-                //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-                pickImageLauncher.launch(Intent.createChooser(intent, "Select Picture"));
+            //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+            pickImageLauncher.launch(Intent.createChooser(intent, "Select Picture"));
 
-                // Đóng bottommsheet
-                setUpSyncingBottomSheetDialog.dismiss();
+            // Đóng bottommsheet
+            setUpSyncingBottomSheetDialog.dismiss();
+        });
+    }
+
+    public void openFilterBottomSheet(View filterIcon) {
+        if (filtered) {
+            filterButton.setColorFilter(null);
+            filtered = false;
+            return;
+        }
+        TextView backwardButton;
+        AutoCompleteTextView imageTagAutoCompleteTextView;
+        EditText descriptionEditText, creationDateEditText;
+        Button openDatePickerButton, applyFiltersButton;
+        TextView selectedLocationTextView;
+        Spinner locationSpinner;
+        String[] imageTags = {"coffee", "tree", "chair", "people", "shirt"};
+        String[] locations = {"", "Ho Chi Minh", "Ha Noi", "Can Tho", "Vinh Long", "Thua Thien Hue"};
+
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_filtering, null);
+
+        final BottomSheetDialog filteringBottomSheetDialog = new BottomSheetDialog(this);
+        filteringBottomSheetDialog.setContentView(viewDialog);
+        filteringBottomSheetDialog.show();
+
+        backwardButton = viewDialog.findViewById(R.id.backward_from_filter_bottom_sheet_text_view);
+        openDatePickerButton = viewDialog.findViewById(R.id.open_date_picker_button);
+        applyFiltersButton = viewDialog.findViewById(R.id.apply_filters_button);
+        imageTagAutoCompleteTextView = viewDialog.findViewById(R.id.image_tag_auto_complete_text_view);
+        descriptionEditText = viewDialog.findViewById(R.id.description_edit_text);
+        creationDateEditText = viewDialog.findViewById(R.id.creation_date_edit_text);
+        selectedLocationTextView = viewDialog.findViewById(R.id.selected_location_text_view);
+        locationSpinner = viewDialog.findViewById(R.id.location_spinner);
+
+        backwardButton.setOnClickListener((View.OnClickListener) v -> filteringBottomSheetDialog.dismiss());
+        openDatePickerButton.setOnClickListener((View.OnClickListener) v -> {
+            DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> creationDateEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, 2002, 1, 29);
+            datePickerDialog.show();
+        });
+
+        applyFiltersButton.setOnClickListener((View.OnClickListener) v -> {
+            filtered = true;
+            filteringBottomSheetDialog.dismiss();
+
+            String chosenImageTag = imageTagAutoCompleteTextView.getText().toString();
+            String description = descriptionEditText.getText().toString();
+            String creationDate = creationDateEditText.getText().toString();
+            String location = selectedLocationTextView.getText().toString();
+
+            if (!creationDate.isEmpty()) {
+                try {
+                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    formatter.setLenient(false);
+                    Date date = formatter.parse(creationDate);
+                }
+                catch (ParseException e) {
+                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
+                    Toast.makeText(this, "Invalid creation date format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
+
+            clonedImgList = new ArrayList<>(imgList);
+
+            if (!chosenImageTag.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(chosenImageTag));
+            if (!description.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(description));
+            if (!creationDate.isEmpty()) clonedImgList.removeIf(e -> !e.getDate().contains(creationDate));
+            if (!location.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(location));
+
+            if (clonedImgList.size() > 0) {
+                ft = getSupportFragmentManager().beginTransaction();
+                imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+            }
+            else {
+                ft = getSupportFragmentManager().beginTransaction();
+                emptyFilteringResultFragment = EmptyFilteringResultFragment.newInstance();
+                ft.replace(R.id.layout_display_images, emptyFilteringResultFragment).commit();
+            }
+
+            filterButton.setColorFilter(R.color.main);
+            filterButton.setAlpha((float) 1);
+        });
+
+        ArrayAdapter<String> imageTagAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, imageTags);
+        imageTagAutoCompleteTextView.setAdapter(imageTagAdapter);
+        imageTagAutoCompleteTextView.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus && imageTagAutoCompleteTextView.getText().toString().isEmpty())
+                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
+            else view.setBackgroundResource(R.drawable.active_edit_text);
+        });
+
+        descriptionEditText.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus && descriptionEditText.getText().toString().isEmpty())
+                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
+            else view.setBackgroundResource(R.drawable.active_edit_text);
+        });
+
+        creationDateEditText.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus && creationDateEditText.getText().toString().isEmpty())
+                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
+            else view.setBackgroundResource(R.drawable.active_edit_text);
+        });
+
+        ArrayAdapter locationAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, locations);
+        locationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        locationSpinner.setAdapter(locationAdapter);
+        locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int chosenIndex, long l) {
+                if (chosenIndex == 0) selectedLocationTextView.setBackgroundResource(R.drawable.lost_focus_edit_text);
+                else selectedLocationTextView.setBackgroundResource((R.drawable.active_edit_text));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
     }
 
     @SuppressLint("NotifyDataSetChanged")
     public void updateViewDisplay() {
+        if (!filtered) clonedImgList = new ArrayList<>(imgList);
 
         if (displayView.equals("card")) {
             if (firstAccess == true) {
@@ -129,7 +255,7 @@ public class LibraryActivity extends AppCompatActivity {
                 firstAccess = false;
 
                 ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(imgList);
+                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
                 ft.replace(R.id.layout_display_images, imageCardFragment).commit();
             }
             else {
@@ -143,7 +269,7 @@ public class LibraryActivity extends AppCompatActivity {
                 firstAccess = false;
 
                 ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(imgList);
+                imageListFragment = ImageListFragment.newInstance(clonedImgList);
                 ft.replace(R.id.layout_display_images, imageListFragment).commit();
             }
             else {
@@ -185,7 +311,7 @@ public class LibraryActivity extends AppCompatActivity {
                     setStatusOfWidgets();
                 }
                 else {
-                    Toast.makeText(this, "You haven't pick any images", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
                 }
 
                 // Update Fragment View
@@ -235,6 +361,14 @@ public class LibraryActivity extends AppCompatActivity {
         imagePath = tempFile.getAbsolutePath();
 
         return imagePath;
+    }
+
+    public List<String> getTagsOfImage(String imageURL) {
+        // make API call to Eden AI
+        List<String> imageTags = new ArrayList<>();
+        imageTags.add("coffee");
+        imageTags.add("chair");
+        return imageTags;
     }
 
     public long getSizeOfImage(String imagePath) {
@@ -304,6 +438,9 @@ public class LibraryActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+        // Lấy các từ khóa đặc trưng của ảnh
+        List<String> tags = getTagsOfImage(imagePath);
+
         // Lấy kích thước của ảnh
         long sizeOfImage = getSizeOfImage(imagePath);
 
@@ -315,7 +452,7 @@ public class LibraryActivity extends AppCompatActivity {
         String location = convertToString(latLong);
 
         // Lưu thông tin vào Image
-        Image image = new Image(dateTime, sizeOfImage, "A favarite image", location, imageURI);
+        Image image = new Image(imageURI, tags,"A favarite image", dateTime, sizeOfImage, location);
 
         return image;
     }

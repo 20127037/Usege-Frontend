@@ -7,6 +7,7 @@
     android:padding="10dp">
 
     <TextView
+        android:id="@+id/backward_from_filter_bottom_sheet_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/arrow_backward"
@@ -95,9 +96,9 @@
                     android:drawablePadding="5dp"/>
 
                 <Button
+                    android:id="@+id/open_date_picker_button"
                     android:layout_width="50dp"
                     android:layout_height="40dp"
-                    android:onClick="openDatePicker"
                     android:layout_centerVertical="true"
                     android:alpha="0"/>
             </RelativeLayout>
@@ -143,21 +144,16 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <Button
-            android:id="@+id/apply_button"
-            android:onClick="applyFilters"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/button_border"
-            android:text="Apply"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
 
+    <Button
+        android:id="@+id/apply_filters_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Apply"
+        android:background="@drawable/confirm_button_border"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </LinearLayout>
