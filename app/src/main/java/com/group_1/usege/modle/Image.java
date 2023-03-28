@@ -6,10 +6,14 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Image implements Parcelable {
+    private List<String> tags;
+    private String description;
     private String date;
     private long size;
-    private String description;
     private String location;
     private Uri uri;
 
@@ -29,10 +33,6 @@ public class Image implements Parcelable {
         return location;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public Uri getUri() {
         return uri;
     }
@@ -41,21 +41,13 @@ public class Image implements Parcelable {
         this.uri = uri;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
+    public String getDate() { return date; }
 
     public long getSize() {
         return size;
     }
 
-    public void setSize(long size) {
-        this.size = size;
-    }
+    public List<String> getTags() { return tags; }
 
     public String getDescription() {
         return description;
@@ -69,12 +61,24 @@ public class Image implements Parcelable {
         // Nothing
     }
 
-    public Image(String date, long size, String description, String location, Uri uri) {
-        this.date = date;
-        this.size = size;
-        this.description = description;
-        this.location = location;
+    public Image(Uri uri, List<String> tags, String description, String date, long size, String location) {
         this.uri = uri;
+        this.tags = tags;
+        this.description = description;
+
+        if (date == null) this.date = "";
+        else {
+            String day = date.split(" ")[0];
+            List<String> dayComponents = Arrays.asList(day.split(":"));
+            String reversedDay = dayComponents.get(2).concat("/").concat(dayComponents.get(1)).concat("/").concat(dayComponents.get(0));
+            this.date = reversedDay;
+        }
+
+        this.size = size;
+
+        // Thực hiện chuyển đổi ở đây trước khi gán giá trị
+        this.location = location;
+        //////////////////
     }
 
     protected Image(Parcel in) {
