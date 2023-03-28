@@ -7,6 +7,8 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,10 +30,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
+import com.group_1.usege.layout.adapter.RecycleAdapter;
 import com.group_1.usege.syncing.fragment.EmptyFilteringResultFragment;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
@@ -77,7 +81,11 @@ public class LibraryActivity extends AppCompatActivity {
         filterButton = findViewById(R.id.image_view_search);
 
         imgViewCard.setEnabled(false);
+        imgViewCard.setAlpha((float)0.5);
         imgViewList.setEnabled(false);
+        imgViewCard.setAlpha((float)0.5);
+        filterButton.setEnabled(false);
+        filterButton.setAlpha((float)0.5);
 
         imgViewUpload.setOnClickListener(v -> clickOpenSetUpSyncingBottomSheetDialog());
 
@@ -131,10 +139,25 @@ public class LibraryActivity extends AppCompatActivity {
 
     public void openFilterBottomSheet(View filterIcon) {
         if (filtered) {
-            filterButton.setColorFilter(null);
             filtered = false;
+            imgViewUpload.setEnabled(true);
+            imgViewUpload.setAlpha((float)1);
+            imgViewCard.setEnabled(true);
+            imgViewList.setEnabled(true);
+            if (displayView == "card") {
+                imgViewCard.setAlpha((float)1);
+                imgViewList.setAlpha((float)0.7);
+            }
+            else {
+                imgViewCard.setAlpha((float)0.7);
+                imgViewList.setAlpha((float)1);
+            }
+            filterButton.setColorFilter(null);
+
+            updateViewDisplay();
             return;
         }
+
         TextView backwardButton;
         AutoCompleteTextView imageTagAutoCompleteTextView;
         EditText descriptionEditText, creationDateEditText;
@@ -159,21 +182,21 @@ public class LibraryActivity extends AppCompatActivity {
         selectedLocationTextView = viewDialog.findViewById(R.id.selected_location_text_view);
         locationSpinner = viewDialog.findViewById(R.id.location_spinner);
 
-        backwardButton.setOnClickListener((View.OnClickListener) v -> filteringBottomSheetDialog.dismiss());
-        openDatePickerButton.setOnClickListener((View.OnClickListener) v -> {
+        backwardButton.setOnClickListener(v -> filteringBottomSheetDialog.dismiss());
+        openDatePickerButton.setOnClickListener(v -> {
             DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> creationDateEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
             DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, 2002, 1, 29);
             datePickerDialog.show();
         });
 
-        applyFiltersButton.setOnClickListener((View.OnClickListener) v -> {
-            filtered = true;
-            filteringBottomSheetDialog.dismiss();
-
+        applyFiltersButton.setOnClickListener(v -> {
             String chosenImageTag = imageTagAutoCompleteTextView.getText().toString();
             String description = descriptionEditText.getText().toString();
             String creationDate = creationDateEditText.getText().toString();
             String location = selectedLocationTextView.getText().toString();
+
+            filtered = true;
+            filteringBottomSheetDialog.dismiss();
 
             if (!creationDate.isEmpty()) {
                 try {
@@ -192,21 +215,26 @@ public class LibraryActivity extends AppCompatActivity {
 
             if (!chosenImageTag.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(chosenImageTag));
             if (!description.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(description));
-            if (!creationDate.isEmpty()) clonedImgList.removeIf(e -> !e.getDate().contains(creationDate));
+            if (!creationDate.isEmpty()) clonedImgList.removeIf(e -> e.getDate().isEmpty() || !e.getDate().contains(creationDate));
             if (!location.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(location));
 
             if (clonedImgList.size() > 0) {
                 ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
             }
             else {
                 ft = getSupportFragmentManager().beginTransaction();
                 emptyFilteringResultFragment = EmptyFilteringResultFragment.newInstance();
                 ft.replace(R.id.layout_display_images, emptyFilteringResultFragment).commit();
+                imgViewCard.setEnabled(false);
+                imgViewList.setEnabled(false);
             }
-
-            filterButton.setColorFilter(R.color.main);
+            imgViewUpload.setEnabled(false);
+            imgViewUpload.setAlpha((float)0.5);
+            imgViewList.setAlpha((float)0.5);
+            imgViewCard.setAlpha((float)0.5);
+            filterButton.setColorFilter(Color.parseColor("#45af7d"), PorterDuff.Mode.SRC_ATOP);
             filterButton.setAlpha((float) 1);
         });
 
@@ -259,7 +287,8 @@ public class LibraryActivity extends AppCompatActivity {
                 ft.replace(R.id.layout_display_images, imageCardFragment).commit();
             }
             else {
-                imageCardFragment.recycleAdapter.notifyDataSetChanged();
+//                imageCardFragment.recycleAdapter.notifyDataSetChanged();
+                imageCardFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageCardFragment.getContext(), "card"));
             }
         }
         else if (displayView.equals("list")) {
@@ -273,7 +302,8 @@ public class LibraryActivity extends AppCompatActivity {
                 ft.replace(R.id.layout_display_images, imageListFragment).commit();
             }
             else {
-                imageListFragment.recycleAdapter.notifyDataSetChanged();
+//                imageListFragment.recycleAdapter.notifyDataSetChanged();
+                imageListFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageListFragment.getContext(), "list"));
             }
         }
     }
@@ -334,6 +364,8 @@ public class LibraryActivity extends AppCompatActivity {
             //imgViewList.setAlpha(1F);
             imgViewCard.setEnabled(true);
             imgViewList.setEnabled(true);
+            filterButton.setEnabled(true);
+            filterButton.setAlpha((float)1);
         }
         else {
             imgViewCard.setAlpha(0.5F);

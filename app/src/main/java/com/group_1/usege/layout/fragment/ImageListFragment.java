@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ImageListFragment extends Fragment {
     TextView totalImage;
-    RecyclerView rcvPhoto;
+    public RecyclerView rcvPhoto;
     public RecycleAdapter recycleAdapter;
     private List<Image> lstImage;
     private Context context = null;
