@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".syncing.fragment.EmptyFragment"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/background"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Here is a little bit empty"
+        android:textSize="18sp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_view_sync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Let's sync with your local data"
+        android:textSize="20dp"
+        android:textColor="@color/blue"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="80dp"/>
+
+</LinearLayout>
