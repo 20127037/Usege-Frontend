@@ -1,7 +1,5 @@
 package com.group_1.usege.syncing.activities;
 
-import static android.os.FileUtils.*;
-
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
@@ -35,14 +33,11 @@ import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
 
-import com.group_1.usege.layout.adapter.RecycleAdapter;
-import com.group_1.usege.syncing.fragment.EmptyFilteringResultFragment;
+import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
@@ -52,7 +47,6 @@ import com.group_1.usege.modle.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.SignatureException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
