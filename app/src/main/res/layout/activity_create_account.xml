@@ -10,11 +10,11 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         style="@style/Usege.Bar.TitleBar"
-        app:title="@string/title_activity_create_account" />
+        app:title="@string/create_account" />
 
     <ImageView
         style="@style/Usege.Image.CenteredWrapImage"
-        android:src="@drawable/screen_create_account" />
+        android:src="@drawable/scr_create_account" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
 
             <TextView
                 style="@style/Usege.Text.LabelTextView"
-                android:text="@string/title_email" />
+                android:text="@string/email" />
 
             <EditText
                 android:id="@+id/edtEmail"
@@ -46,10 +46,27 @@
 
             <TextView
                 style="@style/Usege.Text.LabelTextView"
-                android:text="@string/title_password" />
+                android:text="@string/password" />
 
             <EditText
                 android:id="@+id/edtPassword"
+                style="Usege.Text.EditTextView"
+                android:drawableStart="@drawable/ic_password_key"
+                android:inputType="textPassword" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/primary_margin_medium"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Usege.Text.LabelTextView"
+                android:text="@string/retype" />
+
+            <EditText
+                android:id="@+id/edtRetype"
                 style="Usege.Text.EditTextView"
                 android:drawableStart="@drawable/ic_password_key"
                 android:inputType="textPassword" />
@@ -61,13 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/primary_margin_medium"
-            android:text="@string/title_submit" />
-
-        <Button
-            android:id="@+id/btnForgetPassword"
-            style="@style/Usege.Button.NormalTextButton"
-            android:layout_marginTop="@dimen/primary_margin_large"
-            android:text="@string/title_forget_password" />
+            android:text="@string/submit" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,12 +88,12 @@
 
             <TextView
                 style="@style/Usege.Text.LabelTextView"
-                android:text="@string/title_whether_do_not_have_account" />
+                android:text="@string/already_have_account" />
 
             <Button
                 android:id="@+id/btnSignUp"
                 style="@style/Usege.Button.NormalTextButton"
-                android:text="@string/title_sign_up" />
+                android:text="@string/login" />
         </LinearLayout>
     </LinearLayout>
 
