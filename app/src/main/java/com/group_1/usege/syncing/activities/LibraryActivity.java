@@ -32,13 +32,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
 
+import com.group_1.usege.layout.fragment.AlbumCardFragment;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 
+import com.group_1.usege.modle.Album;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
@@ -61,11 +64,19 @@ public class LibraryActivity extends AppCompatActivity {
     FragmentTransaction ft;
     ImageCardFragment imageCardFragment;
     ImageListFragment imageListFragment;
+    AlbumCardFragment albumCardFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
 
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
+
+    Button albumButton;
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
+
+    List<Album> albumList = new ArrayList<Album>() {{
+        add(new Album("demo Album 1"));
+        add(new Album("demo Album 1"));
+    }};
     private String displayView = "card";
     private Boolean firstAccess = true;
     private Boolean filtered = false;
@@ -85,6 +96,7 @@ public class LibraryActivity extends AppCompatActivity {
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
         filterButton = findViewById(R.id.image_view_search);
+        albumButton = findViewById(R.id.btn_album);
 
         imgViewCard.setEnabled(false);
         imgViewCard.setAlpha((float)0.5);
@@ -93,6 +105,8 @@ public class LibraryActivity extends AppCompatActivity {
         filterButton.setEnabled(false);
         filterButton.setAlpha((float)0.5);
 
+
+        albumButton.setOnClickListener(v -> clickOpenAlbumList());
         imgViewUpload.setOnClickListener(v -> clickOpenSetUpSyncingBottomSheetDialog());
 
         imgViewCard.setOnClickListener(v -> {
@@ -106,6 +120,12 @@ public class LibraryActivity extends AppCompatActivity {
             firstAccess = true;
             updateViewDisplay();
         });
+    }
+
+    public void clickOpenAlbumList() {
+        ft = getSupportFragmentManager().beginTransaction();
+        albumCardFragment = AlbumCardFragment.newInstance(albumList);
+        ft.replace(R.id.layout_display_images, albumCardFragment).commit();
     }
 
     public void clickOpenSetUpSyncingBottomSheetDialog() {
@@ -554,4 +574,6 @@ public class LibraryActivity extends AppCompatActivity {
         }
         return result;
     }
+
+
 }
