@@ -5,6 +5,11 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
+    <style name="Usege.Text.EditTextView" parent="@style/TextAppearance.Material3.DisplayLarge">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
     <style name="Usege.Text.TitleBar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
