@@ -213,7 +213,7 @@ public class LibraryActivity extends AppCompatActivity {
             String location = selectedLocationTextView.getText().toString();
 
             if (!creationDate.isEmpty()) {
-                if (creationDate.contains("/")) {
+                if (!creationDate.contains("/")) {
                     creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
                     Toast.makeText(this, "Please use '/' symbol", Toast.LENGTH_SHORT).show();
                     return;
