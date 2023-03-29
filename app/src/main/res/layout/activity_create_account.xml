@@ -7,112 +7,83 @@
     android:orientation="vertical"
     tools:context=".authentication.activities.CreateAccountActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/seed">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/title_activity_create_account"
-            android:textColor="@color/white"
-            android:textAppearance="@style/TextAppearance.Material3.ActionBar.Title" />
-    </com.google.android.material.appbar.MaterialToolbar>
 
+    <com.google.android.material.appbar.MaterialToolbar
+        style="@style/Usege.Bar.TitleBar"
+        app:title="@string/title_activity_create_account" />
+
+    <ImageView
+        style="@style/Usege.Image.CenteredWrapImage"
+        android:src="@drawable/screen_create_account" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:fitsSystemWindows="true"
-        android:layout_marginHorizontal="@dimen/primary_horizontal_margin"
-        >
+        android:layout_marginHorizontal="@dimen/primary_margin_large"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/primary_vertical_margin">
+            android:layout_marginTop="@dimen/primary_margin_medium"
+            android:orientation="vertical">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title_email"
-                android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+                style="@style/Usege.Text.LabelTextView"
+                android:text="@string/title_email" />
+
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
                 android:id="@+id/edtEmail"
-                android:textColor="@color/gray"
-                android:drawableStart="@drawable/ic_email"
-                android:textAppearance="TextAppearance.Material3.DisplayLarge"/>
+                style="Usege.Text.EditTextView"
+                android:drawableStart="@drawable/ic_email" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/primary_vertical_margin"
-            >
+            android:layout_marginTop="@dimen/primary_margin_medium"
+            android:orientation="vertical">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title_password"
-                android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                style="@style/Usege.Text.LabelTextView"
+                android:text="@string/title_password" />
+
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
                 android:id="@+id/edtPassword"
-                android:inputType="textPassword"
-                android:textColor="@color/gray"
-                android:drawableStart="@drawable/ic_password_key"/>
+                style="Usege.Text.EditTextView"
+                android:drawableStart="@drawable/ic_password_key"
+                android:inputType="textPassword" />
         </LinearLayout>
 
         <Button
+            android:id="@+id/btnConfirmSignIn"
+            style="@style/Widget.Material3.Button.Icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            style="@style/Widget.Material3.Button.Icon"
-            android:text="@string/title_submit"
-            android:id="@+id/btnConfirmSignIn"
-            android:layout_marginTop="@dimen/primary_vertical_margin"
-            />
+            android:layout_marginTop="@dimen/primary_margin_medium"
+            android:text="@string/title_submit" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:text="@string/title_forget_password"
             android:id="@+id/btnForgetPassword"
-            android:layout_marginTop="@dimen/primary_vertical_margin"
-            />
+            style="@style/Usege.Button.NormalTextButton"
+            android:layout_marginTop="@dimen/primary_margin_large"
+            android:text="@string/title_forget_password" />
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:layout_marginTop="@dimen/primary_margin_medium"
+            android:orientation="horizontal">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="@string/title_whether_do_not_have_account"
-                />
+                style="@style/Usege.Text.LabelTextView"
+                android:text="@string/title_whether_do_not_have_account" />
+
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="textStart"
-                android:layout_alignParentEnd="true"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:text="@string/title_sign_up"
                 android:id="@+id/btnSignUp"
-                />
-        </RelativeLayout>
+                style="@style/Usege.Button.NormalTextButton"
+                android:text="@string/title_sign_up" />
+        </LinearLayout>
     </LinearLayout>
 
 
