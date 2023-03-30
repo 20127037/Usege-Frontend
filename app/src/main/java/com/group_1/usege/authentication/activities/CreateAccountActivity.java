@@ -6,7 +6,15 @@ import android.os.Bundle;
 
 import com.group_1.usege.R;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class CreateAccountActivity extends AppCompatActivity {
+
+    @Inject
+    public
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

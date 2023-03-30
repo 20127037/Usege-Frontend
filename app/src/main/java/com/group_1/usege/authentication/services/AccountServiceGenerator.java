@@ -1,12 +1,22 @@
 package com.group_1.usege.authentication.services;
 
-import com.group_1.usege.authentication.model.UserInfo;
+import android.content.Context;
+
 import com.group_1.usege.utilities.api.BaseServiceGenerator;
 
-public class AccountServiceGenerator extends BaseServiceGenerator<UserInfo> {
+import javax.inject.Inject;
 
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.android.scopes.ActivityScoped;
+
+@ActivityScoped
+public class AccountServiceGenerator extends BaseServiceGenerator<AccountService> {
+    @Inject
+    AccountServiceGenerator(@ApplicationContext Context context) {
+        super(context);
+    }
     @Override
-    protected String getBaseUrl() {
-        return null;
+    protected Class<AccountService> getServiceClass() {
+        return AccountService.class;
     }
 }

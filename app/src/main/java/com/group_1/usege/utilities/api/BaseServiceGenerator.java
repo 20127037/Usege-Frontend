@@ -1,5 +1,9 @@
 package com.group_1.usege.utilities.api;
 
+import android.content.Context;
+
+import com.group_1.usege.R;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -12,10 +16,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public abstract class BaseServiceGenerator<S> {
 
-    //protected static final String BASE_URL = "https://api.github.com/";
     private S wrappedService;
-    protected abstract String getBaseUrl();
     protected abstract Class<S> getServiceClass();
+    private final String baseUrl;
+    public BaseServiceGenerator(Context context)
+    {
+        baseUrl = context.getResources().getString(R.string.base_server_url);
+    }
 
     private static final Retrofit.Builder builder
             = new Retrofit.Builder()
@@ -28,7 +35,7 @@ public abstract class BaseServiceGenerator<S> {
 
     private void setRetrofitBuilderInfo(OkHttpClient httpClient)
     {
-        builder.baseUrl(getBaseUrl())
+        builder.baseUrl(baseUrl)
                 .client(httpClient);
     }
     private S createService()
