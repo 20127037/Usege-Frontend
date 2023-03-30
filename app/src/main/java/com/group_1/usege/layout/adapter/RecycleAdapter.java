@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
 import com.group_1.usege.modle.Image;
+import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
-
+import android.app.Activity;
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
 
     private List<Image> lstImage;
@@ -73,6 +74,25 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         Glide.with(context)
                 .load(uri)
                 .into(holder.imgView);
+
+        if (displayView.equals("card")) {
+            holder.imgView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    // TODO Auto-generated method stub
+                    if (context.getClass().equals(LibraryActivity.class)) {
+//                        ((LibraryActivity)context).showCreateAlbumBottomSheet();
+                        Activity activity = (Activity) context;
+                        if (activity instanceof LibraryActivity) {
+                            LibraryActivity libActivity = (LibraryActivity) activity;
+                            libActivity.clickOpenAlbumCreateBottomSheet();
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
+
 
         if (displayView.equals("list")) {
             String newDescription = setUpDescription(image.getDescription());

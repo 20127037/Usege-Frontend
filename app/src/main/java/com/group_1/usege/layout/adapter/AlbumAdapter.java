@@ -19,12 +19,12 @@ import java.util.List;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
 
-    private List<Album> lstImage;
+    private List<Album> lstAlbum;
     private Context context;
     private String displayView = "";
 
     public AlbumAdapter(List<Album> lstImage, Context context, String displayView) {
-        this.lstImage = lstImage;
+        this.lstAlbum = lstImage;
         this.context = context;
         this.displayView = displayView;
     }
@@ -67,7 +67,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 //                .into(holder.imgView);
 
         // Load ảnh ra layout
-        Album image = lstImage.get(position);
+        Album image = lstAlbum.get(position);
 
 //        Uri uri = image.getUri();
 //        Glide.with(context)
@@ -82,8 +82,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        if (lstImage != null) {
-            return lstImage.size();
+        if (lstAlbum != null) {
+            return lstAlbum.size();
         }
 
         return 0;

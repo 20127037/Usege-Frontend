@@ -20,6 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
@@ -59,6 +61,7 @@ import java.util.Date;
 
 import java.util.List;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 public class LibraryActivity extends AppCompatActivity {
 
     FragmentTransaction ft;
@@ -75,7 +78,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     List<Album> albumList = new ArrayList<Album>() {{
         add(new Album("demo Album 1"));
-        add(new Album("demo Album 1"));
+        add(new Album("demo Album 2"));
     }};
     private String displayView = "card";
     private Boolean firstAccess = true;
@@ -126,6 +129,44 @@ public class LibraryActivity extends AppCompatActivity {
         ft = getSupportFragmentManager().beginTransaction();
         albumCardFragment = AlbumCardFragment.newInstance(albumList);
         ft.replace(R.id.layout_display_images, albumCardFragment).commit();
+    }
+    public void clickOpenAlbumCreateBottomSheet() {
+        Button btnConfirm;
+        ImageView imageViewBackward;
+        EditText titleEditText, passwordEditText;
+
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_create_album, null);
+
+
+        final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        createAlbumBottomSheetDialog.setContentView(viewDialog);
+        createAlbumBottomSheetDialog.show();
+
+        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+        titleEditText = viewDialog.findViewById(R.id.edit_text_title);
+        passwordEditText = viewDialog.findViewById(R.id.edit_text_password);
+        imageViewBackward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createAlbumBottomSheetDialog.dismiss();
+            }
+        });
+
+        btnConfirm.setOnClickListener(v -> {
+            String title = String.valueOf(titleEditText.getText());
+            String password = String.valueOf(passwordEditText.getText());
+
+            System.out.println("title: " + title);
+            System.out.println("password: " + password);
+
+            albumList.add(new Album(title));
+
+            Toast.makeText(this, "Created album success!", Toast.LENGTH_SHORT).show();
+
+            // Đóng bottommsheet
+            createAlbumBottomSheetDialog.dismiss();
+        });
     }
 
     public void clickOpenSetUpSyncingBottomSheetDialog() {
@@ -575,5 +616,11 @@ public class LibraryActivity extends AppCompatActivity {
         return result;
     }
 
-
+//    public void showCreateAlbumBottomSheet() {
+//        if(bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//        } else {
+//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//        }
+//    }
 }

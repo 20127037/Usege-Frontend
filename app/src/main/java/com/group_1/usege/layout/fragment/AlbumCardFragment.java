@@ -25,7 +25,7 @@ public class AlbumCardFragment extends Fragment {
 
     public RecyclerView rcvPhoto;
 
-    public AlbumAdapter recycleAdapter;
+    public AlbumAdapter albumAdapter;
     private List<Album> lstImage;
     private Context context = null;
     public AlbumCardFragment() {
@@ -64,10 +64,10 @@ public class AlbumCardFragment extends Fragment {
 
         rcvPhoto = layoutImageCard.findViewById(R.id.rcv_photo);
 
-        recycleAdapter = new AlbumAdapter(lstImage, context, "card");
+        albumAdapter = new AlbumAdapter(lstImage, context, "card");
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
         rcvPhoto.setLayoutManager(gridLayoutManager);
-        rcvPhoto.setAdapter(recycleAdapter);
+        rcvPhoto.setAdapter(albumAdapter);
 
         return layoutImageCard;
     }
