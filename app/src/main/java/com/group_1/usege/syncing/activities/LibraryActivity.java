@@ -76,6 +76,8 @@ public class LibraryActivity extends AppCompatActivity {
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
+
+    Context context = this;
     private String displayView = "card";
     private Boolean firstAccess = true;
     private Boolean filtered = false;
@@ -387,9 +389,9 @@ public class LibraryActivity extends AppCompatActivity {
                         getInformationThread.start();
 
                         imgList.add(image);
-                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
-                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
-                        Log.e("NOTE", "LOCATION " + imgList.get(2).getLocation());
+//                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
+//                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
+//                        Log.e("NOTE", "LOCATION " + imgList.get(2).getLocation());
                     }
 
                     setStatusOfWidgets();
@@ -511,48 +513,48 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
 
-    public Image getInformationOfImage(Uri imageURI) {
-        String imagePath = null;
-        try {
-            imagePath = getImagePath(imageURI);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Tạo đối tượng ExifInterface để lấy thông tin ảnh
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(imagePath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Lấy các từ khóa đặc trưng của ảnh
-        List<String> tags = getTagsOfImage(imagePath);
-
-
-        // Lấy kích thước của ảnh
-        long sizeOfImage = getSizeOfImage(imagePath);
-
-        // Lấy thời gian chụp của ảnh
-        String dateTime = getDateTimeOfImage(exif);
-
-        // Lấy vị trí
-        float latLong[] = getLocationOfImage(exif);
-        String location = convertToString(latLong);
-        String address = "";
-        if (location.length() > 0) {
-            //CallApi callApi = new CallApi();
-            //address = callApi.callApiGetAddress(location, im);
-
-        }
-        Log.d("Location", "Address: " + address);
-
-                // Lưu thông tin vào Image
-        Image image = new Image(dateTime, sizeOfImage, "A favarite image", address, imageURI);
-
-        return image;
-    }
+//    public Image getInformationOfImage(Uri imageURI) {
+//        String imagePath = null;
+//        try {
+//            imagePath = getImagePath(imageURI);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        // Tạo đối tượng ExifInterface để lấy thông tin ảnh
+//        ExifInterface exif = null;
+//        try {
+//            exif = new ExifInterface(imagePath);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        // Lấy các từ khóa đặc trưng của ảnh
+//        List<String> tags = getTagsOfImage(imagePath);
+//
+//
+//        // Lấy kích thước của ảnh
+//        long sizeOfImage = getSizeOfImage(imagePath);
+//
+//        // Lấy thời gian chụp của ảnh
+//        String dateTime = getDateTimeOfImage(exif);
+//
+//        // Lấy vị trí
+//        float latLong[] = getLocationOfImage(exif);
+//        String location = convertToString(latLong);
+//        String address = "";
+//        if (location.length() > 0) {
+//            //CallApi callApi = new CallApi();
+//            //address = callApi.callApiGetAddress(location, im);
+//
+//        }
+//        Log.d("Location", "Address: " + address);
+//
+//                // Lưu thông tin vào Image
+//        //Image image = new Image(imageURI, null, dateTime, sizeOfImage, "A favarite image", address);
+//
+//        return image;
+//    }
 
     private static float convertToDegree(String stringDMS, String ref) {
         float result = 0.0f, numbers;
