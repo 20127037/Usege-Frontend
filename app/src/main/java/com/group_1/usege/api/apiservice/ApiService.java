@@ -1,5 +1,7 @@
-package com.group_1.usege.api.googlemaps;
+package com.group_1.usege.api.apiservice;
 
+
+import com.group_1.usege.api.googlemaps.GeocodeResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

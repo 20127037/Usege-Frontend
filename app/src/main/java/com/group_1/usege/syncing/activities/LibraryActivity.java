@@ -1,7 +1,5 @@
 package com.group_1.usege.syncing.activities;
 
-import static android.os.FileUtils.*;
-
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
@@ -11,11 +9,12 @@ import android.content.Context;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.FileUtils;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,8 +39,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
-import com.group_1.usege.api.googlemaps.ApiService;
-import com.group_1.usege.api.googlemaps.CallApi;
+import com.group_1.usege.api.apiservice.ApiGoogleMap;
 
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 
@@ -51,7 +49,6 @@ import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.modle.Image;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -62,9 +59,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 import java.util.List;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -389,9 +383,9 @@ public class LibraryActivity extends AppCompatActivity {
                         getInformationThread.start();
 
                         imgList.add(image);
-//                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
 //                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
 //                        Log.e("NOTE", "LOCATION " + imgList.get(2).getLocation());
+
                     }
 
                     setStatusOfWidgets();
@@ -626,7 +620,7 @@ public class LibraryActivity extends AppCompatActivity {
             String location = convertToString(latLong);
             String address = "";
             if (location.length() > 0) {
-                CallApi callApi = new CallApi(location, image, context);
+                ApiGoogleMap callApi = new ApiGoogleMap(location, image, context);
                 address = callApi.callApiGetAddress();
 
             }
