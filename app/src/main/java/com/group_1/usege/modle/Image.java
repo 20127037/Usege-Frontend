@@ -30,6 +30,8 @@ public class Image implements Parcelable {
     }
 
     public void setLocation(String location) {
+        // neu location o dang toa do thi goi api de chuyen doi
+        // nguoc lai khong lam gi
         this.location = location;
     }
 

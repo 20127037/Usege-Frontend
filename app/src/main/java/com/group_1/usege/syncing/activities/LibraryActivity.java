@@ -6,6 +6,7 @@ import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -54,7 +55,8 @@ public class LibraryActivity extends AppCompatActivity {
     ImageView imageViewBackward, imgViewUpload, imgViewCard, imgViewList;
     Button btnConfirm;
     List<Image> imgList = new ArrayList<>();
-    private CallApi callApi = new CallApi();
+
+    Context context = this;
     private String displayView = "card";
     private Boolean firstAccess = true;
     private static final int Read_Permission = 101;
@@ -171,10 +173,15 @@ public class LibraryActivity extends AppCompatActivity {
                         for (int i = 0; i < countOfImages; i++) {
                             // Thêm dữ liệu
                             Uri imageURI = data.getClipData().getItemAt(i).getUri();
-                            Image image = getInformationOfImage(imageURI);
+                            //Image image = getInformationOfImage(imageURI);
+                            Image image = new Image();
+                            image.setUri(imageURI);
+                            image.setLocation("");
+                            GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+                            getInformationThread.start();
                             // Đây là dữ liệu mẫu
-
                             //Image image = new Image("", 0F, "A favorite image", "", imageURI);
+
                             imgList.add(image);
                         }
 
@@ -182,10 +189,19 @@ public class LibraryActivity extends AppCompatActivity {
                     } else {
                         Uri imageURI = data.getData();
                         // Thêm dữ liệu
-                        Image image = getInformationOfImage(imageURI);
+                        //Image image = getInformationOfImage(imageURI);
                         // Đây là dữ liệu mẫu
                         //Image image = new Image("", 0F, "The beautiful place", "", imageURI);
+                        Image image = new Image();
+                        image.setUri(imageURI);
+                        image.setLocation("");
+                        GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+                        getInformationThread.start();
+
                         imgList.add(image);
+                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
+                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
+                        Log.e("NOTE", "LOCATION " + imgList.get(2).getLocation());
                     }
 
                     setStatusOfWidgets();
@@ -193,6 +209,7 @@ public class LibraryActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(this, "You haven't pick any images", Toast.LENGTH_LONG).show();
                 }
+                // Thread
 
                 // Update Fragment View
                 updateViewDisplay();
@@ -322,7 +339,9 @@ public class LibraryActivity extends AppCompatActivity {
         String location = convertToString(latLong);
         String address = "";
         if (location.length() > 0) {
-            address = callApi.callApiGetAddress(location);
+            //CallApi callApi = new CallApi();
+            //address = callApi.callApiGetAddress(location, im);
+
         }
         Log.d("Location", "Address: " + address);
 
@@ -363,5 +382,57 @@ public class LibraryActivity extends AppCompatActivity {
             return -result;
         }
         return result;
+    }
+
+    public class GetInformationThread extends Thread {
+        private Image image;
+        private Uri uri;
+
+        private GetInformationThread(Image image, Uri uri) {
+            this.image = image;
+            this.uri = uri;
+        }
+        @Override
+        public void run(){
+            String imagePath = null;
+            try {
+                imagePath = getImagePath(uri);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Tạo đối tượng ExifInterface để lấy thông tin ảnh
+            ExifInterface exif = null;
+            try {
+                exif = new ExifInterface(imagePath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Lấy kích thước của ảnh
+            long sizeOfImage = getSizeOfImage(imagePath);
+
+            // Lấy thời gian chụp của ảnh
+            String dateTime = getDateTimeOfImage(exif);
+
+            // Lấy vị trí
+            float latLong[] = getLocationOfImage(exif);
+            String location = convertToString(latLong);
+            String address = "";
+            if (location.length() > 0) {
+                CallApi callApi = new CallApi(location, image, context);
+                address = callApi.callApiGetAddress();
+
+            }
+            Log.d("Location", "Address: " + address);
+
+            // Lưu thông tin vào Image
+            image.setDate(dateTime);
+            image.setSize(sizeOfImage);
+            image.setDescription("A favorite image");
+            //image.setLocation(address);
+            //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
+        }
     }
 }
