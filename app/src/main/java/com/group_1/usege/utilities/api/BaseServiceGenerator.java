@@ -13,38 +13,52 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public abstract class BaseServiceGenerator<S> {
 
     //protected static final String BASE_URL = "https://api.github.com/";
+    private S wrappedService;
     protected abstract String getBaseUrl();
-    private final Retrofit.Builder builder
+    protected abstract Class<S> getServiceClass();
+
+    private static final Retrofit.Builder builder
             = new Retrofit.Builder()
-            .baseUrl(getBaseUrl())
             .addConverterFactory(GsonConverterFactory.create());
-    private Retrofit retrofit = builder.build();
-    private static final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
     private static final HttpLoggingInterceptor logging
             = new HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BASIC);
+    private static final OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(logging).build();
+    private static final OkHttpClient.Builder tokenHttpClient = new OkHttpClient.Builder();
 
-    public S createService(Class<S> serviceClass) {
-        if (!httpClient.interceptors().contains(logging)) {
-            httpClient.addInterceptor(logging);
-            builder.client(httpClient.build());
-            retrofit = builder.build();
-        }
-        return retrofit.create(serviceClass);
+    private void setRetrofitBuilderInfo(OkHttpClient httpClient)
+    {
+        builder.baseUrl(getBaseUrl())
+                .client(httpClient);
     }
-    public S createService(Class<S> serviceClass, final String token) {
-        if (token != null) {
-            httpClient.interceptors().clear();
-            httpClient.addInterceptor( chain -> {
-                Request original = chain.request();
-                Request.Builder builder1 = original.newBuilder()
-                        .header("Authorization", token);
-                Request request = builder1.build();
-                return chain.proceed(request);
-            });
-            builder.client(httpClient.build());
-            retrofit = builder.build();
-        }
-        return retrofit.create(serviceClass);
+    private S createService()
+    {
+        setRetrofitBuilderInfo(httpClient);
+        return builder.build().create(getServiceClass());
+    }
+    private S createService(final String token)
+    {
+        tokenHttpClient.interceptors().clear();
+        tokenHttpClient.addInterceptor(logging);
+        tokenHttpClient.addInterceptor(chain -> {
+            Request original = chain.request();
+            Request.Builder builder1 = original.newBuilder()
+                    .header("Authorization", token);
+            Request request = builder1.build();
+            return chain.proceed(request);
+        });
+        setRetrofitBuilderInfo(tokenHttpClient.build());
+        return builder.build().create(getServiceClass());
+    }
+    public S getService() {
+        if (wrappedService == null)
+            wrappedService = createService();
+        return wrappedService;
+    }
+    public S getService(final String token)
+    {
+        if (wrappedService == null)
+            wrappedService = createService(token);
+        return wrappedService;
     }
 }
