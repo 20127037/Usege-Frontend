@@ -81,4 +81,8 @@
 
     <color name="main">#45af7d</color>
     <color name="confirmation">#3A8392</color>
+    <color name="lost_focus">#767171</color>
+    <color name="important">#AF4C3B</color>
+    <color name="caution">#AF4C3B</color>
+    <color name="heading">#404040</color>
 </resources>

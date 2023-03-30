@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Set up your syncing preference"
+            android:textColor="@color/heading"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_gravity="center"/>
@@ -39,30 +40,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Automatic when start the app"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:button="@drawable/custome_radio_button"
-            android:padding="18dp"/>
-
-        <RadioButton
-            android:id="@+id/radio_button_just_this_time"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Just this time"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:button="@drawable/custome_radio_button"
-            android:padding="18dp"/>
+            android:padding="18dp"
+            android:textColor="@color/lost_focus" />
 
         <RadioButton
             android:id="@+id/radio_button_manually"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Pick manually"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:button="@drawable/custome_radio_button"
-            android:padding="18dp"/>
+            android:padding="18dp" />
 
     </RadioGroup>
 
@@ -71,9 +59,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="30dp">
+
         <Button
             android:id="@+id/btn_confirm"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Confirm"
             android:textSize="20sp"

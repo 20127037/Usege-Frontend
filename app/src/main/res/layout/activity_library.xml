@@ -117,6 +117,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
                 android:alpha="0.7"
+                android:onClick="openFilterBottomSheet"
                 android:src="@drawable/baseline_search" />
         </RelativeLayout>
 
