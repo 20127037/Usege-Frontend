@@ -19,6 +19,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,10 +29,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
@@ -55,17 +58,19 @@ import java.util.List;
 public class LibraryActivity extends AppCompatActivity {
 
     FragmentTransaction ft;
+    LinearLayout imageDisplayLayout;
     ImageCardFragment imageCardFragment;
     ImageListFragment imageListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
 
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
-    RelativeLayout bottomMenu;
+    static RelativeLayout bottomMenu;
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
     private String displayView = "card";
     private Boolean firstAccess = true;
     private Boolean filtered = false;
+    public static List<ImageView> selectedImageViews = new ArrayList<>();
 
     private static final int Read_Permission = 101;
 
@@ -554,8 +559,29 @@ public class LibraryActivity extends AppCompatActivity {
         return result;
     }
 
-    public void openBottomMenu(View v) {
+    public static void openBottomMenu(View v) {
         bottomMenu.setVisibility(View.VISIBLE);
+        selectedImageViews.add((ImageView) v);
+        Log.d("selectedImageViews' size", String.valueOf(selectedImageViews.size()));
+    }
+    public void removeBottomMenu(View v) {
+        bottomMenu.setVisibility(View.GONE);
+        selectedImageViews.forEach(imageView -> imageView.setAlpha((float) 1.0));
+        selectedImageViews.clear();
+    }
+
+    public void selectAllImages(View v) {
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+        LinearLayout test = (LinearLayout) imageDisplayLayout.getChildAt(0);
+        RecyclerView test1 = (RecyclerView) test.getChildAt(0);
+        int c = test1.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) test1.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.setAlpha((float) 0.5);
+            if (!selectedImageViews.contains(imageView))
+                selectedImageViews.add(imageView);
+        }
     }
 
     public void showMoreOptions(View v) {
@@ -567,4 +593,6 @@ public class LibraryActivity extends AppCompatActivity {
         });
         popupMenu.show();
     }
+
+
 }

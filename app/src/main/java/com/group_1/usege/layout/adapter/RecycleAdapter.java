@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
 import com.group_1.usege.modle.Image;
+import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
 
@@ -93,15 +94,16 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
         TextView description;
-        @SuppressLint("RestrictedApi")
+        @SuppressLint({"RestrictedApi", "ResourceAsColor"})
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             if (displayView.equals("card")) {
                 imgView = itemView.findViewById(R.id.image_view_photo);
-//                imgView.setOnLongClickListener(v -> {
-//
-//                    return true;
-//                });
+                imgView.setOnLongClickListener(v -> {
+                    LibraryActivity.openBottomMenu(imgView);
+                    v.setAlpha((float) 0.5);
+                    return true;
+                });
             }
             else {
                 imgView = itemView.findViewById(R.id.image_view_thumbnail);
