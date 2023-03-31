@@ -85,7 +85,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                         Activity activity = (Activity) context;
                         if (activity instanceof LibraryActivity) {
                             LibraryActivity libActivity = (LibraryActivity) activity;
-                            libActivity.clickOpenAlbumCreateBottomSheet();
+                            libActivity.clickOpenAlbumCreateBottomSheetAndAddImage(position);
                         }
                     }
                     return true;

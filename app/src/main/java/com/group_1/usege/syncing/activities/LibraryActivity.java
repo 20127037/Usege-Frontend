@@ -20,7 +20,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -33,17 +32,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.group_1.usege.R;
 
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
+import com.group_1.usege.layout.fragment.AlbumListFragment;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 
 import com.group_1.usege.modle.Album;
+import com.group_1.usege.syncing.fragment.EmptyAlbumFragment;
+import com.group_1.usege.syncing.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
@@ -60,27 +60,29 @@ import java.util.Arrays;
 import java.util.Date;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 public class LibraryActivity extends AppCompatActivity {
 
     FragmentTransaction ft;
     ImageCardFragment imageCardFragment;
     ImageListFragment imageListFragment;
     AlbumCardFragment albumCardFragment;
+    AlbumListFragment albumListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
 
+    EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
+    EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
 
-    Button albumButton;
+    Button albumButton, fileButton;
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
 
-    List<Album> albumList = new ArrayList<Album>() {{
-        add(new Album("demo Album 1"));
-        add(new Album("demo Album 2"));
-    }};
+    List<Album> albumList = new ArrayList<Album>() ;
     private String displayView = "card";
+    private String mode = "image";
+    // mode image or album
     private Boolean firstAccess = true;
     private Boolean filtered = false;
 
@@ -100,6 +102,7 @@ public class LibraryActivity extends AppCompatActivity {
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
         filterButton = findViewById(R.id.image_view_search);
         albumButton = findViewById(R.id.btn_album);
+        fileButton = findViewById(R.id.btn_file);
 
         imgViewCard.setEnabled(false);
         imgViewCard.setAlpha((float)0.5);
@@ -109,7 +112,14 @@ public class LibraryActivity extends AppCompatActivity {
         filterButton.setAlpha((float)0.5);
 
 
-        albumButton.setOnClickListener(v -> clickOpenAlbumList());
+        fileButton.setOnClickListener(v -> {
+            mode = "image";
+            clickOpenImageList();
+        });
+        albumButton.setOnClickListener(v -> {
+            mode = "album";
+            clickOpenAlbumList();
+        });
         imgViewUpload.setOnClickListener(v -> clickOpenSetUpSyncingBottomSheetDialog());
 
         imgViewCard.setOnClickListener(v -> {
@@ -125,10 +135,66 @@ public class LibraryActivity extends AppCompatActivity {
         });
     }
 
+    //    Start Album handler
     public void clickOpenAlbumList() {
-        ft = getSupportFragmentManager().beginTransaction();
-        albumCardFragment = AlbumCardFragment.newInstance(albumList);
-        ft.replace(R.id.layout_display_images, albumCardFragment).commit();
+        // check empty list
+        if(albumList.size() == 0) {
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyAlbumFragment = EmptyAlbumFragment.newInstance();
+            ft.replace(R.id.layout_display_images, emptyAlbumFragment).commit();
+            return;
+        }
+        if (Objects.equals(displayView, "card")) {
+            ft = getSupportFragmentManager().beginTransaction();
+            albumCardFragment = AlbumCardFragment.newInstance(albumList);
+            ft.replace(R.id.layout_display_images, albumCardFragment).commit();
+        } else {
+            ft = getSupportFragmentManager().beginTransaction();
+            albumListFragment = AlbumListFragment.newInstance(albumList);
+            ft.replace(R.id.layout_display_images, albumListFragment).commit();
+        }
+    }
+    public void clickOpenAlbumCreateBottomSheetAndAddImage(int position) {
+        Button btnConfirm;
+        ImageView imageViewBackward;
+        EditText titleEditText, passwordEditText;
+
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_create_album, null);
+
+
+        final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        createAlbumBottomSheetDialog.setContentView(viewDialog);
+        createAlbumBottomSheetDialog.show();
+
+        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+        titleEditText = viewDialog.findViewById(R.id.edit_text_title);
+        passwordEditText = viewDialog.findViewById(R.id.edit_text_password);
+        imageViewBackward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createAlbumBottomSheetDialog.dismiss();
+            }
+        });
+
+        final String returnValue = "";
+
+        btnConfirm.setOnClickListener(v -> {
+            String title = String.valueOf(titleEditText.getText());
+            String password = String.valueOf(passwordEditText.getText());
+
+            System.out.println("title: " + title);
+            System.out.println("password: " + password);
+
+            albumList.add(new Album(title));
+
+            imgList.get(position).getBelongToAlbum().add(new Album(title));
+
+            Toast.makeText(this, "Created album success!", Toast.LENGTH_SHORT).show();
+
+            // Đóng bottommsheet
+            createAlbumBottomSheetDialog.dismiss();
+        });
     }
     public void clickOpenAlbumCreateBottomSheet() {
         Button btnConfirm;
@@ -153,12 +219,11 @@ public class LibraryActivity extends AppCompatActivity {
             }
         });
 
+        final String returnValue = "";
+
         btnConfirm.setOnClickListener(v -> {
             String title = String.valueOf(titleEditText.getText());
             String password = String.valueOf(passwordEditText.getText());
-
-            System.out.println("title: " + title);
-            System.out.println("password: " + password);
 
             albumList.add(new Album(title));
 
@@ -166,8 +231,66 @@ public class LibraryActivity extends AppCompatActivity {
 
             // Đóng bottommsheet
             createAlbumBottomSheetDialog.dismiss();
+
+            clickOpenAlbumList();
         });
     }
+    public boolean checkBelongToAlbum(Image img, String albumTitle) {
+        boolean isBelong = false;
+        List<Album> belongToAlbum = img.getBelongToAlbum();
+        for(int i = 0; i< belongToAlbum.size();i++) {
+            if(Objects.equals(belongToAlbum.get(i).getName(), albumTitle)) {
+                isBelong = true;
+                break;
+            }
+        }
+        return isBelong;
+    }
+    public void clickOpenAlbumImageList(String albumTitle) {
+        List<Image> temp = new ArrayList<>();
+        for(int i=0;i<imgList.size();i++) {
+            if(checkBelongToAlbum(imgList.get(i), albumTitle)) {
+                temp.add(imgList.get(i));
+            }
+        }
+
+        if(temp.size() > 0) {
+            ft = getSupportFragmentManager().beginTransaction();
+            imageCardFragment = ImageCardFragment.newInstance(temp);
+            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+        }
+        else {
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyAlbumImageFragment = EmptyAlbumImageFragment.newInstance();
+            ft.replace(R.id.layout_display_images, emptyAlbumImageFragment).commit();
+        }
+    }
+    public void clickAddImageToAlbum() {
+
+    }
+    public void clickOpenImageList() {
+        // check empty list
+        if(imgList.size() == 0) {
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyFragment = EmptyFragment.newInstance();
+            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+            return;
+        }
+        if(Objects.equals(displayView, "card")) {
+            ft = getSupportFragmentManager().beginTransaction();
+            imageCardFragment = ImageCardFragment.newInstance(imgList);
+            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+        }
+        else {
+            ft = getSupportFragmentManager().beginTransaction();
+            imageListFragment = ImageListFragment.newInstance(imgList);
+            ft.replace(R.id.layout_display_images, imageListFragment).commit();
+        }
+    }
+
+    //    End Album handler
+
+
 
     public void clickOpenSetUpSyncingBottomSheetDialog() {
         Button btnConfirm;
@@ -360,43 +483,64 @@ public class LibraryActivity extends AppCompatActivity {
             clonedImgList = new ArrayList<>(imgList);
         }
 
-        if (displayView.equals("card")) {
-            imgViewList.setAlpha(0.5F);
-            imgViewCard.setAlpha(1F);
-            if (firstAccess == true) {
-                firstAccess = false;
+        if (Objects.equals(mode, "image")) {
+            if (displayView.equals("card")) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
+                if (firstAccess == true) {
+                    firstAccess = false;
 
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-            }
-            else {
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+                }
+                else {
 //                imageCardFragment.recycleAdapter.notifyDataSetChanged();
 //                imageCardFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageCardFragment.getContext(), "card"));
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+                }
             }
-        }
-        else if (displayView.equals("list")) {
-            imgViewList.setAlpha(1F);
-            imgViewCard.setAlpha(0.5F);
-            if (firstAccess == true) {
-                firstAccess = false;
+            else if (displayView.equals("list")) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
+                if (firstAccess == true) {
+                    firstAccess = false;
 
-                ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageListFragment).commit();
-            }
-            else {
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageListFragment).commit();
+                }
+                else {
 //                imageListFragment.recycleAdapter.notifyDataSetChanged();
 //                imageListFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageListFragment.getContext(), "list"));
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageListFragment).commit();
+
+                }
+            }
+        } else if (Objects.equals(mode, "album")) {
+            // album mode
+            if (displayView.equals("card")) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
                 ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+                albumCardFragment = AlbumCardFragment.newInstance(albumList);
+                ft.replace(R.id.layout_display_images, albumCardFragment).commit();
+            }
+            else if (displayView.equals("list")) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
+                ft = getSupportFragmentManager().beginTransaction();
+                albumListFragment = AlbumListFragment.newInstance(albumList);
+                ft.replace(R.id.layout_display_images, albumListFragment).commit();
 
             }
         }
+
+
     }
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -615,12 +759,4 @@ public class LibraryActivity extends AppCompatActivity {
         }
         return result;
     }
-
-//    public void showCreateAlbumBottomSheet() {
-//        if(bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//        } else {
-//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//        }
-//    }
 }
