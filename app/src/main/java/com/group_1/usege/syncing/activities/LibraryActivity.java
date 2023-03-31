@@ -9,12 +9,10 @@ import android.content.Context;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -72,6 +70,7 @@ public class LibraryActivity extends AppCompatActivity {
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
 
     Context context = this;
+
     private String displayView = "card";
     private Boolean firstAccess = true;
     private Boolean filtered = false;
@@ -121,32 +120,34 @@ public class LibraryActivity extends AppCompatActivity {
         View viewDialog = getLayoutInflater().inflate(R.layout.layout_set_up_syncing, null);
 
         // Yêu cầu quyền truy cập
-        requestPermission();
+        Boolean result = requestPermission();
 
-        final BottomSheetDialog setUpSyncingBottomSheetDialog = new BottomSheetDialog(this);
-        setUpSyncingBottomSheetDialog.setContentView(viewDialog);
-        setUpSyncingBottomSheetDialog.show();
+        if (result == true) {
+            final BottomSheetDialog setUpSyncingBottomSheetDialog = new BottomSheetDialog(this);
+            setUpSyncingBottomSheetDialog.setContentView(viewDialog);
+            setUpSyncingBottomSheetDialog.show();
 
-        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
-        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
-        imageViewBackward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+            imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+            imageViewBackward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setUpSyncingBottomSheetDialog.dismiss();
+                }
+            });
+
+            btnConfirm.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+                //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                pickImageLauncher.launch(Intent.createChooser(intent, "Select Picture"));
+
+                // Đóng bottommsheet
                 setUpSyncingBottomSheetDialog.dismiss();
-            }
-        });
-
-        btnConfirm.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-            //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-            pickImageLauncher.launch(Intent.createChooser(intent, "Select Picture"));
-
-            // Đóng bottommsheet
-            setUpSyncingBottomSheetDialog.dismiss();
-        });
+            });
+        }
     }
 
     public void openFilterBottomSheet(View filterIcon) {
@@ -369,7 +370,7 @@ public class LibraryActivity extends AppCompatActivity {
                             imgList.add(image);
                         }
 
-                    // Lấy 1 ảnh
+                        // Lấy 1 ảnh
                     } else {
                         Uri imageURI = data.getData();
                         // Thêm dữ liệu
@@ -399,15 +400,19 @@ public class LibraryActivity extends AppCompatActivity {
                 updateViewDisplay();
             });
 
-    // Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
-    private void requestPermission() {
+    //Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
+    private Boolean requestPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+                == PackageManager.PERMISSION_GRANTED) {
+            return true;
         }
+        else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+        }
+        return false;
     }
+
 
     public void setStatusOfWidgets() {
         if (imgList.size() > 0) {
