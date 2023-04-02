@@ -70,7 +70,7 @@ public class LibraryActivity extends AppCompatActivity {
     private String displayView = "card";
     private Boolean firstAccess = true;
     private Boolean filtered = false;
-    public static List<ImageView> selectedImageViews = new ArrayList<>();
+    public static List<Image> selectedImages = new ArrayList<>();
 
     private static final int Read_Permission = 101;
 
@@ -559,15 +559,14 @@ public class LibraryActivity extends AppCompatActivity {
         return result;
     }
 
-    public static void openBottomMenu(View v) {
+    public static void openBottomMenu(Image image) {
         bottomMenu.setVisibility(View.VISIBLE);
-        selectedImageViews.add((ImageView) v);
-        Log.d("selectedImageViews' size", String.valueOf(selectedImageViews.size()));
+        selectedImages.add(image);
+        Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
     }
     public void removeBottomMenu(View v) {
         bottomMenu.setVisibility(View.GONE);
-        selectedImageViews.forEach(imageView -> imageView.setAlpha((float) 1.0));
-        selectedImageViews.clear();
+        selectedImages.clear();
     }
 
     public void selectAllImages(View v) {
@@ -579,9 +578,8 @@ public class LibraryActivity extends AppCompatActivity {
             CardView cardView = (CardView) test1.getChildAt(i);
             ImageView imageView = (ImageView) cardView.getChildAt(0);
             imageView.setAlpha((float) 0.5);
-            if (!selectedImageViews.contains(imageView))
-                selectedImageViews.add(imageView);
         }
+        selectedImages = new ArrayList<>(imgList);
     }
 
     public void showMoreOptions(View v) {

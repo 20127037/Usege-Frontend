@@ -1,6 +1,5 @@
 package com.group_1.usege.layout.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -76,6 +75,12 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .load(uri)
                 .into(holder.imgView);
 
+        holder.imgView.setOnLongClickListener(v -> {
+            LibraryActivity.openBottomMenu(image);
+            v.setAlpha((float) 0.5);
+            return true;
+        });
+
         if (displayView.equals("list")) {
             String newDescription = setUpDescription(image.getDescription());
             holder.description.setText(newDescription);
@@ -87,23 +92,16 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         if (lstImage != null) {
             return lstImage.size();
         }
-
         return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
         TextView description;
-        @SuppressLint({"RestrictedApi", "ResourceAsColor"})
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             if (displayView.equals("card")) {
                 imgView = itemView.findViewById(R.id.image_view_photo);
-                imgView.setOnLongClickListener(v -> {
-                    LibraryActivity.openBottomMenu(imgView);
-                    v.setAlpha((float) 0.5);
-                    return true;
-                });
             }
             else {
                 imgView = itemView.findViewById(R.id.image_view_thumbnail);
@@ -111,8 +109,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
             }
 
         }
-
-
     }
 
     public String setUpDescription(String curDescription) {
