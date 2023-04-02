@@ -10,7 +10,7 @@
         android:id="@+id/backward_from_filter_bottom_sheet_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/arrow_backward"
+        android:drawableLeft="@drawable/icon_backward_arrow"
         android:gravity="center"
         android:text="Choose one or more filters"
         android:textColor="@color/heading"
@@ -39,9 +39,9 @@
                 android:id="@+id/image_tag_auto_complete_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/lost_focus_edit_text"
+                android:background="@drawable/edit_text_lost_focus"
                 android:padding="10dp"
-                android:drawableLeft="@drawable/image_tag_icon"
+                android:drawableLeft="@drawable/icon_image_tag"
                 android:drawablePadding="5dp"
                 android:completionThreshold="1"/>
         </LinearLayout>
@@ -63,9 +63,9 @@
                 android:inputType="text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/lost_focus_edit_text"
+                android:background="@drawable/edit_text_lost_focus"
                 android:padding="10dp"
-                android:drawableLeft="@drawable/image_description_icon"
+                android:drawableLeft="@drawable/icon_image_description"
                 android:drawablePadding="5dp"/>
         </LinearLayout>
 
@@ -90,9 +90,9 @@
                     android:inputType="date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/lost_focus_edit_text"
+                    android:background="@drawable/edit_text_lost_focus"
                     android:padding="10dp"
-                    android:drawableLeft="@drawable/image_creation_date_icon"
+                    android:drawableLeft="@drawable/icon_image_creation_date"
                     android:drawablePadding="5dp"/>
 
                 <Button
@@ -125,9 +125,9 @@
                     android:id="@+id/selected_location_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/lost_focus_edit_text"
+                    android:background="@drawable/edit_text_lost_focus"
                     android:padding="10dp"
-                    android:drawableLeft="@drawable/image_location_icon"
+                    android:drawableLeft="@drawable/icon_image_location"
                     android:drawablePadding="5dp"/>
 
                 <Spinner
@@ -151,7 +151,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="Apply"
-        android:background="@drawable/confirm_button_border"
+        android:background="@drawable/button_border_confirm"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"

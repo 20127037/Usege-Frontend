@@ -15,7 +15,7 @@
             android:id="@+id/image_view_backward"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/arrow_backward"
+            android:src="@drawable/icon_backward_arrow"
             android:layout_marginRight="8dp"/>
 
         <TextView
@@ -68,7 +68,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@drawable/confirm_button_border"
+            android:background="@drawable/button_border_confirm"
             android:layout_gravity="center"
             android:paddingHorizontal="60dp" />
 

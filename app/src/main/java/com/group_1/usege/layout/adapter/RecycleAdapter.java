@@ -1,5 +1,6 @@
 package com.group_1.usege.layout.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -19,7 +20,6 @@ import com.group_1.usege.syncing.activities.LibraryActivity;
 import java.util.List;
 import android.app.Activity;
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
-
     private List<Image> lstImage;
     private Context context;
     private String displayView = "";
@@ -32,7 +32,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
     @NonNull
     @Override
-    public RecycleAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = null;
@@ -45,6 +45,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull RecycleAdapter.ViewHolder holder, int position) {
@@ -112,10 +113,16 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
         TextView description;
+        @SuppressLint({"RestrictedApi", "ResourceAsColor"})
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             if (displayView.equals("card")) {
                 imgView = itemView.findViewById(R.id.image_view_photo);
+                imgView.setOnLongClickListener(v -> {
+                    LibraryActivity.openBottomMenu(imgView);
+                    v.setAlpha((float) 0.5);
+                    return true;
+                });
             }
             else {
                 imgView = itemView.findViewById(R.id.image_view_thumbnail);
@@ -123,6 +130,8 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
             }
 
         }
+
+
     }
 
     public String setUpDescription(String curDescription) {
