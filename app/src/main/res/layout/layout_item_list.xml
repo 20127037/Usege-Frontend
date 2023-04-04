@@ -9,20 +9,21 @@
         android:id="@+id/image_view_thumbnail"
         android:layout_width="0dp"
         android:layout_height="75dp"
-        android:layout_weight="0.35"
+        android:layout_weight="0.3"
         android:layout_gravity="left"
+        android:scaleType="centerCrop"
         android:src="@drawable/profile" />
 
     <TextView
         android:id="@+id/text_view_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.45"
+        android:layout_weight="0.5"
         android:text="A favorite image"
         android:textSize="18sp"
         android:alpha="0.8"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="4dp"/>
+        android:layout_marginLeft="32dp"/>
 
     <ImageView
         android:id="@+id/image_view_more"

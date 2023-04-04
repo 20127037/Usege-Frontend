@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".manipulation.activities.ImageActivity">
+
+    <LinearLayout
+        android:id="@+id/layout_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:layout_marginTop="4dp">
+
+        <ImageView
+            android:id="@+id/image_view_backward"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_backward"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.1"
+            android:layout_marginRight="8dp"/>
+
+        <TextView
+            android:id="@+id/text_view_tag1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="coffee"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="@drawable/border_tags"
+            android:textColor="@color/white"
+            android:drawableLeft="@drawable/coffee"
+            android:layout_weight="0.3"
+            android:layout_marginRight="8dp"/>
+
+        <TextView
+            android:id="@+id/text_view_tag2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="coffee"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="@drawable/border_tags"
+            android:textColor="@color/white"
+            android:drawableLeft="@drawable/coffee"
+            android:layout_weight="0.3"
+            android:layout_marginRight="8dp"/>
+
+        <TextView
+            android:id="@+id/text_view_tag3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="coffee"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="@drawable/border_tags"
+            android:textColor="@color/white"
+            android:drawableLeft="@drawable/coffee"
+            android:layout_weight="0.3"
+            android:layout_marginRight="2dp"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_tags">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/layout_datetime_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/text_view_datetime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="January 29, 2023"
+                    android:textSize="18sp"
+                    android:layout_alignParentLeft="true"/>
+
+                <TextView
+                    android:id="@+id/text_view_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="500KB"
+                    android:textSize="18sp"
+                    android:layout_alignParentRight="true"/>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_image_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/layout_datetime_size">
+
+                <ImageView
+                    android:id="@+id/image_view_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/background"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
+                    <EditText
+                        android:id="@+id/edit_text_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:text="Coffee is a drink prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a |"
+                        android:textSize="18sp"
+                        android:background="@null"
+                        android:textAlignment="center"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:itemBackground="@color/md_theme_dark_secondary"
+        app:menu="@menu/menu_image_bottom_nav"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:labelVisibilityMode="labeled"/>
+</RelativeLayout>
