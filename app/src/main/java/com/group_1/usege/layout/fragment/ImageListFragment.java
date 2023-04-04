@@ -1,6 +1,8 @@
 package com.group_1.usege.layout.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.layout.adapter.RecycleAdapter;
+import com.group_1.usege.manipulation.activities.ImageActivity;
+import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
 
 import java.io.Serializable;
@@ -25,7 +30,7 @@ public class ImageListFragment extends Fragment {
 
     public RecyclerView rcvPhoto;
 
-    public RecycleAdapter recycleAdapter;
+    public ListAdapter listAdapter;
     private List<Image> lstImage;
     private Context context = null;
     public ImageListFragment() {
@@ -64,11 +69,24 @@ public class ImageListFragment extends Fragment {
 
         rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
 
-        recycleAdapter = new RecycleAdapter(lstImage, context, "list");
+        listAdapter = new ListAdapter(lstImage, context, new IClickItemImageListener() {
+            @Override
+            public void onClickItemImage(Image image) {
+                onClickGoToDetails(image);
+            }
+        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rcvPhoto.setLayoutManager(linearLayoutManager);
-        rcvPhoto.setAdapter(recycleAdapter);
+        rcvPhoto.setAdapter(listAdapter);
 
         return layoutImageList;
+    }
+
+    private void onClickGoToDetails(Image image) {
+        Intent intent = new Intent(context, ImageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("object_image", image);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
     }
 }

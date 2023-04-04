@@ -1,6 +1,7 @@
 package com.group_1.usege.layout.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.layout.adapter.CardAdapter;
+import com.group_1.usege.manipulation.activities.ImageActivity;
+import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
 import com.group_1.usege.layout.adapter.RecycleAdapter;
 
@@ -26,7 +30,7 @@ public class ImageCardFragment  extends Fragment {
 
     public RecyclerView rcvPhoto;
 
-    public RecycleAdapter recycleAdapter;
+    public CardAdapter cardAdapter;
     private List<Image> lstImage;
     private Context context = null;
     public ImageCardFragment() {
@@ -65,11 +69,24 @@ public class ImageCardFragment  extends Fragment {
 
         rcvPhoto = layoutImageCard.findViewById(R.id.rcv_photo);
 
-        recycleAdapter = new RecycleAdapter(lstImage, context, "card");
+        cardAdapter = new CardAdapter(lstImage, context, new IClickItemImageListener() {
+            @Override
+            public void onClickItemImage(Image image) {
+                onClickGoToDetails(image);
+            }
+        });
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
         rcvPhoto.setLayoutManager(gridLayoutManager);
-        rcvPhoto.setAdapter(recycleAdapter);
+        rcvPhoto.setAdapter(cardAdapter);
 
         return layoutImageCard;
+    }
+
+    private void onClickGoToDetails(Image image) {
+        Intent intent = new Intent(context, ImageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("object_image", image);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
     }
 }

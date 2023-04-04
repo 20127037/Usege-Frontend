@@ -111,7 +111,7 @@ public class Image implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(date);
-        dest.writeFloat(size);
+        dest.writeLong(size);
         dest.writeString(description);
         dest.writeString(location);
         dest.writeParcelable(uri, flags);

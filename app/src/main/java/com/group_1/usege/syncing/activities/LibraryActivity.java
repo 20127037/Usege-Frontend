@@ -39,6 +39,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
 import com.group_1.usege.api.apiservice.ApiGoogleMap;
 
+import com.group_1.usege.layout.adapter.RecycleAdapter;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 
 import com.group_1.usege.syncing.fragment.EmptyFragment;
@@ -362,6 +363,7 @@ public class LibraryActivity extends AppCompatActivity {
                             Image image = new Image();
                             image.setUri(imageURI);
                             image.setLocation("");
+                            image.setDescription("A favorite image");
                             GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                             getInformationThread.start();
                             // Đây là dữ liệu mẫu
@@ -380,6 +382,7 @@ public class LibraryActivity extends AppCompatActivity {
                         Image image = new Image();
                         image.setUri(imageURI);
                         image.setLocation("");
+                        image.setDescription("A favorite image");
                         GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                         getInformationThread.start();
 
@@ -634,9 +637,18 @@ public class LibraryActivity extends AppCompatActivity {
             // Lưu thông tin vào Image
             image.setDate(dateTime);
             image.setSize(sizeOfImage);
-            image.setDescription("A favorite image");
             //image.setLocation(address);
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (imageCardFragment.cardAdapter != null || imageListFragment.listAdapter != null) {
+            imageCardFragment.cardAdapter.release();
+            imageListFragment.listAdapter.release();
         }
     }
 }

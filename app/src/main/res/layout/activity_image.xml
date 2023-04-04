@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     tools:context=".manipulation.activities.ImageActivity">
 
     <LinearLayout
@@ -28,12 +27,11 @@
             android:id="@+id/text_view_tag1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="coffee"
+            android:text="Coffee"
             android:textSize="18sp"
             android:gravity="center"
             android:background="@drawable/border_tags"
             android:textColor="@color/white"
-            android:drawableLeft="@drawable/coffee"
             android:layout_weight="0.3"
             android:layout_marginRight="8dp"/>
 
@@ -41,12 +39,11 @@
             android:id="@+id/text_view_tag2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="coffee"
+            android:text="People"
             android:textSize="18sp"
             android:gravity="center"
             android:background="@drawable/border_tags"
             android:textColor="@color/white"
-            android:drawableLeft="@drawable/coffee"
             android:layout_weight="0.3"
             android:layout_marginRight="8dp"/>
 
@@ -54,12 +51,11 @@
             android:id="@+id/text_view_tag3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="coffee"
+            android:text="T-shirt"
             android:textSize="18sp"
             android:gravity="center"
             android:background="@drawable/border_tags"
             android:textColor="@color/white"
-            android:drawableLeft="@drawable/coffee"
             android:layout_weight="0.3"
             android:layout_marginRight="2dp"/>
     </LinearLayout>
@@ -67,7 +63,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_tags">
+        android:layout_below="@id/layout_tags"
+        android:layout_marginBottom="70dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,17 +98,17 @@
             <LinearLayout
                 android:id="@+id/layout_image_description"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_below="@+id/layout_datetime_size">
 
                 <ImageView
                     android:id="@+id/image_view_image"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/background"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:src="@drawable/background" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -122,7 +119,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:enabled="false"
-                        android:text="Coffee is a drink prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a |"
+                        android:text="Coffee is a drink prepared from roasted coffee beans. Darkly colored, bitter, and slightly acidic, coffee has a"
                         android:textSize="18sp"
                         android:background="@null"
                         android:textAlignment="center"
@@ -132,15 +129,49 @@
         </LinearLayout>
     </ScrollView>
 
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/md_theme_dark_secondary"
-        app:menu="@menu/menu_image_bottom_nav"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
-        app:labelVisibilityMode="labeled"/>
+        android:background="#E1F4E0"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/photoshop"
+            android:text="Photoshop"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_weight="0.25"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/favorite_border"
+            android:text="Favorite"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_weight="0.25"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/describe"
+            android:text="Describe"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_weight="0.25"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/delete"
+            android:text="Delete"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_weight="0.25"/>
+
+    </LinearLayout>
 </RelativeLayout>

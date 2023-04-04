@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="6dp"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    android:id="@+id/layout_item_card">
 
     <ImageView
         android:id="@+id/image_view_photo"
