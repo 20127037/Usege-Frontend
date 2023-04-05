@@ -5,11 +5,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
-    <style name="Usege.Text.EditTextView" parent="@style/TextAppearance.Material3.DisplayLarge">
+    <style name="Usege.Text.EditTextLayout" parent="@style/Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textAlignment">textStart</item>
+    </style>
+    <style name="Usege.Text.EditTextView" parent="@style/Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="Usege.Bar.TitleBar" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="android:layout_width">match_parent</item>
@@ -21,6 +23,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
+        <item name='android:adjustViewBounds'>true</item>
+        <item name='android:scaleType'>fitCenter</item>
     </style>
 
     <style name="Usege.Button.NormalTextButton" parent="Widget.Material3.Button.TextButton">
@@ -28,5 +32,4 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAlignment">textStart</item>
     </style>
-
 </resources>

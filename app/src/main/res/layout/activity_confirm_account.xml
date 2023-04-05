@@ -4,40 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".account.activities.ResetPasswordActivity">
+    tools:context=".account.activities.ConfirmAccountActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         style="@style/Usege.Bar.TitleBar"
         android:id="@+id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.1"
-        app:title="@string/reset_password" />
-
-    <ImageView
-        style="@style/Usege.Image.CenteredWrapImage"
-        android:src="@drawable/scr_reset_password"
-        android:id="@+id/screen_img"
-        android:layout_marginTop="@dimen/primary_margin_medium"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.3"
-        />
-
+        app:title="@string/confirm_account" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:layout_marginHorizontal="@dimen/primary_margin_large"
-        android:layout_marginTop="@dimen/primary_margin_large"
-        android:id="@+id/frag_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.group_1.usege.utilities.view.EditTextFragment"
-        app:layout_constraintTop_toBottomOf="@id/screen_img"
-        android:text="@string/email"
-        android:drawableLeft="@drawable/ic_email"/>
+        android:id="@+id/frag_confirm_code"
+        android:layout_marginHorizontal="@dimen/primary_margin_large"
+        android:layout_marginTop="@dimen/primary_margin_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:name="com.group_1.usege.account.fragments.ConfirmCodeFragment"/>
 
     <Button
         android:id="@+id/btn_submit"

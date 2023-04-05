@@ -2,13 +2,21 @@
     <string name="app_name">Usege</string>
     <string name="login"><b>Login</b></string>
     <string name="reset_password"><b>Reset pasword</b></string>
+    <string name="confirm_account"><b>Confirm account</b></string>
+    <string name="confirm_reset_password"><b>Confirm account</b></string>
+    <string name="resend"><b>Resend</b></string>
     <string name="create_account"><b>Create an account</b></string>
     <string name="email"><b>Email</b></string>
+    <string name="empty" />
+    <string name="input_6_digits_below"><b>Please input a 6-digit code below</b></string>
     <string name="password"><b>Password</b></string>
     <string name="retype"><b>Retype</b></string>
     <string name="submit"><b>Submit</b></string>
     <string name="forget_password"><b>Forget password</b></string>
     <string name="sign_up"><b>Sign up</b></string>
-    <string name="do_not_have_account"><b>Don't have an account?</b></string>
+    <string name="do_not_have_account"><b>Do not have an account?</b></string>
     <string name="already_have_account"><b>Already have an account?</b></string>
+    <string name="yes"><b>Yes</b></string>
+    <string name="confirm_code_has_been_sent">A verification code has been sent to your mailbox</string>
+    <string name="confirm_code_could_be_resent_in">Code could be resent in </string>
 </resources>

@@ -1,13 +1,18 @@
 package com.group_1.usege.utilities.api;
 
 import android.content.Context;
+import android.content.res.Resources;
+
+import androidx.annotation.StringRes;
 
 import com.group_1.usege.R;
 
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -17,16 +22,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public abstract class BaseServiceGenerator<S> {
 
     private S wrappedService;
+    private String currentToken;
     protected abstract Class<S> getServiceClass();
-    private final String baseUrl;
-    public BaseServiceGenerator(Context context)
+    protected final String baseUrl;
+    public BaseServiceGenerator(Resources resources, @StringRes int versionRes, @StringRes int serviceNameRes)
     {
-        baseUrl = context.getResources().getString(R.string.base_server_url);
+        baseUrl = String.format("%s/%s/%s/", resources.getString(R.string.uri_base_server), resources.getString(versionRes), resources.getString(serviceNameRes));
     }
 
     private static final Retrofit.Builder builder
             = new Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create());
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.createWithScheduler(Schedulers.io()));
     private static final HttpLoggingInterceptor logging
             = new HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BASIC);
@@ -43,7 +50,8 @@ public abstract class BaseServiceGenerator<S> {
         setRetrofitBuilderInfo(httpClient);
         return builder.build().create(getServiceClass());
     }
-    private S createService(final String token)
+
+    private static synchronized OkHttpClient addTokenHeader(final String token)
     {
         tokenHttpClient.interceptors().clear();
         tokenHttpClient.addInterceptor(logging);
@@ -54,18 +62,24 @@ public abstract class BaseServiceGenerator<S> {
             Request request = builder1.build();
             return chain.proceed(request);
         });
-        setRetrofitBuilderInfo(tokenHttpClient.build());
+        return tokenHttpClient.build();
+    }
+    private S createService(final String token)
+    {
+        currentToken = token;
+        setRetrofitBuilderInfo(addTokenHeader(token));
         return builder.build().create(getServiceClass());
     }
-    public S getService() {
+    public synchronized S getService() {
         if (wrappedService == null)
             wrappedService = createService();
         return wrappedService;
     }
-    public S getService(final String token)
+    public synchronized S getService(final String token)
     {
-        if (wrappedService == null)
+        if (wrappedService == null || !currentToken.equals(token))
             wrappedService = createService(token);
+        //A new token is used -> build a new service
         return wrappedService;
     }
 }

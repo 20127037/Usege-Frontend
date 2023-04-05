@@ -1,89 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".authentication.activities.CreateAccountActivity">
+    tools:context=".account.activities.CreateAccountActivity">
 
 
     <com.google.android.material.appbar.MaterialToolbar
         style="@style/Usege.Bar.TitleBar"
+        android:id="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.1"
         app:title="@string/create_account" />
 
     <ImageView
         style="@style/Usege.Image.CenteredWrapImage"
-        android:src="@drawable/scr_create_account" />
+        android:src="@drawable/scr_create_account"
+        android:id="@+id/screen_img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.3"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.6"
         android:layout_marginHorizontal="@dimen/primary_margin_large"
+        android:layout_marginBottom="@dimen/primary_margin_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/screen_img"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/frag_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
-            android:orientation="vertical">
+            android:name="com.group_1.usege.utilities.view.EditTextFragment"
+            android:text="@string/email"
+            android:drawableLeft="@drawable/ic_email"/>
 
-            <TextView
-                style="@style/Usege.Text.LabelTextView"
-                android:text="@string/email" />
-
-            <EditText
-                android:id="@+id/edtEmail"
-                style="Usege.Text.EditTextView"
-                android:drawableStart="@drawable/ic_email" />
-        </LinearLayout>
-
-        <LinearLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/frag_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
-            android:orientation="vertical">
+            android:name="com.group_1.usege.utilities.view.EditTextFragment"
+            android:text="@string/password"
+            android:drawableLeft="@drawable/ic_password_key"
+            app:checkRule="true"
+            android:inputType="textPassword"/>
 
-            <TextView
-                style="@style/Usege.Text.LabelTextView"
-                android:text="@string/password" />
-
-            <EditText
-                android:id="@+id/edtPassword"
-                style="Usege.Text.EditTextView"
-                android:drawableStart="@drawable/ic_password_key"
-                android:inputType="textPassword" />
-        </LinearLayout>
-
-        <LinearLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/frag_retype"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/Usege.Text.LabelTextView"
-                android:text="@string/retype" />
-
-            <EditText
-                android:id="@+id/edtRetype"
-                style="Usege.Text.EditTextView"
-                android:drawableStart="@drawable/ic_password_key"
-                android:inputType="textPassword" />
-        </LinearLayout>
+            android:name="com.group_1.usege.utilities.view.EditTextFragment"
+            android:text="@string/retype"
+            android:drawableLeft="@drawable/ic_password_key"
+            android:inputType="textPassword"/>
 
         <Button
-            android:id="@+id/btnConfirmSignIn"
+            android:id="@+id/btn_submit"
             style="@style/Widget.Material3.Button.Icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
             android:text="@string/submit" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
             android:orientation="horizontal">
 
             <TextView
@@ -91,11 +83,10 @@
                 android:text="@string/already_have_account" />
 
             <Button
-                android:id="@+id/btnSignUp"
+                android:id="@+id/btn_login"
                 style="@style/Usege.Button.NormalTextButton"
                 android:text="@string/login" />
         </LinearLayout>
     </LinearLayout>
 
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

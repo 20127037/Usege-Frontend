@@ -1,79 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    tools:context=".authentication.activities.CreateAccountActivity">
+    tools:context=".account.activities.CreateAccountActivity">
 
 
     <com.google.android.material.appbar.MaterialToolbar
         style="@style/Usege.Bar.TitleBar"
-        app:title="@string/create_account" />
+        android:id="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.1"
+        app:title="@string/login" />
 
     <ImageView
         style="@style/Usege.Image.CenteredWrapImage"
-        android:src="@drawable/scr_login" />
+        android:src="@drawable/scr_login"
+        android:id="@+id/screen_img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.3"
+        />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.4"
         android:layout_marginHorizontal="@dimen/primary_margin_large"
+        android:id="@+id/inputSectionLayout"
+        app:layout_constraintTop_toBottomOf="@id/screen_img"
+        android:gravity="center"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/frag_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
-            android:orientation="vertical">
+            android:name="com.group_1.usege.utilities.view.EditTextFragment"
+            android:text="@string/email"
+            android:drawableLeft="@drawable/ic_email"/>
 
-            <TextView
-                style="@style/Usege.Text.LabelTextView"
-                android:text="@string/email" />
-
-            <EditText
-                android:id="@+id/edtEmail"
-                style="Usege.Text.EditTextView"
-                android:drawableStart="@drawable/ic_email" />
-        </LinearLayout>
-
-        <LinearLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/frag_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/Usege.Text.LabelTextView"
-                android:text="@string/password" />
-
-            <EditText
-                android:id="@+id/edtPassword"
-                style="Usege.Text.EditTextView"
-                android:drawableStart="@drawable/ic_password_key"
-                android:inputType="textPassword" />
-        </LinearLayout>
+            android:name="com.group_1.usege.utilities.view.EditTextFragment"
+            android:text="@string/password"
+            android:drawableLeft="@drawable/ic_password_key"
+            android:inputType="textPassword"/>
 
         <Button
-            android:id="@+id/btnConfirmSignIn"
+            android:id="@+id/btn_submit"
             style="@style/Widget.Material3.Button.Icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
             android:text="@string/submit" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.2"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/inputSectionLayout"
+        app:layout_constraintTop_toBottomOf="@id/inputSectionLayout">
         <Button
-            android:id="@+id/btnForgetPassword"
+            android:id="@+id/btn_forget_password"
             style="@style/Usege.Button.NormalTextButton"
-            android:layout_marginTop="@dimen/primary_margin_large"
-            android:text="@string/forget_password" />
+            android:text="@string/forget_password"
+            android:paddingStart="0dp"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_margin_medium"
             android:orientation="horizontal">
 
             <TextView
@@ -81,11 +86,11 @@
                 android:text="@string/do_not_have_account" />
 
             <Button
-                android:id="@+id/btnSignUp"
+                android:id="@+id/btn_sign_up"
                 style="@style/Usege.Button.NormalTextButton"
                 android:text="@string/sign_up" />
         </LinearLayout>
     </LinearLayout>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
