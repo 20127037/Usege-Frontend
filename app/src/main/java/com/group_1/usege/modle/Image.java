@@ -18,7 +18,6 @@ public class Image implements Parcelable {
     private String location;
     private Uri uri;
 
-    private List<Album> belongToAlbum;
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override
@@ -81,8 +80,6 @@ public class Image implements Parcelable {
 
         // Thực hiện chuyển đổi ở đây trước khi gán giá trị
         this.location = location;
-
-        this.belongToAlbum = new ArrayList<Album>();
         //////////////////
     }
 
@@ -106,13 +103,5 @@ public class Image implements Parcelable {
         dest.writeString(description);
         dest.writeString(location);
         dest.writeParcelable(uri, flags);
-    }
-
-    public List<Album> getBelongToAlbum() {
-        return belongToAlbum;
-    }
-
-    public void setBelongToAlbum(List<Album> belongToAlbum) {
-        this.belongToAlbum = belongToAlbum;
     }
 }

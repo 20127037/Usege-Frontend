@@ -75,25 +75,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .load(uri)
                 .into(holder.imgView);
 
-        if (displayView.equals("card")) {
-            holder.imgView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    // TODO Auto-generated method stub
-                    if (context.getClass().equals(LibraryActivity.class)) {
-//                        ((LibraryActivity)context).showCreateAlbumBottomSheet();
-                        Activity activity = (Activity) context;
-                        if (activity instanceof LibraryActivity) {
-                            LibraryActivity libActivity = (LibraryActivity) activity;
-                            libActivity.clickOpenAlbumCreateBottomSheetAndAddImage(position);
-                        }
-                    }
-                    return true;
-                }
-            });
-        }
-
-
         holder.imgView.setOnLongClickListener(v -> {
             LibraryActivity.openBottomMenu(image);
             v.setAlpha((float) 0.5);

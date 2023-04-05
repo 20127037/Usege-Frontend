@@ -6,14 +6,24 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Album {
+public class Album implements Serializable {
     private String name;
+
+    private List<Image> albumImages;
 
     public Album(String name) {
         this.name = name;
+        this.albumImages = new ArrayList<Image>();
+    }
+
+    public Album(String name, List<Image> albumImages) {
+        this.name = name;
+        this.albumImages = albumImages;
     }
 
     public String getName() {
@@ -22,5 +32,13 @@ public class Album {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Image> getAlbumImages() {
+        return albumImages;
+    }
+
+    public void setAlbumImages(List<Image> albumImages) {
+        this.albumImages = albumImages;
     }
 }

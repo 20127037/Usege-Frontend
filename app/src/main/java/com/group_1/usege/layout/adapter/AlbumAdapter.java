@@ -18,6 +18,7 @@ import com.group_1.usege.modle.Album;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
+import java.util.Objects;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
 
@@ -57,16 +58,23 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             // set name for album
             String albumName = image.getName();
             holder.albumTextView.setText(albumName);
+
+            // set image for album if not default (favorite or trash)
+            if(Objects.equals(albumName, "favorite")) {
+                holder.albumImgView.setImageResource(R.drawable.album_favorite_img);
+            } else if (Objects.equals(albumName, "trash")) {
+                holder.albumImgView.setImageResource(R.drawable.album_trash_img);
+            }
+
             holder.albumImgView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
                     if (context.getClass().equals(LibraryActivity.class)) {
-//                        ((LibraryActivity)context).showCreateAlbumBottomSheet();
                         Activity activity = (Activity) context;
                         if (activity instanceof LibraryActivity) {
                             LibraryActivity libActivity = (LibraryActivity) activity;
-                            libActivity.clickOpenAlbumImageList(image.getName());
+                            libActivity.clickOpenAlbumImageList(lstAlbum.get(position));
                         }
                     }
                 }
