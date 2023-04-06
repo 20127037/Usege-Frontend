@@ -1,11 +1,14 @@
 package com.group_1.usege.manipulation.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,11 +30,13 @@ import java.util.Locale;
 
 public class ImageActivity extends AppCompatActivity {
 
-    TextView tvDatetime, tvSize;
+    TextView tvDatetime, tvSize, tvPhotoshop, tvFavorite, tvDescribe, tvDelete;
     ImageView ivImage, ivBack;
     EditText etDescription;
-
+    Button btnReset, btnConfirm;
+    View layoutTags, layoutButton;
     Context context = this;
+    Image image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +47,11 @@ public class ImageActivity extends AppCompatActivity {
             return;
         }
 
-        Image image = (Image) bundle.getParcelable("object_image");
+        image = (Image) bundle.getParcelable("object_image");
         Log.d("Size", "I: " + image.getDate());
         // Ánh xạ các widgets
         init();
-        setValueToLayout(image);
+        setValueToLayout();
 
     }
 
@@ -55,7 +60,15 @@ public class ImageActivity extends AppCompatActivity {
         tvSize = findViewById(R.id.text_view_size);
         ivImage = findViewById(R.id.image_view_image);
         ivBack = findViewById(R.id.image_view_backward);
+        tvDescribe = findViewById(R.id.text_view_describe);
+        tvPhotoshop = findViewById(R.id.text_view_photoshop);
+        tvFavorite = findViewById(R.id.text_view_favorite);
+        tvDelete = findViewById(R.id.text_view_delete);
         etDescription = findViewById(R.id.edit_text_description);
+        btnReset = findViewById(R.id.btn_reset);
+        btnConfirm = findViewById(R.id.btn_confirm);
+        layoutTags = findViewById(R.id.layout_tags);
+        layoutButton = findViewById(R.id.layout_reset_confirm);
 
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,14 +76,64 @@ public class ImageActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        tvDescribe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutTags.setVisibility(View.GONE);
+                layoutButton.setVisibility(View.VISIBLE);
+
+                // Thiết lập edit text description
+                etDescription.setEnabled(true);
+                etDescription.requestFocus();
+
+                // Thiết lập text view describe
+                setAlphaForDrawableInTextView(tvDescribe, 255, 1);
+            }
+        });
+
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etDescription.setEnabled(false);
+                layoutTags.setVisibility(View.VISIBLE);
+                layoutButton.setVisibility(View.GONE);
+
+                // Thiết lập text view describe
+                setAlphaForDrawableInTextView(tvDescribe, 153, 1);
+            }
+        });
+
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etDescription.setEnabled(false);
+                layoutTags.setVisibility(View.VISIBLE);
+                layoutButton.setVisibility(View.GONE);
+
+                // Lưu vào image
+                image.setDescription(etDescription.getText().toString());
+                etDescription.setText(image.getDescription());
+                Log.d("Text", image.getDescription());
+                // Thiết lập text view describe
+                setAlphaForDrawableInTextView(tvDescribe, 153, 1);
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
+        //super.onBackPressed();
+        Intent returnIntent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("return_image", image);
+        returnIntent.putExtras(bundle);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
-    public void setValueToLayout(Image image) {
+    public void setValueToLayout() {
         // Hiển thị dung lượng
         tvSize.setText(image.getSize() + " KB");
 
@@ -107,5 +170,16 @@ public class ImageActivity extends AppCompatActivity {
         }
 
         return formattedDate;
+    }
+
+    public void setAlphaForDrawableInTextView(TextView textView, int alpha, int direction) {
+        Drawable[] drawables = textView.getCompoundDrawables();
+        Drawable drawable = drawables[direction]; // index 1 tương ứng với drawableTop
+
+        // Đặt độ mờ (alpha) cho drawableTop
+        drawable.setAlpha(alpha); // giá trị alpha từ 0-255, 128 tương đương với độ mờ 50%
+
+        // Thiết lập lại drawables cho TextView
+        textView.setCompoundDrawables(drawables[0], drawable, drawables[2], drawables[3]);
     }
 }

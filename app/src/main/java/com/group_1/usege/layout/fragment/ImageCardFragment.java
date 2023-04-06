@@ -14,19 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.group_1.usege.MainActivity;
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.CardAdapter;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
 import com.group_1.usege.layout.adapter.RecycleAdapter;
+import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class ImageCardFragment  extends Fragment {
-    FragmentTransaction ft;
-    TextView totalImage;
+    LibraryActivity libraryActivity;
 
     public RecyclerView rcvPhoto;
 
@@ -55,6 +56,7 @@ public class ImageCardFragment  extends Fragment {
 
         try {
             context = getActivity();
+            libraryActivity = (LibraryActivity) getActivity();
         }
         catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
@@ -71,8 +73,8 @@ public class ImageCardFragment  extends Fragment {
 
         cardAdapter = new CardAdapter(lstImage, context, new IClickItemImageListener() {
             @Override
-            public void onClickItemImage(Image image) {
-                onClickGoToDetails(image);
+            public void onClickItemImage(Image image, int position) {
+                onClickGoToDetails(image, position);
             }
         });
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
@@ -82,11 +84,12 @@ public class ImageCardFragment  extends Fragment {
         return layoutImageCard;
     }
 
-    private void onClickGoToDetails(Image image) {
-        Intent intent = new Intent(context, ImageActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("object_image", image);
-        intent.putExtras(bundle);
-        context.startActivity(intent);
+    private void onClickGoToDetails(Image image, int position) {
+//        Intent intent = new Intent(context, ImageActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("object_image", image);
+//        intent.putExtras(bundle);
+//        context.startActivity(intent);
+        libraryActivity.sendAndReceiveImage(image, position);
     }
 }

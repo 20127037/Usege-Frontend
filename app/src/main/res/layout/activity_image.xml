@@ -6,8 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".manipulation.activities.ImageActivity">
 
-    <LinearLayout
-        android:id="@+id/layout_tags"
+    <RelativeLayout
+        android:id="@+id/layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -16,54 +16,96 @@
 
         <ImageView
             android:id="@+id/image_view_backward"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrow_backward"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.1"
-            android:layout_marginRight="8dp"/>
+            android:layout_marginRight="8dp"
+            android:layout_alignParentLeft="true"/>
 
-        <TextView
-            android:id="@+id/text_view_tag1"
-            android:layout_width="0dp"
+        <HorizontalScrollView
+            android:id="@+id/layout_tags"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Coffee"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:background="@drawable/border_tags"
-            android:textColor="@color/white"
-            android:layout_weight="0.3"
-            android:layout_marginRight="8dp"/>
+            android:layout_toRightOf="@id/image_view_backward"
+            >
 
-        <TextView
-            android:id="@+id/text_view_tag2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="People"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:background="@drawable/border_tags"
-            android:textColor="@color/white"
-            android:layout_weight="0.3"
-            android:layout_marginRight="8dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp">
 
-        <TextView
-            android:id="@+id/text_view_tag3"
-            android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/text_view_tag1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/border_tags"
+                    android:gravity="center"
+                    android:text="Coffee"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/text_view_tag2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="People"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:background="@drawable/border_tags"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="8dp"/>
+
+                <TextView
+                    android:id="@+id/text_view_tag3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="T-shirt"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:background="@drawable/border_tags"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="2dp"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:id="@+id/layout_reset_confirm"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="T-shirt"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:background="@drawable/border_tags"
-            android:textColor="@color/white"
-            android:layout_weight="0.3"
-            android:layout_marginRight="2dp"/>
-    </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/btn_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset"
+                android:textAllCaps="false"
+                android:textColor="@color/confirmation"
+                android:textSize="18sp"
+                android:background="@drawable/border_reset"
+                android:layout_marginRight="8dp"/>
+
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirm"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:background="@drawable/confirm_button_border"/>
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_tags"
+        android:layout_below="@id/layout_header"
         android:layout_marginBottom="70dp">
         <LinearLayout
             android:layout_width="match_parent"
@@ -138,6 +180,7 @@
         android:padding="4dp">
 
         <TextView
+            android:id="@+id/text_view_photoshop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/photoshop"
@@ -147,6 +190,7 @@
             android:layout_weight="0.25"/>
 
         <TextView
+            android:id="@+id/text_view_favorite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/favorite_border"
@@ -156,6 +200,7 @@
             android:layout_weight="0.25"/>
 
         <TextView
+            android:id="@+id/text_view_describe"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/describe"
@@ -165,6 +210,7 @@
             android:layout_weight="0.25"/>
 
         <TextView
+            android:id="@+id/text_view_delete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/delete"

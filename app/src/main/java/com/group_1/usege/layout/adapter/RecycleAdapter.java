@@ -87,7 +87,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         holder.layoutItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iClickItemImageListener.onClickItemImage(image);
+                iClickItemImageListener.onClickItemImage(image, position);
             }
         });
     }

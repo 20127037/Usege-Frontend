@@ -80,7 +80,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.layoutItemList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iClickItemImageListener.onClickItemImage(image);
+                iClickItemImageListener.onClickItemImage(image, position);
             }
         });
     }

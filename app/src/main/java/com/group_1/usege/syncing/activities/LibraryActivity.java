@@ -39,13 +39,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
 import com.group_1.usege.api.apiservice.ApiGoogleMap;
 
-import com.group_1.usege.layout.adapter.RecycleAdapter;
+import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 
+import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.modle.Image;
+import com.group_1.usege.syncing.impl.SendAndReceiveImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +61,7 @@ import java.util.Date;
 
 import java.util.List;
 
-public class LibraryActivity extends AppCompatActivity {
+public class LibraryActivity extends AppCompatActivity implements SendAndReceiveImage {
 
     FragmentTransaction ft;
     ImageCardFragment imageCardFragment;
@@ -71,6 +73,8 @@ public class LibraryActivity extends AppCompatActivity {
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
 
     Context context = this;
+
+    int selectedImagePosition;
 
     private String displayView = "card";
     private Boolean firstAccess = true;
@@ -143,7 +147,7 @@ public class LibraryActivity extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
                 //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-                pickImageLauncher.launch(Intent.createChooser(intent, "Select Picture"));
+                launcher.launch(Intent.createChooser(intent, "Select Picture"));
 
                 // Đóng bottommsheet
                 setUpSyncingBottomSheetDialog.dismiss();
@@ -310,6 +314,8 @@ public class LibraryActivity extends AppCompatActivity {
         if (displayView.equals("card")) {
             imgViewList.setAlpha(0.5F);
             imgViewCard.setAlpha(1F);
+            imgViewList.setEnabled(true);
+            imgViewCard.setEnabled(false);
             if (firstAccess == true) {
                 firstAccess = false;
 
@@ -328,6 +334,8 @@ public class LibraryActivity extends AppCompatActivity {
         else if (displayView.equals("list")) {
             imgViewList.setAlpha(1F);
             imgViewCard.setAlpha(0.5F);
+            imgViewList.setEnabled(false);
+            imgViewCard.setEnabled(true);
             if (firstAccess == true) {
                 firstAccess = false;
 
@@ -346,10 +354,11 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
-    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 Intent data = result.getData();
+
                 if (result.getResultCode() == RESULT_OK && data != null) {
 
                     // Lấy nhiều ảnh
@@ -590,6 +599,36 @@ public class LibraryActivity extends AppCompatActivity {
         }
         return result;
     }
+
+    @Override
+    public void sendAndReceiveImage(Image image, int position) {
+        selectedImagePosition = position;
+        Intent intent = new Intent(context, ImageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("object_image", image);
+        intent.putExtras(bundle);
+        launcherSendAndReceiveImage.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    Bundle bundle = data.getExtras();
+                    if (bundle == null) {
+                        return;
+                    }
+                    // Nhận giá trị mới khi ảnh đã được cập nhật
+                    Image selectedImage = (Image) bundle.getParcelable("return_image");
+
+                    // Cập nhật ảnh đã chọn
+                    imgList.get(selectedImagePosition).setDescription(selectedImage.getDescription());
+                }
+                else {
+                    //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+                }
+            });
 
     public class GetInformationThread extends Thread {
         private Image image;

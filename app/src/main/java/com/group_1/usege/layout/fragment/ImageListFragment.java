@@ -21,12 +21,13 @@ import com.group_1.usege.layout.adapter.RecycleAdapter;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
+import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class ImageListFragment extends Fragment {
-    TextView totalImage;
+    LibraryActivity libraryActivity;
 
     public RecyclerView rcvPhoto;
 
@@ -55,6 +56,7 @@ public class ImageListFragment extends Fragment {
 
         try {
             context = getActivity();
+            libraryActivity = (LibraryActivity) getActivity();
         }
         catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
@@ -71,8 +73,8 @@ public class ImageListFragment extends Fragment {
 
         listAdapter = new ListAdapter(lstImage, context, new IClickItemImageListener() {
             @Override
-            public void onClickItemImage(Image image) {
-                onClickGoToDetails(image);
+            public void onClickItemImage(Image image, int position) {
+                onClickGoToDetails(image, position);
             }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
@@ -82,11 +84,12 @@ public class ImageListFragment extends Fragment {
         return layoutImageList;
     }
 
-    private void onClickGoToDetails(Image image) {
-        Intent intent = new Intent(context, ImageActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("object_image", image);
-        intent.putExtras(bundle);
-        context.startActivity(intent);
+    private void onClickGoToDetails(Image image, int position) {
+//        Intent intent = new Intent(context, ImageActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("object_image", image);
+//        intent.putExtras(bundle);
+//        context.startActivity(intent);
+        libraryActivity.sendAndReceiveImage(image, position);
     }
 }

@@ -77,7 +77,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         holder.layoutItemCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iClickItemImageListener.onClickItemImage(image);
+                iClickItemImageListener.onClickItemImage(image, position);
             }
         });
     }
