@@ -1,26 +1,20 @@
 package com.group_1.usege.layout.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.group_1.usege.MainActivity;
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.CardAdapter;
-import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
-import com.group_1.usege.layout.adapter.RecycleAdapter;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.io.Serializable;
@@ -75,6 +69,11 @@ public class ImageCardFragment  extends Fragment {
             @Override
             public void onClickItemImage(Image image, int position) {
                 onClickGoToDetails(image, position);
+            }
+
+            @Override
+            public void onLongClickItemImage(Image image) {
+
             }
         });
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);

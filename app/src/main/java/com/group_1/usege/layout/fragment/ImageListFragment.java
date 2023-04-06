@@ -1,8 +1,6 @@
 package com.group_1.usege.layout.fragment;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,12 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.ListAdapter;
-import com.group_1.usege.layout.adapter.RecycleAdapter;
-import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
 import com.group_1.usege.syncing.activities.LibraryActivity;
@@ -75,6 +70,11 @@ public class ImageListFragment extends Fragment {
             @Override
             public void onClickItemImage(Image image, int position) {
                 onClickGoToDetails(image, position);
+            }
+
+            @Override
+            public void onLongClickItemImage(Image image) {
+
             }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);

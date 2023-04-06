@@ -6,4 +6,6 @@ import com.group_1.usege.modle.Image;
 
 public interface IClickItemImageListener {
     void onClickItemImage(Image image, int position);
+
+    void onLongClickItemImage(Image image);
 }

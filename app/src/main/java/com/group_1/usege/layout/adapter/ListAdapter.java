@@ -46,27 +46,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ListAdapter.ViewHolder holder, int position) {
-//        Uri uri = uriList.get(position);
-//        if(uri == null) {
-//            return;
-//        }
-//
-//        try {
-//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-//            if (bitmap != null) {
-//                holder.imgView.setImageBitmap(bitmap);
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-        //holder.imgView.setImageURI(uriList.get(position));
 
-//        Glide.with(context)
-//                .load(uriList.get(position))
-//                .into(holder.imgView);
-
+        final int finalPosition = position;
         // Load ảnh ra layout
-        Image image = lstImage.get(position);
+        Image image = lstImage.get(finalPosition);
 
         Uri uri = image.getUri();
         Glide.with(context)
@@ -80,7 +63,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.layoutItemList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iClickItemImageListener.onClickItemImage(image, position);
+                iClickItemImageListener.onClickItemImage(image, finalPosition);
+            }
+        });
+
+        holder.layoutItemList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return false;
             }
         });
     }
