@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Usege.Text.LabelTextView"
+        android:text="@string/confirm_code_has_been_sent" />
+
+    <TextView
+        style="@style/Usege.Text.LabelTextView"
+        android:layout_marginTop="@dimen/primary_margin_medium"
+        android:text="@string/input_6_digits_below" />
+
+    <com.goodiebag.pinview.Pinview
+        android:id="@+id/pinview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/primary_margin_medium"
+        app:cursorVisible="false"
+        app:forceKeyboard="true"
+        app:inputType="number"
+        app:password="false"
+        app:pinHeight="40dp"
+        app:pinLength="6" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:id="@+id/btn_resend"
+        android:text="@string/resend"
+        android:layout_gravity="end"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/primary_margin_medium"
+        android:gravity="end"
+        android:visibility="gone"
+        android:id="@+id/layout_delay"
+        android:orientation="horizontal">
+
+
+        <TextView
+            style="@style/Usege.Text.LabelTextView"
+            android:text="@string/confirm_code_could_be_resent_in" />
+
+        <com.group_1.usege.utilities.view.TimerTextView
+            android:id="@+id/text_timer"
+            android:textStyle="bold"
+            style="@style/Usege.Text.LabelTextView"
+            android:layout_marginLeft="@dimen/primary_margin_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>
+
+
+    <!--    <Button-->
+    <!--        android:id="@+id/btn_submit"-->
+    <!--        style="@style/Widget.Material3.Button.Icon"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="@string/submit"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="@id/inputSectionLayout"-->
+    <!--        app:layout_constraintStart_toStartOf="@id/inputSectionLayout" />-->
