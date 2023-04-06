@@ -27,6 +27,15 @@
         <item name='android:scaleType'>fitCenter</item>
     </style>
 
+    <style name="Usege.Dialogue.FullScreenDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
+
     <style name="Usege.Button.NormalTextButton" parent="Widget.Material3.Button.TextButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

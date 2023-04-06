@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import com.group_1.usege.R;
-import com.group_1.usege.account.services.AccountService;
 import com.group_1.usege.account.services.AccountServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
+import com.group_1.usege.utilities.api.ResponseMessages;
 import com.group_1.usege.utilities.dto.ErrorResponse;
+import com.group_1.usege.utilities.view.DialogueUtilities;
 import com.group_1.usege.utilities.view.EditTextFragment;
 
 import javax.inject.Inject;
@@ -52,7 +53,7 @@ public class ResetPasswordActivity extends ApiCallerActivity<Void> {
     @Override
     protected void handleCallSuccess(Void body) {
         Bundle infoBundle = new Bundle();
-        infoBundle.putString(AccountService.USERNAME, email);
+        infoBundle.putString(ResponseMessages.USERNAME, email);
         ActivityUtilities.TransitActivityAndFinish(this, ConfirmResetPassword.class, infoBundle);
     }
 
@@ -65,8 +66,16 @@ public class ResetPasswordActivity extends ApiCallerActivity<Void> {
     protected void handleCallFail(ErrorResponse errorResponse) {
         switch (errorResponse.getMessage())
         {
-            case AccountService.USER_NOT_FOUND:
+            case ResponseMessages.USER_NOT_FOUND:
                 handleUserNotFound();
+                return;
+            case ResponseMessages.USER_NOT_CONFIRMED:
+                DialogueUtilities.showConfirmDialogue(this, R.string.need_confirm_account, (v, w) -> {
+                    Bundle infoBundle = new Bundle();
+                    infoBundle.putString(ResponseMessages.USERNAME, email);
+                    infoBundle.putBoolean(ConfirmAccountActivity.RESEND_IMMEDIATELY, true);
+                    ActivityUtilities.TransitActivityAndFinish(this, ConfirmAccountActivity.class, infoBundle);
+                },null);
                 return;
             default:
                 setCallApiFail();

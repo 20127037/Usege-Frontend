@@ -11,8 +11,6 @@ import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface AuthService {
-    String USER_NOT_CONFIRMED = "USER_NOT_CONFIRMED";
-    String USERNAME_PASSWORD_MISMATCH = "USERNAME_PASSWORD_MISMATCH";
     @POST(".")
     Single<Response<CacheToken>> login(@Body CreateAccountRequestDto request);
     @PUT(".")

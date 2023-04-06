@@ -9,14 +9,14 @@ import androidx.fragment.app.FragmentManager;
 import com.group_1.usege.R;
 import com.group_1.usege.account.activities.ConfirmAccountActivity;
 import com.group_1.usege.account.activities.CreateAccountActivity;
+import com.group_1.usege.account.activities.ResetPasswordActivity;
 import com.group_1.usege.account.dto.CreateAccountRequestDto;
 import com.group_1.usege.authen.model.CacheToken;
 import com.group_1.usege.authen.repository.TokenRepository;
-import com.group_1.usege.account.services.AccountService;
-import com.group_1.usege.authen.services.AuthService;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
+import com.group_1.usege.utilities.api.ResponseMessages;
 import com.group_1.usege.utilities.dto.ErrorResponse;
 import com.group_1.usege.utilities.view.DialogueUtilities;
 import com.group_1.usege.utilities.view.EditTextFragment;
@@ -55,6 +55,8 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
         btnSignIn.setOnClickListener(v -> signIn());
         Button toSignUpScreenBtn = findViewById(R.id.btn_sign_up);
         toSignUpScreenBtn.setOnClickListener(v -> ActivityUtilities.TransitActivity(this, CreateAccountActivity.class));
+        Button toForgetPasswordScreen = findViewById(R.id.btn_forget_password);
+        toForgetPasswordScreen.setOnClickListener(v -> ActivityUtilities.TransitActivity(this, ResetPasswordActivity.class));
     }
 
     private void signIn()
@@ -87,21 +89,24 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     }
 
     protected void handleUserNotConfirmed() {
-        Bundle infoBundle = new Bundle();
-        infoBundle.putString(AccountService.USERNAME, currentEmail);
-        ActivityUtilities.TransitActivity(this, ConfirmAccountActivity.class, infoBundle);
+        DialogueUtilities.showConfirmDialogue(this, R.string.need_confirm_account, (v, w) -> {
+            Bundle infoBundle = new Bundle();
+            infoBundle.putString(ResponseMessages.USERNAME, currentEmail);
+            infoBundle.putBoolean(ConfirmAccountActivity.RESEND_IMMEDIATELY, true);
+            ActivityUtilities.TransitActivity(this, ConfirmAccountActivity.class, infoBundle);
+        },null);
     }
 
     @Override
     protected void handleCallFail(ErrorResponse errorResponse) {
         switch (errorResponse.getMessage())
         {
-            case AccountService.USER_NOT_FOUND:
-            case AuthService.USERNAME_PASSWORD_MISMATCH:
+            case ResponseMessages.USER_NOT_FOUND:
+            case ResponseMessages.USERNAME_PASSWORD_MISMATCH:
                 Log.e("Login", errorResponse.getMessage());
                 handleFailSignIn();
                 break;
-            case AuthService.USER_NOT_CONFIRMED:
+            case ResponseMessages.USER_NOT_CONFIRMED:
                 handleUserNotConfirmed();
                 break;
             default:

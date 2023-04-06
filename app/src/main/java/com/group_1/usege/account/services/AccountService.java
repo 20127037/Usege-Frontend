@@ -13,12 +13,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface AccountService {
-    String USERNAME = "USERNAME";
-    String USERNAME_EXISTS = "USERNAME_EXISTS";
-    String PASSWORD_INVALID =  "PASSWORD_INVALID";
-    String CODE_MISMATCH =  "CODE_MISMATCH";
-    String CODE_EXPIRED = "CODE_EXPIRED";
-    String USER_NOT_FOUND = "USER_NOT_FOUND";
 
     @POST(".")
     Single<Response<UserInfo>> create(@Body CreateAccountRequestDto accountRequestDto);
@@ -26,10 +20,8 @@ public interface AccountService {
     Single<Response<Void>> confirm(@Path("id") String id, @Query("code") String code);
     @POST("confirmCode/{id}")
     Single<Response<Void>> resendAccountConfirmCode(@Path("id") String id);
-    @POST("forgetPassword/{id}")
+    @POST("forget/{id}")
     Single<Response<Void>> forgetPassword(@Path("id") String id);
-    @POST("forgetPassword/confirmCode/{id}")
-    Single<Response<Void>> resendForgetPasswordConfirmCode(@Path("id") String id);
-    @PUT("forgetPassword/{id}")
+    @PUT("forget/{id}")
     Single<Response<Void>> confirmForgetPassword(@Path("id") String id, @Body ConfirmForgetPasswordDto code);
 }

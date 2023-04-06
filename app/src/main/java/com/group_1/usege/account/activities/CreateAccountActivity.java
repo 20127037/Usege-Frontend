@@ -7,12 +7,12 @@ import androidx.fragment.app.FragmentManager;
 
 import com.group_1.usege.R;
 import com.group_1.usege.account.dto.CreateAccountRequestDto;
-import com.group_1.usege.account.services.AccountService;
 import com.group_1.usege.account.services.AccountServiceGenerator;
 import com.group_1.usege.authen.activities.LoginActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
+import com.group_1.usege.utilities.api.ResponseMessages;
 import com.group_1.usege.utilities.dto.ErrorResponse;
 import com.group_1.usege.utilities.view.EditTextFragment;
 
@@ -93,7 +93,7 @@ public class CreateAccountActivity extends ApiCallerActivity<UserInfo> {
     @Override
     protected void handleCallSuccess(UserInfo userInfo) {
         Bundle infoBundle = new Bundle();
-        infoBundle.putString(AccountService.USERNAME, userInfo.getEmail());
+        infoBundle.putString(ResponseMessages.USERNAME, userInfo.getEmail());
         ActivityUtilities.TransitActivityAndFinish(this, ConfirmAccountActivity.class, infoBundle);
     }
 
@@ -102,10 +102,10 @@ public class CreateAccountActivity extends ApiCallerActivity<UserInfo> {
 
         switch (errorResponse.getMessage())
         {
-            case AccountService.USERNAME_EXISTS:
+            case ResponseMessages.USERNAME_EXISTS:
                 handleEmailExists();
                 break;
-            case AccountService.PASSWORD_INVALID:
+            case ResponseMessages.PASSWORD_INVALID:
                 handlePasswordNotFollowRules();
                 break;
             default:

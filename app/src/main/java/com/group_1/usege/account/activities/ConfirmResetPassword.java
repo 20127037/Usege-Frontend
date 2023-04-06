@@ -58,7 +58,7 @@ public class ConfirmResetPassword extends BaseConfirmActivity {
 
     @Override
     public void resend() {
-        startCallApi(accountServiceGenerator.getService().resendForgetPasswordConfirmCode(username));
+        startCallApiSilent(accountServiceGenerator.getService().forgetPassword(username));
     }
 
     @Override

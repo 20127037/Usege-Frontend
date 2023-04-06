@@ -19,9 +19,7 @@ public class TimerTextView extends androidx.appcompat.widget.AppCompatTextView {
     private final Handler handler = new Handler(Looper.myLooper()){
         @Override
         public void handleMessage(Message msg) {
-            int progress = msg.arg1;
-            String progressText = DurationFormatUtils.formatDuration(progress * 1000L, "MM:SS", true);
-            setText(progressText);
+            setText((String)msg.obj);
         }
     };
 
@@ -38,16 +36,15 @@ public class TimerTextView extends androidx.appcompat.widget.AppCompatTextView {
         super(context, attrs, defStyleAttr);
     }
 
-    private class DelayThread extends Thread
+    private static class DelayThread extends Thread
     {
         private final AtomicBoolean running = new AtomicBoolean(true);
         private final Runnable doneCallback;
         private final BiConsumer<Integer, DelayThread> progressCallback;
         private final int interval;
-        private final int time;
-        private int currentTime = 0;
+        private int time;
 
-        public DelayThread( int time, Runnable doneCallback, BiConsumer<Integer, DelayThread> progressCallback)
+        public DelayThread(int time, Runnable doneCallback, BiConsumer<Integer, DelayThread> progressCallback)
         {
             this(time, 1, doneCallback, progressCallback);
         }
@@ -65,13 +62,13 @@ public class TimerTextView extends androidx.appcompat.widget.AppCompatTextView {
         }
 
         public void run() {
-            while (running.get() && currentTime < time)
+            while (running.get() && time > 0)
             {
                 try
                 {
                     Thread.sleep(interval * 1000L);
-                    currentTime++;
-                    progressCallback.accept(currentTime, this);
+                    time--;
+                    progressCallback.accept(time, this);
                 } catch (InterruptedException e){
                     Thread.currentThread().interrupt();
                     System.out.println(
@@ -89,10 +86,12 @@ public class TimerTextView extends androidx.appcompat.widget.AppCompatTextView {
         if (currentWaiter != null)
             return;
         currentDoneCallback = doneCallback;
-        currentWaiter = new DelayThread(timeInSeconds, this::doneDelaying, (progress, waiter) -> {
-            Message msg = handler.obtainMessage(1, progress);
+        currentWaiter = new DelayThread(timeInSeconds, () -> handler.post(this::doneDelaying), (progress, waiter) -> {
+            String progressText = DurationFormatUtils.formatDuration(progress * 1000L, "m:s", true);
+            Message msg = handler.obtainMessage(1, progressText);
             handler.sendMessage(msg);
         });
+        currentWaiter.start();
     }
     public void forceStop()
     {

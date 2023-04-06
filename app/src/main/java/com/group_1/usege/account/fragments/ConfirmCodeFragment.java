@@ -55,7 +55,6 @@ public class ConfirmCodeFragment extends Fragment {
         timerTextView = view.findViewById(R.id.text_timer);
         btnResend = view.findViewById(R.id.btn_resend);
         layoutDelay = view.findViewById(R.id.layout_delay);
-
         btnResend.setOnClickListener(v -> resendCode());
         //btnSubmit.setOnClickListener(v -> confirm());
     }

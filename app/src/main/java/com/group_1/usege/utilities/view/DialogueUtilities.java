@@ -19,4 +19,16 @@ public class DialogueUtilities {
                 .setPositiveButton(R.string.yes, listener)
                 .show();
     }
+
+    public static void showConfirmDialogue(Context context, @StringRes int msg,
+                                           @Nullable final DialogInterface.OnClickListener yesListener,
+                                           @Nullable final DialogInterface.OnClickListener noListener)
+    {
+        new MaterialAlertDialogBuilder(context)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, yesListener)
+                .setNegativeButton(R.string.no, noListener)
+                .show();
+    }
 }

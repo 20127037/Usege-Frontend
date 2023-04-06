@@ -3,6 +3,7 @@
     <string name="login"><b>Login</b></string>
     <string name="reset_password"><b>Reset pasword</b></string>
     <string name="confirm_account"><b>Confirm account</b></string>
+    <string name="need_confirm_account"><b>Your account need to be confirmed before used</b></string>
     <string name="confirm_reset_password"><b>Confirm account</b></string>
     <string name="resend"><b>Resend</b></string>
     <string name="create_account"><b>Create an account</b></string>
@@ -17,6 +18,7 @@
     <string name="do_not_have_account"><b>Do not have an account?</b></string>
     <string name="already_have_account"><b>Already have an account?</b></string>
     <string name="yes"><b>Yes</b></string>
+    <string name="no"><b>No</b></string>
     <string name="confirm_code_has_been_sent">A verification code has been sent to your mailbox</string>
     <string name="confirm_code_could_be_resent_in">Code could be resent in </string>
 </resources>

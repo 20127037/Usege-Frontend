@@ -42,7 +42,7 @@ public class ConfirmAccountActivity extends BaseConfirmActivity {
 
     @Override
     public void resend() {
-        startCallApi(accountServiceGenerator.getService().resendAccountConfirmCode(username));
+        startCallApiSilent(accountServiceGenerator.getService().resendAccountConfirmCode(username));
     }
 
     @Override
