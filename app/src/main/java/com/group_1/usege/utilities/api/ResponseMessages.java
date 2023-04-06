@@ -1,0 +1,12 @@
+package com.group_1.usege.utilities.api;
+
+public interface ResponseMessages {
+    String USER_NOT_CONFIRMED = "USER_NOT_CONFIRMED";
+    String USERNAME_PASSWORD_MISMATCH = "USERNAME_PASSWORD_MISMATCH";
+    String USERNAME_EXISTS = "USERNAME_EXISTS";
+    String USERNAME = "USERNAME";
+    String PASSWORD_INVALID =  "PASSWORD_INVALID";
+    String CODE_MISMATCH =  "CODE_MISMATCH";
+    String CODE_EXPIRED = "CODE_EXPIRED";
+    String USER_NOT_FOUND = "USER_NOT_FOUND";
+}
