@@ -98,6 +98,7 @@ public class ImageActivity extends AppCompatActivity {
                 etDescription.setEnabled(false);
                 layoutTags.setVisibility(View.VISIBLE);
                 layoutButton.setVisibility(View.GONE);
+                etDescription.setText(image.getDescription());
 
                 // Thiết lập text view describe
                 setAlphaForDrawableInTextView(tvDescribe, 153, 1);
