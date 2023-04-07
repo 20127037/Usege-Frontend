@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Image implements Parcelable {
     private long size;
     private String location;
     private Uri uri;
+
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override

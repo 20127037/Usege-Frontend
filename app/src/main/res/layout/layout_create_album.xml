@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set up your syncing preference"
+            android:text="Create an album"
             android:textColor="@color/heading"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -29,30 +29,55 @@
 
     </LinearLayout>
 
-    <RadioGroup
-        android:id="@+id/radio_group_syncing"
-        android:checkedButton="@id/radio_button_automatic"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RadioButton
-            android:id="@+id/radio_button_automatic"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+        <EditText
+            android:id="@+id/edit_text_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Automatic when start the app"
-            android:button="@drawable/custome_radio_button"
-            android:padding="18dp"
-            android:textColor="@color/lost_focus" />
+            android:layout_height="wrap_content"
+            android:hint="Enter album title"
+            android:drawableStart="@drawable/chat_icon"
+            android:background="@drawable/outline_button_main_color"
+            android:padding="8dp"
+            android:inputType="text"
+            />
+    </LinearLayout>
 
-        <RadioButton
-            android:id="@+id/radio_button_manually"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+        <EditText
+            android:id="@+id/edit_text_password"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Pick manually"
-            android:button="@drawable/custome_radio_button"
-            android:padding="18dp" />
-
-    </RadioGroup>
+            android:layout_height="wrap_content"
+            android:hint="Enter album password"
+            android:inputType="textPassword"
+            android:drawableStart="@drawable/lock_icon"
+            android:background="@drawable/outline_button_main_color"
+            android:padding="8dp"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

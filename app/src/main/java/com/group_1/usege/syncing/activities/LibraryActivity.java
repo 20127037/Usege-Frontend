@@ -21,18 +21,23 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -40,9 +45,16 @@ import com.group_1.usege.R;
 import com.group_1.usege.api.apiservice.ApiGoogleMap;
 
 import com.group_1.usege.layout.adapter.ListAdapter;
+import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
+import com.group_1.usege.layout.fragment.AlbumCardFragment;
+import com.group_1.usege.layout.fragment.AlbumImageListFragment;
+import com.group_1.usege.layout.fragment.AlbumListFragment;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 
 import com.group_1.usege.manipulation.activities.ImageActivity;
+import com.group_1.usege.modle.Album;
+import com.group_1.usege.syncing.fragment.EmptyAlbumFragment;
+import com.group_1.usege.syncing.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
@@ -58,17 +70,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-
 import java.util.List;
+import java.util.Objects;
 
 public class LibraryActivity extends AppCompatActivity implements SendAndReceiveImage {
 
     FragmentTransaction ft;
+    LinearLayout imageDisplayLayout;
     ImageCardFragment imageCardFragment;
     ImageListFragment imageListFragment;
+    AlbumCardFragment albumCardFragment;
+    AlbumListFragment albumListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
 
+    EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
+    EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
+    static RelativeLayout bottomMenu;
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
 
@@ -76,9 +94,23 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
 
     int selectedImagePosition;
 
+
+    Button albumButton, fileButton;
+    List<Image> imgList = new ArrayList<>();
+    List<Image> clonedImgList = new ArrayList<>();
+
+    List<Album> albumList = new ArrayList<Album>() {
+        {
+            add(new Album("favorite")); // favorite album
+            add(new Album("trash")); // trash album
+        }
+    };
     private String displayView = "card";
+    private String mode = "image";
+    // mode image or album
     private Boolean firstAccess = true;
     private Boolean filtered = false;
+    public static List<Image> selectedImages = new ArrayList<>();
 
     private static final int Read_Permission = 101;
 
@@ -95,14 +127,26 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
         filterButton = findViewById(R.id.image_view_search);
+        albumButton = findViewById(R.id.btn_album);
+        fileButton = findViewById(R.id.btn_file);
+        bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
 
         imgViewCard.setEnabled(false);
-        imgViewCard.setAlpha((float)0.5);
+        imgViewCard.setAlpha((float) 0.5);
         imgViewList.setEnabled(false);
-        imgViewCard.setAlpha((float)0.5);
+        imgViewCard.setAlpha((float) 0.5);
         filterButton.setEnabled(false);
-        filterButton.setAlpha((float)0.5);
+        filterButton.setAlpha((float) 0.5);
 
+
+        fileButton.setOnClickListener(v -> {
+            mode = "image";
+            clickOpenImageList();
+        });
+        albumButton.setOnClickListener(v -> {
+            mode = "album";
+            clickOpenAlbumList();
+        });
         imgViewUpload.setOnClickListener(v -> clickOpenSetUpSyncingBottomSheetDialog());
 
         imgViewCard.setOnClickListener(v -> {
@@ -117,6 +161,202 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             updateViewDisplay();
         });
     }
+
+    // menu bottom functions
+    private Album destinationAlbum;
+
+    public void addToAlbum(View v) { // call in XML file
+        bottomMenu.setVisibility(View.GONE);
+        //  -------------------------
+        Button btnConfirm;
+        Button createAlbumButton;
+        ImageView imageViewBackward;
+
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_choose_destination_album, null);
+
+        final BottomSheetDialog chooseAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        chooseAlbumBottomSheetDialog.setContentView(viewDialog);
+        chooseAlbumBottomSheetDialog.show();
+
+        createAlbumButton = viewDialog.findViewById(R.id.btn_create_album);
+        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+        RecyclerView albumRadioRecyclerView = viewDialog.findViewById(R.id.rcv_album);
+
+        // filter favortie and trash album
+        ArrayList<Album> cloneAlbumList = new ArrayList<Album>(albumList);
+        cloneAlbumList.removeIf(albumItem -> albumItem.getName() == "favorite" || albumItem.getName() == "trash");
+        AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        albumRadioRecyclerView.setLayoutManager(linearLayoutManager);
+        albumRadioRecyclerView.setAdapter(albumRadioAdapter);
+        imageViewBackward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseAlbumBottomSheetDialog.dismiss();
+            }
+        });
+
+
+        createAlbumButton.setOnClickListener(event -> {
+            clickOpenAlbumCreateBottomSheet();
+            chooseAlbumBottomSheetDialog.dismiss();
+        });
+
+        btnConfirm.setOnClickListener(event -> {
+            destinationAlbum.getAlbumImages().addAll(selectedImages);
+            // Đóng bottommsheet
+            chooseAlbumBottomSheetDialog.dismiss();
+        });
+    }
+
+    public void setDestinationAlbum(Album album) {
+        destinationAlbum = album;
+    }
+
+    //    Start Album handler
+    public void clickOpenAlbumList() {
+        // check empty list
+        if (albumList.size() == 0) {
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyAlbumFragment = EmptyAlbumFragment.newInstance();
+            ft.replace(R.id.layout_display_images, emptyAlbumFragment).commit();
+            return;
+        }
+        if (Objects.equals(displayView, "card")) {
+            ft = getSupportFragmentManager().beginTransaction();
+            albumCardFragment = AlbumCardFragment.newInstance(albumList);
+            ft.replace(R.id.layout_display_images, albumCardFragment).commit();
+        } else {
+            ft = getSupportFragmentManager().beginTransaction();
+            albumListFragment = AlbumListFragment.newInstance(albumList);
+            ft.replace(R.id.layout_display_images, albumListFragment).commit();
+        }
+    }
+
+    public void clickOpenAlbumCreateBottomSheetAndAddImage(int position) {
+        Button btnConfirm;
+        ImageView imageViewBackward;
+        EditText titleEditText, passwordEditText;
+
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_create_album, null);
+
+
+        final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        createAlbumBottomSheetDialog.setContentView(viewDialog);
+        createAlbumBottomSheetDialog.show();
+
+        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+        titleEditText = viewDialog.findViewById(R.id.edit_text_title);
+        passwordEditText = viewDialog.findViewById(R.id.edit_text_password);
+        imageViewBackward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createAlbumBottomSheetDialog.dismiss();
+            }
+        });
+
+        final String returnValue = "";
+
+        btnConfirm.setOnClickListener(v -> {
+            String title = String.valueOf(titleEditText.getText());
+            String password = String.valueOf(passwordEditText.getText());
+
+            System.out.println("title: " + title);
+            System.out.println("password: " + password);
+
+            albumList.add(new Album(title, new ArrayList<Image>() {{
+                add(imgList.get(position));
+            }}));
+
+            Toast.makeText(this, "Created album success!", Toast.LENGTH_SHORT).show();
+
+            // Đóng bottommsheet
+            createAlbumBottomSheetDialog.dismiss();
+        });
+    }
+
+    public void clickOpenAlbumCreateBottomSheet() {
+        Button btnConfirm;
+        ImageView imageViewBackward;
+        EditText titleEditText, passwordEditText;
+
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_create_album, null);
+
+        final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        createAlbumBottomSheetDialog.setContentView(viewDialog);
+        createAlbumBottomSheetDialog.show();
+
+        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+        titleEditText = viewDialog.findViewById(R.id.edit_text_title);
+        passwordEditText = viewDialog.findViewById(R.id.edit_text_password);
+        imageViewBackward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createAlbumBottomSheetDialog.dismiss();
+            }
+        });
+
+        final String returnValue = "";
+
+        btnConfirm.setOnClickListener(v -> {
+            String title = String.valueOf(titleEditText.getText());
+            String password = String.valueOf(passwordEditText.getText());
+
+            albumList.add(new Album(title, selectedImages));
+
+            Toast.makeText(this, "Created album success!", Toast.LENGTH_SHORT).show();
+
+            // Đóng bottommsheet
+            createAlbumBottomSheetDialog.dismiss();
+
+            clickOpenAlbumList();
+        });
+    }
+
+    public void clickOpenAlbumImageList(Album album) {
+        if (album.getAlbumImages().size() > 0) {
+            ft = getSupportFragmentManager().beginTransaction();
+            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album);
+            ft.replace(R.id.layout_display_images, albumImagesList).commit();
+        } else {
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyAlbumImageFragment = EmptyAlbumImageFragment.newInstance();
+            ft.replace(R.id.layout_display_images, emptyAlbumImageFragment).commit();
+        }
+    }
+
+    public void clickAddImageToAlbum() {
+
+    }
+
+    public void clickOpenImageList() {
+        // check empty list
+        if (imgList.size() == 0) {
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyFragment = EmptyFragment.newInstance();
+            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+            return;
+        }
+        if (Objects.equals(displayView, "card")) {
+            ft = getSupportFragmentManager().beginTransaction();
+            imageCardFragment = ImageCardFragment.newInstance(imgList);
+            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+        } else {
+            ft = getSupportFragmentManager().beginTransaction();
+            imageListFragment = ImageListFragment.newInstance(imgList);
+            ft.replace(R.id.layout_display_images, imageListFragment).commit();
+        }
+    }
+
+    public void triggerAlbumButton() {
+        albumButton.callOnClick();
+    }
+
+    //    End Album handler
+
 
     public void clickOpenSetUpSyncingBottomSheetDialog() {
         Button btnConfirm;
@@ -159,16 +399,15 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         if (filtered) {
             filtered = false;
             imgViewUpload.setEnabled(true);
-            imgViewUpload.setAlpha((float)1);
+            imgViewUpload.setAlpha((float) 1);
             imgViewCard.setEnabled(true);
             imgViewList.setEnabled(true);
             if (displayView == "card") {
-                imgViewCard.setAlpha((float)1);
-                imgViewList.setAlpha((float)0.7);
-            }
-            else {
-                imgViewCard.setAlpha((float)0.7);
-                imgViewList.setAlpha((float)1);
+                imgViewCard.setAlpha((float) 1);
+                imgViewList.setAlpha((float) 0.7);
+            } else {
+                imgViewCard.setAlpha((float) 0.7);
+                imgViewList.setAlpha((float) 1);
             }
             filterButton.setColorFilter(null);
 
@@ -205,8 +444,10 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             List<String> dayComponents = Arrays.asList(currentDate.split("-"));
             DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-                if (monthOfYear < 10) creationDateEditText.setText(dayOfMonth + "/" + "0" + (monthOfYear + 1) + "/" + year);
-                else creationDateEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                if (monthOfYear < 10)
+                    creationDateEditText.setText(dayOfMonth + "/" + "0" + (monthOfYear + 1) + "/" + year);
+                else
+                    creationDateEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
             };
             DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, Integer.parseInt(dayComponents.get(0)), Integer.parseInt(dayComponents.get(1)) - 1, Integer.parseInt(dayComponents.get(2)));
             datePickerDialog.show();
@@ -220,25 +461,25 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
 
             if (!creationDate.isEmpty()) {
                 if (!creationDate.contains("/")) {
-                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
+                    creationDateEditText.setBackgroundResource(R.drawable.edit_text_error);
                     Toast.makeText(this, "Please use '/' symbol", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                List<String> dayComponents = Arrays.asList(creationDate.split("/"));
-                if(dayComponents.get(1).length() < 2) {
-                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
-                    Toast.makeText(this, "Please re-format the month with 2 digits", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 try {
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     formatter.setLenient(false);
                     Date date = formatter.parse(creationDate);
-                }
-                catch (ParseException e) {
-                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
+                } catch (ParseException e) {
+                    creationDateEditText.setBackgroundResource(R.drawable.edit_text_error);
                     Toast.makeText(this, "Invalid creation date format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                List<String> dayComponents = Arrays.asList(creationDate.split("/"));
+                if (dayComponents.get(1).length() < 2) {
+                    creationDateEditText.setBackgroundResource(R.drawable.edit_text_error);
+                    Toast.makeText(this, "Please re-format the month with 2 digits", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -248,25 +489,27 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
 
             clonedImgList = new ArrayList<>(imgList);
 
-            if (!chosenImageTag.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(chosenImageTag));
-            if (!description.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(description));
-            if (!creationDate.isEmpty()) clonedImgList.removeIf(e -> e.getDate().isEmpty() || !e.getDate().contains(creationDate));
+            if (!chosenImageTag.isEmpty())
+                clonedImgList.removeIf(e -> !e.getTags().contains(chosenImageTag));
+            if (!description.isEmpty())
+                clonedImgList.removeIf(e -> !e.getTags().contains(description));
+            if (!creationDate.isEmpty())
+                clonedImgList.removeIf(e -> e.getDate().isEmpty() || !e.getDate().contains(creationDate));
             if (!location.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(location));
 
             if (clonedImgList.size() > 0) {
                 updateViewDisplay();
-            }
-            else {
+            } else {
                 ft = getSupportFragmentManager().beginTransaction();
                 emptyFilteringResultFragment = EmptyFilteringResultFragment.newInstance();
                 ft.replace(R.id.layout_display_images, emptyFilteringResultFragment).commit();
                 imgViewCard.setEnabled(false);
                 imgViewList.setEnabled(false);
-                imgViewList.setAlpha((float)0.5);
-                imgViewCard.setAlpha((float)0.5);
+                imgViewList.setAlpha((float) 0.5);
+                imgViewCard.setAlpha((float) 0.5);
             }
             imgViewUpload.setEnabled(false);
-            imgViewUpload.setAlpha((float)0.5);
+            imgViewUpload.setAlpha((float) 0.5);
             filterButton.setColorFilter(Color.parseColor("#45af7d"), PorterDuff.Mode.SRC_ATOP);
             filterButton.setAlpha((float) 1);
         });
@@ -275,20 +518,20 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         imageTagAutoCompleteTextView.setAdapter(imageTagAdapter);
         imageTagAutoCompleteTextView.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus && imageTagAutoCompleteTextView.getText().toString().isEmpty())
-                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
-            else view.setBackgroundResource(R.drawable.active_edit_text);
+                view.setBackgroundResource(R.drawable.edit_text_lost_focus);
+            else view.setBackgroundResource(R.drawable.edit_text_active);
         });
 
         descriptionEditText.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus && descriptionEditText.getText().toString().isEmpty())
-                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
-            else view.setBackgroundResource(R.drawable.active_edit_text);
+                view.setBackgroundResource(R.drawable.edit_text_lost_focus);
+            else view.setBackgroundResource(R.drawable.edit_text_active);
         });
 
         creationDateEditText.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus && creationDateEditText.getText().toString().isEmpty())
-                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
-            else view.setBackgroundResource(R.drawable.active_edit_text);
+                view.setBackgroundResource(R.drawable.edit_text_lost_focus);
+            else view.setBackgroundResource(R.drawable.edit_text_active);
         });
 
         ArrayAdapter locationAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, locations);
@@ -297,11 +540,14 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int chosenIndex, long l) {
-                if (chosenIndex == 0) selectedLocationTextView.setBackgroundResource(R.drawable.lost_focus_edit_text);
-                else selectedLocationTextView.setBackgroundResource((R.drawable.active_edit_text));
+                if (chosenIndex == 0)
+                    selectedLocationTextView.setBackgroundResource(R.drawable.edit_text_lost_focus);
+                else selectedLocationTextView.setBackgroundResource((R.drawable.edit_text_active));
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
         });
     }
 
@@ -311,44 +557,63 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             clonedImgList = new ArrayList<>(imgList);
         }
 
-        if (displayView.equals("card")) {
-            imgViewList.setAlpha(0.5F);
-            imgViewCard.setAlpha(1F);
-            imgViewList.setEnabled(true);
-            imgViewCard.setEnabled(false);
-            if (firstAccess == true) {
-                firstAccess = false;
+        if (Objects.equals(mode, "image")) {
+            if (displayView.equals("card")) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
+                imgViewList.setEnabled(true);
+                imgViewCard.setEnabled(false);
+                if (firstAccess == true) {
+                    firstAccess = false;
 
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-            }
-            else {
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+                } else {
 //                imageCardFragment.recycleAdapter.notifyDataSetChanged();
 //                imageCardFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageCardFragment.getContext(), "card"));
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-            }
-        }
-        else if (displayView.equals("list")) {
-            imgViewList.setAlpha(1F);
-            imgViewCard.setAlpha(0.5F);
-            imgViewList.setEnabled(false);
-            imgViewCard.setEnabled(true);
-            if (firstAccess == true) {
-                firstAccess = false;
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+                }
+            } else if (displayView.equals("list")) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
+                imgViewList.setEnabled(false);
+                imgViewCard.setEnabled(true);
+                if (firstAccess == true) {
+                    firstAccess = false;
 
-                ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageListFragment).commit();
-            }
-            else {
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageListFragment).commit();
+                } else {
 //                imageListFragment.recycleAdapter.notifyDataSetChanged();
 //                imageListFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageListFragment.getContext(), "list"));
+                    ft = getSupportFragmentManager().beginTransaction();
+                    imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                    ft.replace(R.id.layout_display_images, imageListFragment).commit();
+
+                }
+            }
+        } else if (Objects.equals(mode, "album")) {
+            // album mode
+            if (displayView.equals("card")) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
+                imgViewList.setEnabled(true);
+                imgViewCard.setEnabled(false);
                 ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+                albumCardFragment = AlbumCardFragment.newInstance(albumList);
+                ft.replace(R.id.layout_display_images, albumCardFragment).commit();
+            } else if (displayView.equals("list")) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
+                imgViewList.setEnabled(false);
+                imgViewCard.setEnabled(true);
+                ft = getSupportFragmentManager().beginTransaction();
+                albumListFragment = AlbumListFragment.newInstance(albumList);
+                ft.replace(R.id.layout_display_images, albumListFragment).commit();
 
             }
         }
@@ -433,10 +698,9 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             imgViewCard.setEnabled(true);
             imgViewList.setEnabled(true);
             filterButton.setEnabled(true);
-            filterButton.setAlpha((float)1);
+            filterButton.setAlpha((float) 1);
 
-        }
-        else {
+        } else {
             imgViewCard.setAlpha(0.5F);
             imgViewList.setAlpha(0.5F);
             imgViewCard.setEnabled(false);
@@ -511,7 +775,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             }
         }
 
-        return  null;
+        return null;
     }
 
     public String convertToString(float[] latLong) {
@@ -645,4 +909,40 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             imageListFragment.listAdapter.release();
         }
     }
+
+    public static void openBottomMenu(Image image) {
+        bottomMenu.setVisibility(View.VISIBLE);
+        selectedImages.add(image);
+        Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
+    }
+
+    public void removeBottomMenu(View v) {
+        bottomMenu.setVisibility(View.GONE);
+        selectedImages.clear();
+    }
+
+    public void selectAllImages(View v) {
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+        LinearLayout test = (LinearLayout) imageDisplayLayout.getChildAt(0);
+        RecyclerView test1 = (RecyclerView) test.getChildAt(0);
+        int c = test1.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) test1.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.setAlpha((float) 0.5);
+        }
+        selectedImages = new ArrayList<>(imgList);
+    }
+
+    public void showMoreOptions(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.getMenuInflater().inflate(R.menu.image_selection_more_options, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            Toast.makeText(getApplicationContext(), menuItem.getTitle().toString(), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+        popupMenu.show();
+    }
+
+
 }

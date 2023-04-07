@@ -21,13 +21,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set up your syncing preference"
-            android:textColor="@color/heading"
+            android:text="Choose a destination"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_gravity="center"/>
 
     </LinearLayout>
+
+
 
     <RadioGroup
         android:id="@+id/radio_group_syncing"
@@ -35,22 +36,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/radio_button_automatic"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_album"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Automatic when start the app"
-            android:button="@drawable/custome_radio_button"
-            android:padding="18dp"
-            android:textColor="@color/lost_focus" />
-
-        <RadioButton
-            android:id="@+id/radio_button_manually"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Pick manually"
-            android:button="@drawable/custome_radio_button"
-            android:padding="18dp" />
+            android:layout_height="wrap_content"/>
 
     </RadioGroup>
 
@@ -59,6 +48,20 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="30dp">
+        <Button
+            android:id="@+id/btn_create_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create An album"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/main"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/outline_button_main_color"
+            android:layout_gravity="center"
+            android:paddingHorizontal="60dp"
+            android:layout_marginBottom="8dp"
+            />
 
         <Button
             android:id="@+id/btn_confirm"
