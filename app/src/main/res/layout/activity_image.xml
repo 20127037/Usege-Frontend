@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".manipulation.activities.ImageActivity">
+    tools:context=".manipulation.activities.ImageActivity"
+    android:id="@+id/view_root">
 
     <RelativeLayout
         android:id="@+id/layout_header"
@@ -172,6 +173,7 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/layout_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -3,14 +3,18 @@ package com.group_1.usege.manipulation.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,6 +34,7 @@ import java.util.Locale;
 
 public class ImageActivity extends AppCompatActivity {
 
+    LinearLayout layoutBottom;
     TextView tvDatetime, tvSize, tvPhotoshop, tvFavorite, tvDescribe, tvDelete;
     ImageView ivImage, ivBack;
     EditText etDescription;
@@ -56,6 +61,7 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     public void init() {
+        layoutBottom = findViewById(R.id.layout_bottom);
         tvDatetime = findViewById(R.id.text_view_datetime);
         tvSize = findViewById(R.id.text_view_size);
         ivImage = findViewById(R.id.image_view_image);
@@ -89,6 +95,35 @@ public class ImageActivity extends AppCompatActivity {
 
                 // Thiết lập text view describe
                 setAlphaForDrawableInTextView(tvDescribe, 255, 1);
+
+//                View rootView = findViewById(R.id.view_root);
+//
+//                // Đăng ký một OnGlobalLayoutListener cho rootView
+//                rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//
+//                        // Lấy chiều cao của rootView
+//                        int rootViewHeight = rootView.getHeight();
+//                        Log.e("R", "R" + rootViewHeight);
+//                        // Lấy chiều cao của khu vực hiển thị (không tính bàn phím)
+//                        Rect visibleRect = new Rect();
+//                        rootView.getWindowVisibleDisplayFrame(visibleRect);
+//                        int visibleHeight = visibleRect.height();
+//                        Log.e("E", "E" + visibleHeight);
+//                        // Tính chiều cao của bàn phím
+//                        int keyboardHeight = rootViewHeight - visibleHeight;
+//
+//                        // Nếu chiều cao bàn phím lớn hơn 0 thì bàn phím đang mở
+//                        if (keyboardHeight > 0) {
+//                            layoutBottom.setVisibility(View.GONE);
+//                            Log.e("E", "E");
+//                        }
+//                        else {
+//                            layoutBottom.setVisibility(View.VISIBLE);
+//                        }
+//                    }
+//                });
             }
         });
 

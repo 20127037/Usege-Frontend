@@ -396,8 +396,8 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
                         getInformationThread.start();
 
                         imgList.add(image);
-//                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
-//                        Log.e("NOTE", "LOCATION " + imgList.get(2).getLocation());
+                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
+                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
 
                     }
 
@@ -523,50 +523,6 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         return location;
     }
 
-
-//    public Image getInformationOfImage(Uri imageURI) {
-//        String imagePath = null;
-//        try {
-//            imagePath = getImagePath(imageURI);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        // Tạo đối tượng ExifInterface để lấy thông tin ảnh
-//        ExifInterface exif = null;
-//        try {
-//            exif = new ExifInterface(imagePath);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        // Lấy các từ khóa đặc trưng của ảnh
-//        List<String> tags = getTagsOfImage(imagePath);
-//
-//
-//        // Lấy kích thước của ảnh
-//        long sizeOfImage = getSizeOfImage(imagePath);
-//
-//        // Lấy thời gian chụp của ảnh
-//        String dateTime = getDateTimeOfImage(exif);
-//
-//        // Lấy vị trí
-//        float latLong[] = getLocationOfImage(exif);
-//        String location = convertToString(latLong);
-//        String address = "";
-//        if (location.length() > 0) {
-//            //CallApi callApi = new CallApi();
-//            //address = callApi.callApiGetAddress(location, im);
-//
-//        }
-//        Log.d("Location", "Address: " + address);
-//
-//                // Lưu thông tin vào Image
-//        //Image image = new Image(imageURI, null, dateTime, sizeOfImage, "A favarite image", address);
-//
-//        return image;
-//    }
-
     private static float convertToDegree(String stringDMS, String ref) {
         float result = 0.0f, numbers;
         String[] DMS = stringDMS.split(",", 3);
@@ -667,11 +623,10 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             String location = convertToString(latLong);
             String address = "";
             if (location.length() > 0) {
-                ApiGoogleMap callApi = new ApiGoogleMap(location, image, context);
-                address = callApi.callApiGetAddress();
-
+                //ApiGoogleMap callApi = new ApiGoogleMap(location, image, context);
+                //callApi.callApiGetAddress();
             }
-            Log.d("Location", "Address: " + address);
+            //Log.d("Location", "Address: " + address);
 
             // Lưu thông tin vào Image
             image.setDate(dateTime);

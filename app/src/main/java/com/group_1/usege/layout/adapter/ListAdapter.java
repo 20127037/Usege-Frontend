@@ -91,7 +91,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            imgView = itemView.findViewById(R.id.image_view_thumbnail);
+            imgView = itemView.findViewById(R.id.image_view_photo);
             description = itemView.findViewById(R.id.text_view_description);
             layoutItemList = itemView.findViewById(R.id.layout_item_list);
         }
