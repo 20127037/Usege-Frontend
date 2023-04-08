@@ -64,6 +64,7 @@ import com.group_1.usege.syncing.impl.SendAndReceiveImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -93,11 +94,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
     Context context = this;
 
     int selectedImagePosition;
-
-
     Button albumButton, fileButton;
-    List<Image> imgList = new ArrayList<>();
-    List<Image> clonedImgList = new ArrayList<>();
 
     List<Album> albumList = new ArrayList<Album>() {
         {
@@ -105,6 +102,8 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             add(new Album("trash")); // trash album
         }
     };
+
+    Album trashBin = albumList.get(1);
     private String displayView = "card";
     private String mode = "image";
     // mode image or album
@@ -113,6 +112,9 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
     public static List<Image> selectedImages = new ArrayList<>();
 
     private static final int Read_Permission = 101;
+
+    private static final int UPDATE_IMAGE = 1;
+    private static final int DELETE_IMAGE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -661,8 +663,8 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
                         getInformationThread.start();
 
                         imgList.add(image);
-                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
-                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
+//                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
+//                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
 
                     }
 
@@ -826,6 +828,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         Intent intent = new Intent(context, ImageActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("object_image", image);
+        bundle.putSerializable("object_album", (Serializable) albumList);
         intent.putExtras(bundle);
         launcherSendAndReceiveImage.launch(intent);
     }
@@ -841,9 +844,27 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
                     }
                     // Nhận giá trị mới khi ảnh đã được cập nhật
                     Image selectedImage = (Image) bundle.getParcelable("return_image");
+                    int task = bundle.getInt("task");
 
-                    // Cập nhật ảnh đã chọn
-                    imgList.get(selectedImagePosition).setDescription(selectedImage.getDescription());
+                    switch (task) {
+                        case UPDATE_IMAGE: {
+                            // update description
+                            imgList.get(selectedImagePosition).setDescription(selectedImage.getDescription());
+                            break;
+                        }
+
+                        case DELETE_IMAGE: {
+                            // delete image
+                            imgList.remove(selectedImagePosition);
+
+                            List<Image> lstdeletedImage = new ArrayList<>();
+                            lstdeletedImage.add(selectedImage);
+                            trashBin.setAlbumImages(lstdeletedImage);
+                            updateViewDisplay();
+
+                            break;
+                        }
+                    }
                 }
                 else {
                     //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();

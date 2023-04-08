@@ -19,6 +19,7 @@ import com.group_1.usege.GlideAppModule;
 import com.group_1.usege.R;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
+import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
 
@@ -66,7 +67,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         holder.layoutItemCard.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                return false;
+                LibraryActivity.openBottomMenu(image);
+                v.setAlpha((float) 0.5);
+                return true;
             }
         });
     }

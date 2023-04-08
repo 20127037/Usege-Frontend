@@ -45,7 +45,7 @@ public class EmptyAlbumImageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LinearLayout layout_empty = (LinearLayout) inflater.inflate(R.layout.fragment_empty, null);
+        View layout_empty = inflater.inflate(R.layout.fragment_empty, null);
 
         textViewSync = layout_empty.findViewById(R.id.text_view_sync);
 

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.layout.adapter.AlbumAdapter;
 import com.group_1.usege.layout.adapter.RecycleAdapter;
 import com.group_1.usege.modle.Album;
 import com.group_1.usege.modle.Image;
@@ -29,6 +30,7 @@ public class AlbumImageListFragment extends Fragment  {
     public RecyclerView rcvPhoto;
 
     public RecycleAdapter recycleAdapter;
+    public AlbumAdapter albumAdapter;
     private Album album;
     private Context context = null;
     public AlbumImageListFragment() {
@@ -82,10 +84,10 @@ public class AlbumImageListFragment extends Fragment  {
             }
         });
 
-        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, "list");
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        rcvPhoto.setLayoutManager(linearLayoutManager);
-        rcvPhoto.setAdapter(recycleAdapter);
+//        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, "list");
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+//        rcvPhoto.setLayoutManager(linearLayoutManager);
+//        rcvPhoto.setAdapter(recycleAdapter);
 
         return layoutImageList;
     }

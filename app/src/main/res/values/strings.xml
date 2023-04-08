@@ -24,4 +24,6 @@
     <string name="no"><b>No</b></string>
     <string name="confirm_code_has_been_sent">A verification code has been sent to your mailbox</string>
     <string name="confirm_code_could_be_resent_in">Code could be resent in </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

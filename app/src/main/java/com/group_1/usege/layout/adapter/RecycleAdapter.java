@@ -17,7 +17,9 @@ import com.group_1.usege.modle.Image;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
+
 import android.app.Activity;
+
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
     private List<Image> lstImage;
     private Context context;
@@ -37,8 +39,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         View view = null;
         if (displayView.equals("card")) {
             view = inflater.inflate(R.layout.item_photo, parent, false);
-        }
-        else if (displayView.equals("list")) {
+        } else if (displayView.equals("list")) {
             view = inflater.inflate(R.layout.layout_item_list, parent, false);
         }
 
@@ -71,6 +72,9 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         Image image = lstImage.get(position);
 
         Uri uri = image.getUri();
+        if (uri == null) {
+            return;
+        }
         Glide.with(context)
                 .load(uri)
                 .into(holder.imgView);
@@ -98,12 +102,12 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
         TextView description;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             if (displayView.equals("card")) {
                 imgView = itemView.findViewById(R.id.image_view_photo);
-            }
-            else {
+            } else {
                 imgView = itemView.findViewById(R.id.image_view_thumbnail);
                 description = itemView.findViewById(R.id.text_view_description);
             }

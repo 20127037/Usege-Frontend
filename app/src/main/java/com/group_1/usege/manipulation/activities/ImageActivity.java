@@ -24,12 +24,14 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.group_1.usege.R;
+import com.group_1.usege.modle.Album;
 import com.group_1.usege.modle.Image;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class ImageActivity extends AppCompatActivity {
@@ -42,6 +44,11 @@ public class ImageActivity extends AppCompatActivity {
     View layoutTags, layoutButton;
     Context context = this;
     Image image;
+    List<Album> lstAlbum;
+
+    private static final int UPDATE_IMAGE = 1;
+    private static final int DELETE_IMAGE = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +60,9 @@ public class ImageActivity extends AppCompatActivity {
         }
 
         image = (Image) bundle.getParcelable("object_image");
-        Log.d("Size", "I: " + image.getDate());
+        lstAlbum = (List<Album>) bundle.getSerializable("object_album");
+        Log.d("Date", "D: " + image.getDate());
+        Log.e("COUNT", "C: " + lstAlbum.size());
         // Ánh xạ các widgets
         init();
         setValueToLayout();
@@ -96,34 +105,13 @@ public class ImageActivity extends AppCompatActivity {
                 // Thiết lập text view describe
                 setAlphaForDrawableInTextView(tvDescribe, 255, 1);
 
-//                View rootView = findViewById(R.id.view_root);
-//
-//                // Đăng ký một OnGlobalLayoutListener cho rootView
-//                rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//                    @Override
-//                    public void onGlobalLayout() {
-//
-//                        // Lấy chiều cao của rootView
-//                        int rootViewHeight = rootView.getHeight();
-//                        Log.e("R", "R" + rootViewHeight);
-//                        // Lấy chiều cao của khu vực hiển thị (không tính bàn phím)
-//                        Rect visibleRect = new Rect();
-//                        rootView.getWindowVisibleDisplayFrame(visibleRect);
-//                        int visibleHeight = visibleRect.height();
-//                        Log.e("E", "E" + visibleHeight);
-//                        // Tính chiều cao của bàn phím
-//                        int keyboardHeight = rootViewHeight - visibleHeight;
-//
-//                        // Nếu chiều cao bàn phím lớn hơn 0 thì bàn phím đang mở
-//                        if (keyboardHeight > 0) {
-//                            layoutBottom.setVisibility(View.GONE);
-//                            Log.e("E", "E");
-//                        }
-//                        else {
-//                            layoutBottom.setVisibility(View.VISIBLE);
-//                        }
-//                    }
-//                });
+            }
+        });
+
+        tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                returnDataImageToLibraryActivity(DELETE_IMAGE);
             }
         });
 
@@ -161,9 +149,14 @@ public class ImageActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         //super.onBackPressed();
+        returnDataImageToLibraryActivity(UPDATE_IMAGE);
+    }
+
+    public void returnDataImageToLibraryActivity(int task) {
         Intent returnIntent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putParcelable("return_image", image);
+        bundle.putInt("task", task);
         returnIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
