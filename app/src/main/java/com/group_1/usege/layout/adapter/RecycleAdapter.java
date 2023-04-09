@@ -9,12 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
 import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
 
@@ -76,9 +76,17 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .into(holder.imgView);
 
         holder.imgView.setOnLongClickListener(v -> {
-            LibraryActivity.openBottomMenu(image);
-            v.setAlpha((float) 0.5);
+            ImageView imageView = (ImageView)v;
+            imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+
             return true;
+        });
+
+        holder.imgView.setOnClickListener(v -> {
+            ImageView imageView = (ImageView)v;
+            if (imageView.getColorFilter() != null) {
+                imageView.clearColorFilter();
+            }
         });
 
         if (displayView.equals("list")) {
@@ -97,6 +105,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
+        View overlayImage;
         TextView description;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

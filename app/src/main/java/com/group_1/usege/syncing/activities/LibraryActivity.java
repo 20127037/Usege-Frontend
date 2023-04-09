@@ -564,21 +564,36 @@ public class LibraryActivity extends AppCompatActivity {
         selectedImages.add(image);
         Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
     }
+    public RecyclerView getRecyclerViewOfImageLibrary() {
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+        LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
+        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
+        return libraryRecyclerView;
+    }
     public void removeBottomMenu(View v) {
+        // FOR UI
         bottomMenu.setVisibility(View.GONE);
+        RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecyclerView.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) libraryRecyclerView.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.setAlpha((float)1);
+        }
+        // FOR LOGIC CODE
         selectedImages.clear();
     }
 
     public void selectAllImages(View v) {
-        imageDisplayLayout = findViewById(R.id.layout_display_images);
-        LinearLayout test = (LinearLayout) imageDisplayLayout.getChildAt(0);
-        RecyclerView test1 = (RecyclerView) test.getChildAt(0);
-        int c = test1.getChildCount();
+        // FOR UI
+        RecyclerView libraryRecycleView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecycleView.getChildCount();
         for (int i = 0; i < c; ++i) {
-            CardView cardView = (CardView) test1.getChildAt(i);
+            CardView cardView = (CardView) libraryRecycleView.getChildAt(i);
             ImageView imageView = (ImageView) cardView.getChildAt(0);
             imageView.setAlpha((float) 0.5);
         }
+        // FOR LOGIC CODE
         selectedImages = new ArrayList<>(imgList);
     }
 
