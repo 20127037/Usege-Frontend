@@ -9,17 +9,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
 import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
 
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
+
     private List<Image> lstImage;
     private Context context;
     private String displayView = "";
@@ -32,7 +31,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecycleAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = null;
@@ -45,7 +44,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
         return new ViewHolder(view);
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull RecycleAdapter.ViewHolder holder, int position) {
@@ -76,20 +74,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .load(uri)
                 .into(holder.imgView);
 
-        holder.imgView.setOnLongClickListener(v -> {
-            LibraryActivity.openBottomMenu(image);
-            ImageView imageView = (ImageView)v;
-            imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
-            return true;
-        });
-
-        holder.imgView.setOnClickListener(v -> {
-            ImageView imageView = (ImageView)v;
-            if (imageView.getColorFilter() != null) {
-                imageView.clearColorFilter();
-            }
-        });
-
         if (displayView.equals("list")) {
             String newDescription = setUpDescription(image.getDescription());
             holder.description.setText(newDescription);
@@ -101,12 +85,12 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         if (lstImage != null) {
             return lstImage.size();
         }
+
         return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
-        View overlayImage;
         TextView description;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
