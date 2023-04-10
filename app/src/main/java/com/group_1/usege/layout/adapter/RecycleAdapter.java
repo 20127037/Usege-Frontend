@@ -76,8 +76,16 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .into(holder.imgView);
 
         holder.imgView.setOnLongClickListener(v -> {
-            LibraryActivity.openBottomMenu(image);
-            v.setAlpha((float) 0.5);
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    libActivity.openBottomMenu(image);
+                    v.setAlpha((float) 0.5);
+                }
+            }
+//            LibraryActivity.openBottomMenu(image);
+//            v.setAlpha((float) 0.5);
             return true;
         });
 

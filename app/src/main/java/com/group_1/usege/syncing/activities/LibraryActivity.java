@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
@@ -82,7 +85,12 @@ public class LibraryActivity extends AppCompatActivity {
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
     static RelativeLayout bottomMenu;
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
-
+    // card list mode: image, album, imageInAlbum
+    public static final String imageMode = "image";
+    public static final String albumMode = "album";
+    public static final String imageInAlbumMode = "imageInAlbum";
+    public TextView moveToAlbum, addToAlbum;
+    public Album isOpeningAlbum;
     Button albumButton, fileButton;
     List<Image> imgList = new ArrayList<>();
     List<Image> clonedImgList = new ArrayList<>();
@@ -94,7 +102,7 @@ public class LibraryActivity extends AppCompatActivity {
         }
     };
     private String displayView = "card";
-    private String mode = "image";
+    private String mode = imageMode;
     // mode image or album
     private Boolean firstAccess = true;
     private Boolean filtered = false;
@@ -102,13 +110,15 @@ public class LibraryActivity extends AppCompatActivity {
 
     private static final int Read_Permission = 101;
 
+    RelativeLayout layoutLibFunctions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
 
         ft = getSupportFragmentManager().beginTransaction();
-        emptyFragment = EmptyFragment.newInstance();
+        emptyFragment = EmptyFragment.newInstance(mode, false);
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
 
         imgViewCard = findViewById(R.id.icon_card);
@@ -118,11 +128,15 @@ public class LibraryActivity extends AppCompatActivity {
         albumButton = findViewById(R.id.btn_album);
         fileButton = findViewById(R.id.btn_file);
         bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
+        // bootom menu functions
+        layoutLibFunctions = findViewById(R.id.layout_library_functions);
+        moveToAlbum = findViewById(R.id.text_view_move_to_album);
+        addToAlbum = findViewById(R.id.text_view_add_to_album);
 
         imgViewCard.setEnabled(false);
         imgViewCard.setAlpha((float) 0.5);
         imgViewList.setEnabled(false);
-        imgViewCard.setAlpha((float) 0.5);
+        imgViewList.setAlpha((float) 0.5);
         filterButton.setEnabled(false);
         filterButton.setAlpha((float) 0.5);
 
@@ -139,17 +153,45 @@ public class LibraryActivity extends AppCompatActivity {
 
         imgViewCard.setOnClickListener(v -> {
             displayView = "card";
+            imgViewCard.setEnabled(false);
+            imgViewCard.setAlpha((float) 1);
+            imgViewList.setEnabled(true);
+            imgViewList.setAlpha((float) 0.5);
             firstAccess = true;
-            updateViewDisplay();
+            switch (mode) {
+                case imageMode:
+                    updateImageViewDisplay();
+                    break;
+                case albumMode:
+                    updateAlbumViewDisplay();
+                    break;
+                case imageInAlbumMode:
+                    updateImageInAlbumViewDisplay();
+                    break;
+            }
         });
 
         imgViewList.setOnClickListener(v -> {
             displayView = "list";
+            imgViewList.setEnabled(false);
+            imgViewList.setAlpha((float) 1);
+            imgViewCard.setEnabled(true);
+            imgViewCard.setAlpha((float) 0.5);
             firstAccess = true;
-            updateViewDisplay();
+            switch (mode) {
+                case imageMode:
+                    updateImageViewDisplay();
+                    break;
+                case albumMode:
+                    updateAlbumViewDisplay();
+                    break;
+                case imageInAlbumMode:
+                    updateImageInAlbumViewDisplay();
+                    break;
+            }
         });
     }
-
+    //    Start Album handler
     // menu bottom functions
     private Album destinationAlbum;
 
@@ -168,13 +210,15 @@ public class LibraryActivity extends AppCompatActivity {
 
         createAlbumButton = viewDialog.findViewById(R.id.btn_create_album);
         btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        btnConfirm.setEnabled(false);
+        btnConfirm.setAlpha((float) 0.5);
         imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
         RecyclerView albumRadioRecyclerView = viewDialog.findViewById(R.id.rcv_album);
 
         // filter favortie and trash album
         ArrayList<Album> cloneAlbumList = new ArrayList<Album>(albumList);
         cloneAlbumList.removeIf(albumItem -> albumItem.getName() == "favorite" || albumItem.getName() == "trash");
-        AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, this);
+        AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, btnConfirm, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         albumRadioRecyclerView.setLayoutManager(linearLayoutManager);
         albumRadioRecyclerView.setAdapter(albumRadioAdapter);
@@ -198,12 +242,66 @@ public class LibraryActivity extends AppCompatActivity {
         });
     }
 
+    public void moveToAlbum(Album fromAlbum) { // call in XML file
+        bottomMenu.setVisibility(View.GONE);
+        //  -------------------------
+        Button btnConfirm;
+        Button createAlbumButton;
+        ImageView imageViewBackward;
+
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_choose_destination_album, null);
+
+        final BottomSheetDialog chooseAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        chooseAlbumBottomSheetDialog.setContentView(viewDialog);
+        chooseAlbumBottomSheetDialog.show();
+
+        createAlbumButton = viewDialog.findViewById(R.id.btn_create_album);
+        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        btnConfirm.setEnabled(false);
+        btnConfirm.setAlpha((float) 0.5);
+        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+        RecyclerView albumRadioRecyclerView = viewDialog.findViewById(R.id.rcv_album);
+
+        // filter favortie and trash album
+        ArrayList<Album> cloneAlbumList = new ArrayList<Album>(albumList);
+        cloneAlbumList.removeIf(albumItem -> albumItem.getName() == "favorite" || albumItem.getName() == "trash");
+        AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, btnConfirm, this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        albumRadioRecyclerView.setLayoutManager(linearLayoutManager);
+        albumRadioRecyclerView.setAdapter(albumRadioAdapter);
+        imageViewBackward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseAlbumBottomSheetDialog.dismiss();
+            }
+        });
+
+
+        createAlbumButton.setVisibility(View.GONE);
+
+        btnConfirm.setOnClickListener(event -> {
+            fromAlbum.getAlbumImages().removeIf(s -> {
+                for(int i=0;i<selectedImages.size();i++) {
+                    if(s.getUri() == selectedImages.get(i).getUri()) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            System.out.println( String.format("before: %d", destinationAlbum.getAlbumImages().size()));
+            destinationAlbum.getAlbumImages().addAll(selectedImages);
+            System.out.println( String.format("after: %d", destinationAlbum.getAlbumImages().size()));
+            Toast.makeText(this, "move image success!", Toast.LENGTH_SHORT).show();
+            clickOpenAlbumImageList(fromAlbum);
+            // Đóng bottommsheet
+            chooseAlbumBottomSheetDialog.dismiss();
+        });
+    }
     public void setDestinationAlbum(Album album) {
         destinationAlbum = album;
     }
-
-    //    Start Album handler
     public void clickOpenAlbumList() {
+        mode= albumMode;
         // check empty list
         if (albumList.size() == 0) {
             ft = getSupportFragmentManager().beginTransaction();
@@ -221,7 +319,6 @@ public class LibraryActivity extends AppCompatActivity {
             ft.replace(R.id.layout_display_images, albumListFragment).commit();
         }
     }
-
     public void clickOpenAlbumCreateBottomSheetAndAddImage(int position) {
         Button btnConfirm;
         ImageView imageViewBackward;
@@ -250,7 +347,7 @@ public class LibraryActivity extends AppCompatActivity {
         btnConfirm.setOnClickListener(v -> {
             String title = String.valueOf(titleEditText.getText());
             String password = String.valueOf(passwordEditText.getText());
-
+            // check log
             System.out.println("title: " + title);
             System.out.println("password: " + password);
 
@@ -264,7 +361,6 @@ public class LibraryActivity extends AppCompatActivity {
             createAlbumBottomSheetDialog.dismiss();
         });
     }
-
     public void clickOpenAlbumCreateBottomSheet() {
         Button btnConfirm;
         ImageView imageViewBackward;
@@ -277,6 +373,8 @@ public class LibraryActivity extends AppCompatActivity {
         createAlbumBottomSheetDialog.show();
 
         btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        btnConfirm.setEnabled(false);
+        btnConfirm.setAlpha((float) 0.5);
         imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
         titleEditText = viewDialog.findViewById(R.id.edit_text_title);
         passwordEditText = viewDialog.findViewById(R.id.edit_text_password);
@@ -288,6 +386,30 @@ public class LibraryActivity extends AppCompatActivity {
         });
 
         final String returnValue = "";
+
+        titleEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String newText = editable.toString();
+                if (newText.length() > 0) {
+                    btnConfirm.setEnabled(true);
+                    btnConfirm.setAlpha((float) 1);
+                } else {
+                    btnConfirm.setEnabled(false);
+                    btnConfirm.setAlpha((float) 0.5);
+                }
+            }
+        });
 
         btnConfirm.setOnClickListener(v -> {
             String title = String.valueOf(titleEditText.getText());
@@ -303,28 +425,37 @@ public class LibraryActivity extends AppCompatActivity {
             clickOpenAlbumList();
         });
     }
-
     public void clickOpenAlbumImageList(Album album) {
+        isOpeningAlbum = album;
+        mode = imageInAlbumMode;
+//        if(album.getName() != "favorite" && album.getName() != "trash") {
+            layoutLibFunctions.setVisibility(View.GONE);
+//        }
         if (album.getAlbumImages().size() > 0) {
-            ft = getSupportFragmentManager().beginTransaction();
-            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album);
-            ft.replace(R.id.layout_display_images, albumImagesList).commit();
+            if (Objects.equals(displayView, "card")) {
+                ft = getSupportFragmentManager().beginTransaction();
+                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, "card");
+                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+            } else {
+                ft = getSupportFragmentManager().beginTransaction();
+                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, "list");
+                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+            }
         } else {
             ft = getSupportFragmentManager().beginTransaction();
-            emptyAlbumImageFragment = EmptyAlbumImageFragment.newInstance();
-            ft.replace(R.id.layout_display_images, emptyAlbumImageFragment).commit();
+            EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
+            ft.replace(R.id.layout_display_images, emptyFragment).commit();
         }
     }
-
-    public void clickAddImageToAlbum() {
-
+    public void setShowLayoutLibFuntions() {
+        layoutLibFunctions.setVisibility(View.VISIBLE);
     }
-
     public void clickOpenImageList() {
         // check empty list
+        mode="image";
         if (imgList.size() == 0) {
             ft = getSupportFragmentManager().beginTransaction();
-            emptyFragment = EmptyFragment.newInstance();
+            emptyFragment = EmptyFragment.newInstance(mode, true);
             ft.replace(R.id.layout_display_images, emptyFragment).commit();
             return;
         }
@@ -338,13 +469,10 @@ public class LibraryActivity extends AppCompatActivity {
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
         }
     }
-
     public void triggerAlbumButton() {
         albumButton.callOnClick();
     }
-
     //    End Album handler
-
 
     public void clickOpenSetUpSyncingBottomSheetDialog() {
         Button btnConfirm;
@@ -397,7 +525,7 @@ public class LibraryActivity extends AppCompatActivity {
             }
             filterButton.setColorFilter(null);
 
-            updateViewDisplay();
+            updateImageViewDisplay();
             return;
         }
 
@@ -484,7 +612,7 @@ public class LibraryActivity extends AppCompatActivity {
             if (!location.isEmpty()) clonedImgList.removeIf(e -> !e.getTags().contains(location));
 
             if (clonedImgList.size() > 0) {
-                updateViewDisplay();
+                updateImageViewDisplay();
             } else {
                 ft = getSupportFragmentManager().beginTransaction();
                 emptyFilteringResultFragment = EmptyFilteringResultFragment.newInstance();
@@ -538,62 +666,82 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void updateViewDisplay() {
+    public void updateImageViewDisplay() {
         if (!filtered) {
             clonedImgList = new ArrayList<>(imgList);
         }
 
-        if (Objects.equals(mode, "image")) {
-            if (displayView.equals("card")) {
-                imgViewList.setAlpha(0.5F);
-                imgViewCard.setAlpha(1F);
-                if (firstAccess == true) {
-                    firstAccess = false;
 
-                    ft = getSupportFragmentManager().beginTransaction();
-                    imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                    ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-                } else {
+        if (displayView.equals("card")) {
+            imgViewList.setAlpha(0.5F);
+            imgViewCard.setAlpha(1F);
+            if (firstAccess == true) {
+                firstAccess = false;
+
+                ft = getSupportFragmentManager().beginTransaction();
+                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+            } else {
 //                imageCardFragment.recycleAdapter.notifyDataSetChanged();
 //                imageCardFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageCardFragment.getContext(), "card"));
-                    ft = getSupportFragmentManager().beginTransaction();
-                    imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                    ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-                }
-            } else if (displayView.equals("list")) {
-                imgViewList.setAlpha(1F);
-                imgViewCard.setAlpha(0.5F);
-                if (firstAccess == true) {
-                    firstAccess = false;
+                ft = getSupportFragmentManager().beginTransaction();
+                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+            }
+        } else if (displayView.equals("list")) {
+            imgViewList.setAlpha(1F);
+            imgViewCard.setAlpha(0.5F);
+            if (firstAccess == true) {
+                firstAccess = false;
 
-                    ft = getSupportFragmentManager().beginTransaction();
-                    imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                    ft.replace(R.id.layout_display_images, imageListFragment).commit();
-                } else {
+                ft = getSupportFragmentManager().beginTransaction();
+                imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+            } else {
 //                imageListFragment.recycleAdapter.notifyDataSetChanged();
 //                imageListFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageListFragment.getContext(), "list"));
-                    ft = getSupportFragmentManager().beginTransaction();
-                    imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                    ft.replace(R.id.layout_display_images, imageListFragment).commit();
-
-                }
-            }
-        } else if (Objects.equals(mode, "album")) {
-            // album mode
-            if (displayView.equals("card")) {
-                imgViewList.setAlpha(0.5F);
-                imgViewCard.setAlpha(1F);
                 ft = getSupportFragmentManager().beginTransaction();
-                albumCardFragment = AlbumCardFragment.newInstance(albumList);
-                ft.replace(R.id.layout_display_images, albumCardFragment).commit();
-            } else if (displayView.equals("list")) {
-                imgViewList.setAlpha(1F);
-                imgViewCard.setAlpha(0.5F);
-                ft = getSupportFragmentManager().beginTransaction();
-                albumListFragment = AlbumListFragment.newInstance(albumList);
-                ft.replace(R.id.layout_display_images, albumListFragment).commit();
+                imageListFragment = ImageListFragment.newInstance(clonedImgList);
+                ft.replace(R.id.layout_display_images, imageListFragment).commit();
 
             }
+        }
+    }
+
+    public void updateAlbumViewDisplay() {
+        // album mode
+        if (displayView.equals("card")) {
+            imgViewList.setAlpha(0.5F);
+            imgViewCard.setAlpha(1F);
+            ft = getSupportFragmentManager().beginTransaction();
+            albumCardFragment = AlbumCardFragment.newInstance(albumList);
+            ft.replace(R.id.layout_display_images, albumCardFragment).commit();
+        } else if (displayView.equals("list")) {
+            imgViewList.setAlpha(1F);
+            imgViewCard.setAlpha(0.5F);
+            ft = getSupportFragmentManager().beginTransaction();
+            albumListFragment = AlbumListFragment.newInstance(albumList);
+            ft.replace(R.id.layout_display_images, albumListFragment).commit();
+        }
+    }
+
+    public void updateImageInAlbumViewDisplay() {
+        layoutLibFunctions.setVisibility(View.GONE);
+        if (isOpeningAlbum.getAlbumImages().size() > 0) {
+
+            if (Objects.equals(displayView, "card")) {
+                ft = getSupportFragmentManager().beginTransaction();
+                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "card");
+                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+            } else {
+                ft = getSupportFragmentManager().beginTransaction();
+                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "list");
+                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+            }
+        } else {
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyAlbumImageFragment = EmptyAlbumImageFragment.newInstance();
+            ft.replace(R.id.layout_display_images, emptyAlbumImageFragment).commit();
         }
     }
 
@@ -633,7 +781,7 @@ public class LibraryActivity extends AppCompatActivity {
                 }
 
                 // Update Fragment View
-                updateViewDisplay();
+                updateImageViewDisplay();
             });
 
     // Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
@@ -812,7 +960,17 @@ public class LibraryActivity extends AppCompatActivity {
         return result;
     }
 
-    public static void openBottomMenu(Image image) {
+    public void openBottomMenu(Image image) {
+        switch (mode) {
+            case imageInAlbumMode:
+                System.out.println("mode to album!");
+                moveToAlbum.setVisibility(View.VISIBLE);
+                addToAlbum.setVisibility(View.GONE);
+                break;
+            default:
+                moveToAlbum.setVisibility(View.GONE);
+                addToAlbum.setVisibility(View.VISIBLE);
+        }
         bottomMenu.setVisibility(View.VISIBLE);
         selectedImages.add(image);
         Log.d("selectedImages' size", String.valueOf(selectedImages.size()));

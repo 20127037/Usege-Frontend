@@ -51,6 +51,9 @@ public class EmptyAlbumImageFragment extends Fragment {
 
         textViewSync.setText("Let's add some image to Album!");
 
+
+        textViewSync.setVisibility(View.GONE);
+
         textViewSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +65,6 @@ public class EmptyAlbumImageFragment extends Fragment {
     }
 
     public void openBottomSheetDialog() {
-        libraryActivity.clickAddImageToAlbum();
+//        libraryActivity.clickAddImageToAlbum();
     }
 }
