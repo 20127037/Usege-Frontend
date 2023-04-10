@@ -559,9 +559,13 @@ public class LibraryActivity extends AppCompatActivity {
         return result;
     }
 
-    public static void openBottomMenu(Image image) {
+    public static void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
         bottomMenu.setVisibility(View.VISIBLE);
         selectedImages.add(image);
+    }
+    public static void removeSingleImageAndRemoveBottomMenuIfNoImageLeft(Image image) {
+        selectedImages.remove(image);
+        if (selectedImages.size() < 1) bottomMenu.setVisibility(View.GONE);
     }
     public RecyclerView getRecyclerViewOfImageLibrary() {
         imageDisplayLayout = findViewById(R.id.layout_display_images);
@@ -569,7 +573,8 @@ public class LibraryActivity extends AppCompatActivity {
         RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
         return libraryRecyclerView;
     }
-    public void removeBottomMenu(View v) {
+
+    public void removeBottomMenuAndAllImages(View v) {
         // FOR UI
         bottomMenu.setVisibility(View.GONE);
         RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
@@ -605,4 +610,17 @@ public class LibraryActivity extends AppCompatActivity {
         });
         popupMenu.show();
     }
+
+    public void shareImages(View v) {
+        ArrayList<Uri> imageUris = new ArrayList<>();
+        selectedImages.forEach((image) -> {
+            imageUris.add(image.getUri());
+        });
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, imageUris);
+        shareIntent.setType("image/*");
+        startActivity(Intent.createChooser(shareIntent, null));
+    }
+
 }
