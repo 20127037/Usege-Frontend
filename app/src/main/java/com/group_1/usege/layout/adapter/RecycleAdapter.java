@@ -77,16 +77,21 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .into(holder.imgView);
 
         holder.imgView.setOnLongClickListener(v -> {
-            LibraryActivity.openBottomMenu(image);
+            // FOR UI
             ImageView imageView = (ImageView)v;
             imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+            LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+            // FOR LOGIC
             return true;
         });
 
         holder.imgView.setOnClickListener(v -> {
             ImageView imageView = (ImageView)v;
             if (imageView.getColorFilter() != null) {
+                // FOR UI
                 imageView.clearColorFilter();
+                // FOR LOGIC
+                LibraryActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
             }
         });
 
