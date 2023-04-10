@@ -80,8 +80,8 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
             // FOR UI
             ImageView imageView = (ImageView)v;
             imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
-            LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
             // FOR LOGIC
+            LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
             return true;
         });
 

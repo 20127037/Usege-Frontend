@@ -573,6 +573,7 @@ public class LibraryActivity extends AppCompatActivity {
         RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
         return libraryRecyclerView;
     }
+
     public void removeBottomMenuAndAllImages(View v) {
         // FOR UI
         bottomMenu.setVisibility(View.GONE);
@@ -621,4 +622,5 @@ public class LibraryActivity extends AppCompatActivity {
         shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, null));
     }
+
 }

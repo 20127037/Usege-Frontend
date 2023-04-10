@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="password_and_retype_not_same">The password and retype value are not the same</string>
+    <string name="email_has_already_exists">Your email has been used in the system. Please, consider using another one!</string>
+    <string name="filed_not_empty">This field may not be empty</string>
+    <string name="error_connection">Connection error. Please try again!</string>
+    <string name="user_not_found">Your email does not exist in the system. Please, try again!</string>
+    <string name="incorrect_confirm_code">The confirm code is incorrect!</string>
+    <string name="email_password_mismatch">Your email and password are mismatch! Please, try again!</string>
+    <string name="expired_confirm_code">The confirm code is expired!</string>
+    <string name="password_not_follow_rules">Your password need satisfies the following constraints: at least 8 characters,
+        1 upper case character,
+        1 lower case character,
+        1 number (0-9),
+        1 special character (!,@,#,$,*,....)
+    </string>
+</resources>
