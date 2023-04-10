@@ -562,7 +562,6 @@ public class LibraryActivity extends AppCompatActivity {
     public static void openBottomMenu(Image image) {
         bottomMenu.setVisibility(View.VISIBLE);
         selectedImages.add(image);
-        Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
     }
     public RecyclerView getRecyclerViewOfImageLibrary() {
         imageDisplayLayout = findViewById(R.id.layout_display_images);
@@ -578,7 +577,7 @@ public class LibraryActivity extends AppCompatActivity {
         for (int i = 0; i < c; ++i) {
             CardView cardView = (CardView) libraryRecyclerView.getChildAt(i);
             ImageView imageView = (ImageView) cardView.getChildAt(0);
-            imageView.setAlpha((float)1);
+            imageView.clearColorFilter();
         }
         // FOR LOGIC CODE
         selectedImages.clear();
@@ -591,7 +590,7 @@ public class LibraryActivity extends AppCompatActivity {
         for (int i = 0; i < c; ++i) {
             CardView cardView = (CardView) libraryRecycleView.getChildAt(i);
             ImageView imageView = (ImageView) cardView.getChildAt(0);
-            imageView.setAlpha((float) 0.5);
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.chosen_image));
         }
         // FOR LOGIC CODE
         selectedImages = new ArrayList<>(imgList);
@@ -606,6 +605,4 @@ public class LibraryActivity extends AppCompatActivity {
         });
         popupMenu.show();
     }
-
-
 }
