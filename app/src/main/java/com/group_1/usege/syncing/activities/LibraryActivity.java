@@ -4,7 +4,6 @@ import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,29 +19,30 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 import com.group_1.usege.R;
-
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
-
-import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.modle.Image;
+import com.group_1.usege.syncing.fragment.EmptyFragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,22 +53,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-
 import java.util.List;
 
 public class LibraryActivity extends AppCompatActivity {
 
     FragmentTransaction ft;
+    LinearLayout imageDisplayLayout;
     ImageCardFragment imageCardFragment;
     ImageListFragment imageListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
 
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
+    static RelativeLayout bottomMenu;
     ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
     List<Image> imgList = new ArrayList<>(); List<Image> clonedImgList = new ArrayList<>();
     private String displayView = "card";
     private Boolean firstAccess = true;
     private Boolean filtered = false;
+    public static List<Image> selectedImages = new ArrayList<>();
 
     private static final int Read_Permission = 101;
 
@@ -85,6 +87,7 @@ public class LibraryActivity extends AppCompatActivity {
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
         filterButton = findViewById(R.id.image_view_search);
+        bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
 
         imgViewCard.setEnabled(false);
         imgViewCard.setAlpha((float)0.5);
@@ -208,25 +211,26 @@ public class LibraryActivity extends AppCompatActivity {
 
             if (!creationDate.isEmpty()) {
                 if (!creationDate.contains("/")) {
-                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
+                    creationDateEditText.setBackgroundResource(R.drawable.edit_text_error);
                     Toast.makeText(this, "Please use '/' symbol", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                List<String> dayComponents = Arrays.asList(creationDate.split("/"));
-                if(dayComponents.get(1).length() < 2) {
-                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
-                    Toast.makeText(this, "Please re-format the month with 2 digits", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 try {
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     formatter.setLenient(false);
                     Date date = formatter.parse(creationDate);
                 }
                 catch (ParseException e) {
-                    creationDateEditText.setBackgroundResource(R.drawable.error_edit_text);
+                    creationDateEditText.setBackgroundResource(R.drawable.edit_text_error);
                     Toast.makeText(this, "Invalid creation date format", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                List<String> dayComponents = Arrays.asList(creationDate.split("/"));
+                if(dayComponents.get(1).length() < 2) {
+                    creationDateEditText.setBackgroundResource(R.drawable.edit_text_error);
+                    Toast.makeText(this, "Please re-format the month with 2 digits", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -263,20 +267,20 @@ public class LibraryActivity extends AppCompatActivity {
         imageTagAutoCompleteTextView.setAdapter(imageTagAdapter);
         imageTagAutoCompleteTextView.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus && imageTagAutoCompleteTextView.getText().toString().isEmpty())
-                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
-            else view.setBackgroundResource(R.drawable.active_edit_text);
+                view.setBackgroundResource(R.drawable.edit_text_lost_focus);
+            else view.setBackgroundResource(R.drawable.edit_text_active);
         });
 
         descriptionEditText.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus && descriptionEditText.getText().toString().isEmpty())
-                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
-            else view.setBackgroundResource(R.drawable.active_edit_text);
+                view.setBackgroundResource(R.drawable.edit_text_lost_focus);
+            else view.setBackgroundResource(R.drawable.edit_text_active);
         });
 
         creationDateEditText.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus && creationDateEditText.getText().toString().isEmpty())
-                view.setBackgroundResource(R.drawable.lost_focus_edit_text);
-            else view.setBackgroundResource(R.drawable.active_edit_text);
+                view.setBackgroundResource(R.drawable.edit_text_lost_focus);
+            else view.setBackgroundResource(R.drawable.edit_text_active);
         });
 
         ArrayAdapter locationAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, locations);
@@ -285,8 +289,8 @@ public class LibraryActivity extends AppCompatActivity {
         locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int chosenIndex, long l) {
-                if (chosenIndex == 0) selectedLocationTextView.setBackgroundResource(R.drawable.lost_focus_edit_text);
-                else selectedLocationTextView.setBackgroundResource((R.drawable.active_edit_text));
+                if (chosenIndex == 0) selectedLocationTextView.setBackgroundResource(R.drawable.edit_text_lost_focus);
+                else selectedLocationTextView.setBackgroundResource((R.drawable.edit_text_active));
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
@@ -553,5 +557,52 @@ public class LibraryActivity extends AppCompatActivity {
             return -result;
         }
         return result;
+    }
+
+    public static void openBottomMenu(Image image) {
+        bottomMenu.setVisibility(View.VISIBLE);
+        selectedImages.add(image);
+    }
+    public RecyclerView getRecyclerViewOfImageLibrary() {
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+        LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
+        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
+        return libraryRecyclerView;
+    }
+    public void removeBottomMenu(View v) {
+        // FOR UI
+        bottomMenu.setVisibility(View.GONE);
+        RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecyclerView.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) libraryRecyclerView.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.clearColorFilter();
+        }
+        // FOR LOGIC CODE
+        selectedImages.clear();
+    }
+
+    public void selectAllImages(View v) {
+        // FOR UI
+        RecyclerView libraryRecycleView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecycleView.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) libraryRecycleView.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.chosen_image));
+        }
+        // FOR LOGIC CODE
+        selectedImages = new ArrayList<>(imgList);
+    }
+
+    public void showMoreOptions(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.getMenuInflater().inflate(R.menu.image_selection_more_options, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            Toast.makeText(getApplicationContext(), menuItem.getTitle().toString(), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+        popupMenu.show();
     }
 }
