@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -126,11 +126,104 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-
         </LinearLayout>
-
 
     </LinearLayout>
 
-</ScrollView>
+    <RelativeLayout
+        android:id="@+id/layout_bottom_menu_for_selecting_images"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bottom_menu"
+        android:visibility="gone"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="15dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerInParent="true">
+
+                    <Button
+                        android:id="@+id/library_cancel_button"
+                        android:layout_width="wrap_content"
+                        android:width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:background="@drawable/button_border_cancel"
+                        android:layout_marginRight="20dp"
+                        android:textColor="@color/confirmation"
+                        android:textStyle="bold"
+                        android:onClick="removeBottomMenuAndAllImages"/>
+
+                    <Button
+                        android:id="@+id/library_select_all_button"
+                        android:layout_width="wrap_content"
+                        android:width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="Select all"
+                        android:background="@drawable/button_border_confirm"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:onClick="selectAllImages" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/icon_add_to_album"
+                    android:text="Add to album"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="15dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/icon_share_images"
+                    android:text="Share"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="15dp"
+                    android:onClick="shareImages"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/icon_delete_images"
+                    android:text="Delete"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="15dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/icon_more"
+                    android:text="More"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="15dp"
+                    android:onClick="showMoreOptions"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
