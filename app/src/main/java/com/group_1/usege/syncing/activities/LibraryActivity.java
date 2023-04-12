@@ -302,6 +302,8 @@ public class LibraryActivity extends AppCompatActivity {
         if (displayView.equals("card")) {
             imgViewList.setAlpha(0.5F);
             imgViewCard.setAlpha(1F);
+            imgViewList.setEnabled(true);
+            imgViewCard.setEnabled(false);
             if (firstAccess == true) {
                 firstAccess = false;
 
@@ -320,9 +322,10 @@ public class LibraryActivity extends AppCompatActivity {
         else if (displayView.equals("list")) {
             imgViewList.setAlpha(1F);
             imgViewCard.setAlpha(0.5F);
+            imgViewList.setEnabled(false);
+            imgViewCard.setEnabled(true);
             if (firstAccess == true) {
                 firstAccess = false;
-
                 ft = getSupportFragmentManager().beginTransaction();
                 imageListFragment = ImageListFragment.newInstance(clonedImgList);
                 ft.replace(R.id.layout_display_images, imageListFragment).commit();

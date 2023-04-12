@@ -24,7 +24,13 @@
         <activity
             android:name=".syncing.activities.LibraryActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".account.activities.ConfirmResetPassword"
             android:exported="true"
@@ -46,11 +52,7 @@
             android:name=".authen.activities.LoginActivity"
             android:exported="true"
             android:label="@string/login">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.group_1.usege.R;
-import com.group_1.usege.layout.adapter.RecycleAdapter;
+import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.modle.Image;
 
 import java.io.Serializable;
@@ -24,10 +24,14 @@ public class ImageListFragment extends Fragment {
     TextView totalImage;
 
     public RecyclerView rcvPhoto;
-
-    public RecycleAdapter recycleAdapter;
+    public ListAdapter listAdapter;
     private List<Image> lstImage;
     private Context context = null;
+
+    private Boolean isLoading;
+    private Boolean isLastPage;
+    private int totalPage = 2;
+    private int currentPage = 1;
     public ImageListFragment() {
         // Required empty public constructor
     }
@@ -64,11 +68,15 @@ public class ImageListFragment extends Fragment {
 
         rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
 
-        recycleAdapter = new RecycleAdapter(lstImage, context, "list");
+        listAdapter = new ListAdapter(lstImage, context);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rcvPhoto.setLayoutManager(linearLayoutManager);
-        rcvPhoto.setAdapter(recycleAdapter);
+        rcvPhoto.setAdapter(listAdapter);
 
         return layoutImageList;
+    }
+
+    public void setFirstData() {
+        
     }
 }

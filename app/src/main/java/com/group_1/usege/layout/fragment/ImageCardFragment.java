@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.layout.adapter.CardAdapter;
 import com.group_1.usege.modle.Image;
-import com.group_1.usege.layout.adapter.RecycleAdapter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,8 +25,7 @@ public class ImageCardFragment  extends Fragment {
     TextView totalImage;
 
     public RecyclerView rcvPhoto;
-
-    public RecycleAdapter recycleAdapter;
+    public CardAdapter cardAdapter;
     private List<Image> lstImage;
     private Context context = null;
     public ImageCardFragment() {
@@ -65,10 +64,10 @@ public class ImageCardFragment  extends Fragment {
 
         rcvPhoto = layoutImageCard.findViewById(R.id.rcv_photo);
 
-        recycleAdapter = new RecycleAdapter(lstImage, context, "card");
+        cardAdapter = new CardAdapter(lstImage, context);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
         rcvPhoto.setLayoutManager(gridLayoutManager);
-        rcvPhoto.setAdapter(recycleAdapter);
+        rcvPhoto.setAdapter(cardAdapter);
 
         return layoutImageCard;
     }
