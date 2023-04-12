@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
+import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
 
 import java.util.List;
@@ -24,6 +25,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private List<Image> lstImage;
     private Context context;
     private IClickItemImageListener iClickItemImageListener;
+    private String albumMode = Album.album_mode_default;
+
+    public ListAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener, String albumMode) {
+        this.lstImage = lstImage;
+        this.context = context;
+        this.iClickItemImageListener = listener;
+        this.albumMode = albumMode;
+    }
 
     public ListAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener) {
         this.lstImage = lstImage;
@@ -44,7 +53,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ListAdapter.ViewHolder holder, int position) {
-
         final int finalPosition = position;
         // Load ảnh ra layout
         Image image = lstImage.get(finalPosition);
@@ -71,6 +79,23 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 return false;
             }
         });
+
+        switch (albumMode) {
+            case Album.album_mode_default:
+//                    holder.description.setText("... days");
+//                holder.imgViewMore.setVisibility(View.VISIBLE);
+                break;
+            case Album.album_mode_trash:
+                holder.description.setText("... days");
+//                holder.imgViewMore.setVisibility(View.GONE);
+                break;
+            case Album.album_mode_favorite:
+//                    holder.description.setText("... days");
+//                holder.imgViewMore.setVisibility(View.VISIBLE);
+                break;
+            default:
+//                holder.imgViewMore.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -84,14 +109,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout layoutItemList;
-        ImageView imgView;
+        ImageView imgView, imgViewMore;
         TextView description;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imgView = itemView.findViewById(R.id.image_view_photo);
             description = itemView.findViewById(R.id.text_view_description);
             layoutItemList = itemView.findViewById(R.id.layout_item_list);
+//            imgViewMore = itemView.findViewById(R.id.image_view_more);
         }
     }
 

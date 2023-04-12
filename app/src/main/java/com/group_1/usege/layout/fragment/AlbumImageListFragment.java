@@ -109,7 +109,7 @@ public class AlbumImageListFragment extends Fragment {
                 public void onClickItemImage(Image image, int position) {
                     onClickGoToDetails(image, position);
                 }
-            });
+            }, albumMode);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             rcvPhoto.setLayoutManager(linearLayoutManager);
             rcvPhoto.setAdapter(listAdapter);
@@ -120,7 +120,7 @@ public class AlbumImageListFragment extends Fragment {
                 public void onClickItemImage(Image image, int position) {
                     onClickGoToDetails(image, position);
                 }
-            });
+            }, albumMode);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
             rcvPhoto.setLayoutManager(gridLayoutManager);
             rcvPhoto.setAdapter(cardAdapter);
