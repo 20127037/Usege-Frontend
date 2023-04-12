@@ -196,6 +196,7 @@ public class LibraryActivity extends AppCompatActivity {
     private Album destinationAlbum;
 
     public void addToAlbum(View v) { // call in XML file
+//        System.out.println("select size" + selectedImages.size());
         bottomMenu.setVisibility(View.GONE);
         //  -------------------------
         Button btnConfirm;
@@ -236,9 +237,10 @@ public class LibraryActivity extends AppCompatActivity {
         });
 
         btnConfirm.setOnClickListener(event -> {
-            destinationAlbum.getAlbumImages().addAll(selectedImages);
+            destinationAlbum.getAlbumImages().addAll(new ArrayList<Image>(selectedImages));
             // Đóng bottommsheet
             chooseAlbumBottomSheetDialog.dismiss();
+            selectedImages.clear();
         });
     }
 
@@ -292,6 +294,7 @@ public class LibraryActivity extends AppCompatActivity {
             destinationAlbum.getAlbumImages().addAll(selectedImages);
             System.out.println( String.format("after: %d", destinationAlbum.getAlbumImages().size()));
             Toast.makeText(this, "move image success!", Toast.LENGTH_SHORT).show();
+            selectedImages.clear();
             clickOpenAlbumImageList(fromAlbum);
             // Đóng bottommsheet
             chooseAlbumBottomSheetDialog.dismiss();
@@ -415,7 +418,9 @@ public class LibraryActivity extends AppCompatActivity {
             String title = String.valueOf(titleEditText.getText());
             String password = String.valueOf(passwordEditText.getText());
 
-            albumList.add(new Album(title, selectedImages));
+            albumList.add(new Album(title, new ArrayList<Image>(selectedImages)));
+//            System.out.println("select add size " + selectedImages.size());
+            selectedImages.clear();
 
             Toast.makeText(this, "Created album success!", Toast.LENGTH_SHORT).show();
 
