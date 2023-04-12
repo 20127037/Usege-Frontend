@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.RecycleAdapter;
-import com.group_1.usege.modle.Image;
+import com.group_1.usege.model.Image;
 
 import java.io.Serializable;
 import java.util.List;

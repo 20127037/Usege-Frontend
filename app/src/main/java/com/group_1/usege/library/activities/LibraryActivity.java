@@ -1,4 +1,4 @@
-package com.group_1.usege.syncing.activities;
+package com.group_1.usege.library.activities;
 
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
@@ -42,22 +41,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
-
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
 import com.group_1.usege.layout.fragment.AlbumImageListFragment;
 import com.group_1.usege.layout.fragment.AlbumListFragment;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
-
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.syncing.fragment.EmptyAlbumFragment;
-import com.group_1.usege.syncing.fragment.EmptyAlbumImageFragment;
-import com.group_1.usege.syncing.fragment.EmptyFragment;
-
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.fragment.EmptyFragment;
+import com.group_1.usege.library.fragment.EmptyAlbumFragment;
+import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
+import com.group_1.usege.library.fragment.EmptyFragment;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.model.Image;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,7 +146,7 @@ public class LibraryActivity extends AppCompatActivity {
             mode = "album";
             clickOpenAlbumList();
         });
-        imgViewUpload.setOnClickListener(v -> clickOpenSetUpSyncingBottomSheetDialog());
+        imgViewUpload.setOnClickListener(v -> clickOpenSetUplibraryBottomSheetDialog());
 
         imgViewCard.setOnClickListener(v -> {
             displayView = "card";
@@ -481,7 +476,7 @@ public class LibraryActivity extends AppCompatActivity {
     }
     //    End Album handler
 
-    public void clickOpenSetUpSyncingBottomSheetDialog() {
+    public void clickOpenSetUplibraryBottomSheetDialog() {
         Button btnConfirm;
         ImageView imageViewBackward;
 
@@ -490,16 +485,16 @@ public class LibraryActivity extends AppCompatActivity {
         // Yêu cầu quyền truy cập
         requestPermission();
 
-        final BottomSheetDialog setUpSyncingBottomSheetDialog = new BottomSheetDialog(this);
-        setUpSyncingBottomSheetDialog.setContentView(viewDialog);
-        setUpSyncingBottomSheetDialog.show();
+        final BottomSheetDialog setUplibraryBottomSheetDialog = new BottomSheetDialog(this);
+        setUplibraryBottomSheetDialog.setContentView(viewDialog);
+        setUplibraryBottomSheetDialog.show();
 
         btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
         imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
         imageViewBackward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setUpSyncingBottomSheetDialog.dismiss();
+                setUplibraryBottomSheetDialog.dismiss();
             }
         });
 
@@ -512,7 +507,7 @@ public class LibraryActivity extends AppCompatActivity {
             pickImageLauncher.launch(Intent.createChooser(intent, "Select Picture"));
 
             // Đóng bottommsheet
-            setUpSyncingBottomSheetDialog.dismiss();
+            setUplibraryBottomSheetDialog.dismiss();
         });
     }
 

@@ -17,12 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.RecycleAdapter;
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.model.Album;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class AlbumImageListFragment extends Fragment  {
     TextView totalImage;
