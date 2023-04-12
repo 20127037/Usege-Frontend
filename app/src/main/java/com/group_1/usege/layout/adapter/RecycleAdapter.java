@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -80,13 +81,24 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 Activity activity = (Activity) context;
                 if (activity instanceof LibraryActivity) {
                     LibraryActivity libActivity = (LibraryActivity) activity;
-                    libActivity.openBottomMenu(image);
-                    v.setAlpha((float) 0.5);
+                    // FOR UI
+                    ImageView imageView = (ImageView)v;
+                    imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+                    // FOR LOGIC
+                    LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
                 }
             }
-//            LibraryActivity.openBottomMenu(image);
-//            v.setAlpha((float) 0.5);
             return true;
+        });
+
+        holder.imgView.setOnClickListener(v -> {
+            ImageView imageView = (ImageView)v;
+            if (imageView.getColorFilter() != null) {
+                // FOR UI
+                imageView.clearColorFilter();
+                // FOR LOGIC
+                LibraryActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+            }
         });
 
         if (displayView.equals("list")) {
@@ -105,6 +117,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
+        View overlayImage;
         TextView description;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -53,6 +53,7 @@ import com.group_1.usege.modle.Album;
 import com.group_1.usege.syncing.fragment.EmptyAlbumFragment;
 import com.group_1.usege.syncing.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.syncing.fragment.EmptyFragment;
+
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.modle.Image;
@@ -125,6 +126,7 @@ public class LibraryActivity extends AppCompatActivity {
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
         filterButton = findViewById(R.id.image_view_search);
+
         albumButton = findViewById(R.id.btn_album);
         fileButton = findViewById(R.id.btn_file);
         bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
@@ -965,7 +967,7 @@ public class LibraryActivity extends AppCompatActivity {
         return result;
     }
 
-    public void openBottomMenu(Image image) {
+    public void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
         switch (mode) {
             case imageInAlbumMode:
                 System.out.println("mode to album!");
@@ -983,19 +985,43 @@ public class LibraryActivity extends AppCompatActivity {
 
     public void removeBottomMenu(View v) {
         bottomMenu.setVisibility(View.GONE);
+    }
+    
+    public void removeSingleImageAndRemoveBottomMenuIfNoImageLeft(Image image) {
+        selectedImages.remove(image);
+        if (selectedImages.size() < 1) bottomMenu.setVisibility(View.GONE);
+    }
+    public RecyclerView getRecyclerViewOfImageLibrary() {
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+        LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
+        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
+        return libraryRecyclerView;
+    }
+
+    public void removeBottomMenuAndAllImages(View v) {
+        // FOR UI
+        bottomMenu.setVisibility(View.GONE);
+        RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecyclerView.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) libraryRecyclerView.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.clearColorFilter();
+        }
+        // FOR LOGIC CODE
         selectedImages.clear();
     }
 
     public void selectAllImages(View v) {
-        imageDisplayLayout = findViewById(R.id.layout_display_images);
-        LinearLayout test = (LinearLayout) imageDisplayLayout.getChildAt(0);
-        RecyclerView test1 = (RecyclerView) test.getChildAt(0);
-        int c = test1.getChildCount();
+        // FOR UI
+        RecyclerView libraryRecycleView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecycleView.getChildCount();
         for (int i = 0; i < c; ++i) {
-            CardView cardView = (CardView) test1.getChildAt(i);
+            CardView cardView = (CardView) libraryRecycleView.getChildAt(i);
             ImageView imageView = (ImageView) cardView.getChildAt(0);
-            imageView.setAlpha((float) 0.5);
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.chosen_image));
         }
+        // FOR LOGIC CODE
         selectedImages = new ArrayList<>(imgList);
     }
 
@@ -1009,5 +1035,16 @@ public class LibraryActivity extends AppCompatActivity {
         popupMenu.show();
     }
 
+    public void shareImages(View v) {
+        ArrayList<Uri> imageUris = new ArrayList<>();
+        selectedImages.forEach((image) -> {
+            imageUris.add(image.getUri());
+        });
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, imageUris);
+        shareIntent.setType("image/*");
+        startActivity(Intent.createChooser(shareIntent, null));
+    }
 
 }

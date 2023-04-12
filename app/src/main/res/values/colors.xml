@@ -85,4 +85,5 @@
     <color name="important">#AF4C3B</color>
     <color name="caution">#AF4C3B</color>
     <color name="heading">#404040</color>
+    <color name="chosen_image">#4F000000</color>
 </resources>

@@ -1,44 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".authentication.activities.LoginActivity">
+    tools:context=".account.activities.CreateAccountActivity">
+
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/seed">
+        style="@style/Usege.Bar.TitleBar"
+        android:id="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.1"
+        app:title="@string/login" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/title_activity_login"
-            android:textColor="@color/white"
-            android:textSize="30sp" />
-    </com.google.android.material.appbar.MaterialToolbar>
+    <ImageView
+        style="@style/Usege.Image.CenteredWrapImage"
+        android:src="@drawable/scr_login"
+        android:id="@+id/screen_img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.3"
+        />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.4"
+        android:layout_marginHorizontal="@dimen/primary_margin_large"
+        android:id="@+id/inputSectionLayout"
+        app:layout_constraintTop_toBottomOf="@id/screen_img"
+        android:gravity="center"
         android:orientation="vertical">
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title_email"
-            android:textColor="@color/black"
-            android:textSize="30sp" />
-        <com.google.android.material.textfield.TextInputEditText
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/frag_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textColor="@color/gray"
-            android:drawableStart="@drawable/ic_launcher_background"
-            android:textSize="30sp" />
+            android:name="com.group_1.usege.utilities.view.EditTextFragment"
+            android:text="@string/email"
+            android:drawableLeft="@drawable/ic_email"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/frag_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.group_1.usege.utilities.view.EditTextFragment"
+            android:text="@string/password"
+            android:drawableLeft="@drawable/ic_password_key"
+            android:inputType="textPassword"/>
+
+        <Button
+            android:id="@+id/btn_submit"
+            style="@style/Widget.Material3.Button.Icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/submit" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.2"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/inputSectionLayout"
+        app:layout_constraintTop_toBottomOf="@id/inputSectionLayout">
+        <Button
+            android:id="@+id/btn_forget_password"
+            style="@style/Usege.Button.NormalTextButton"
+            android:text="@string/forget_password"
+            android:paddingStart="0dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Usege.Text.LabelTextView"
+                android:text="@string/do_not_have_account" />
+
+            <Button
+                android:id="@+id/btn_sign_up"
+                style="@style/Usege.Button.NormalTextButton"
+                android:text="@string/sign_up" />
+        </LinearLayout>
     </LinearLayout>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
