@@ -25,25 +25,23 @@
             android:exported="false" />
         <activity
             android:name=".syncing.activities.LibraryActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:exported="true"/>
         <activity
             android:name=".account.activities.ConfirmResetPassword"
             android:exported="true"
-            android:label="@string/confirm_reset_password"
-            />
+            android:label="@string/confirm_reset_password"/>
         <activity
             android:name=".account.activities.ConfirmAccountActivity"
             android:exported="true"
-            android:label="@string/confirm_account" />
+            android:label="@string/confirm_account"/>
         <activity
             android:name=".account.activities.ResetPasswordActivity"
             android:exported="true"
-            android:label="@string/reset_password" />
+            android:label="@string/reset_password"/>
         <activity
             android:name=".account.activities.CreateAccountActivity"
             android:exported="true"
-            android:label="@string/create_account" />
+            android:label="@string/create_account"/>
         <activity
             android:name=".authen.activities.LoginActivity"
             android:exported="true"
