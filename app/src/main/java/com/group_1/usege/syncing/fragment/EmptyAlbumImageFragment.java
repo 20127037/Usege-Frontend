@@ -45,11 +45,14 @@ public class EmptyAlbumImageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layout_empty = inflater.inflate(R.layout.fragment_empty, null);
+        LinearLayout layout_empty = (LinearLayout) inflater.inflate(R.layout.fragment_empty, null);
 
         textViewSync = layout_empty.findViewById(R.id.text_view_sync);
 
         textViewSync.setText("Let's add some image to Album!");
+
+
+        textViewSync.setVisibility(View.GONE);
 
         textViewSync.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +65,6 @@ public class EmptyAlbumImageFragment extends Fragment {
     }
 
     public void openBottomSheetDialog() {
-        libraryActivity.clickAddImageToAlbum();
+//        libraryActivity.clickAddImageToAlbum();
     }
 }

@@ -32,6 +32,9 @@
             android:name=".ContextMenuForImageCardActivity"
             android:exported="false" />
         <activity
+            android:name=".ContextMenuForImageCardActivity"
+            android:exported="false" />
+        <activity
             android:name=".syncing.activities.LibraryActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">

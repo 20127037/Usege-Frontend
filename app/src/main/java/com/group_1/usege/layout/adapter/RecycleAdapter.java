@@ -18,9 +18,7 @@ import com.group_1.usege.modle.Image;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
-
 import android.app.Activity;
-
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
     private List<Image> lstImage;
     private Context context;
@@ -79,11 +77,17 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 .into(holder.imgView);
 
         holder.imgView.setOnLongClickListener(v -> {
-            // FOR UI
-            ImageView imageView = (ImageView)v;
-            imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
-            // FOR LOGIC
-            LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    // FOR UI
+                    ImageView imageView = (ImageView)v;
+                    imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+                    // FOR LOGIC
+                    LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+                }
+            }
             return true;
         });
 

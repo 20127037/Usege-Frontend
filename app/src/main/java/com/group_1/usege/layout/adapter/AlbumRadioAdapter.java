@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -26,10 +27,12 @@ public class AlbumRadioAdapter extends RecyclerView.Adapter<AlbumRadioAdapter.Vi
     private static RadioButton lastChecked = null;
 
     private static int lastCheckPosition = -1;
+    Button btnConFirm;
 
-    public AlbumRadioAdapter(List<Album> lstAlbum, Context context) {
+    public AlbumRadioAdapter(List<Album> lstAlbum, Button btnConFirm, Context context) {
         this.lstAlbum = lstAlbum;
         this.context = context;
+        this.btnConFirm = btnConFirm;
     }
 
     @NonNull
@@ -71,9 +74,10 @@ public class AlbumRadioAdapter extends RecyclerView.Adapter<AlbumRadioAdapter.Vi
 //                        ((LibraryActivity)context).showCreateAlbumBottomSheet();
                     Activity activity = (Activity) context;
                     if (activity instanceof LibraryActivity) {
-                        System.out.println(2);
                         LibraryActivity libActivity = (LibraryActivity) activity;
                         libActivity.setDestinationAlbum(lstAlbum.get(position));
+                        btnConFirm.setEnabled(true);
+                        btnConFirm.setAlpha(1);
                     }
                 }
             }
