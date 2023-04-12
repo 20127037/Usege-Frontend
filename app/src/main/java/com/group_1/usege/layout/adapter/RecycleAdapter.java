@@ -85,7 +85,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                     ImageView imageView = (ImageView)v;
                     imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
                     // FOR LOGIC
-                    LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+                    //LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
                 }
             }
             return true;
@@ -97,7 +97,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                 // FOR UI
                 imageView.clearColorFilter();
                 // FOR LOGIC
-                LibraryActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+                //LibraryActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
             }
         });
 
@@ -119,7 +119,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         ImageView imgView;
         View overlayImage;
         TextView description;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             if (displayView.equals("card")) {
