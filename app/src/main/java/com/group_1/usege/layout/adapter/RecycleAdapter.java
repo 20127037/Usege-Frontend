@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
+import com.group_1.usege.modle.Album;
 import com.group_1.usege.modle.Image;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 
@@ -23,6 +24,15 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     private List<Image> lstImage;
     private Context context;
     private String displayView = "";
+
+    private String albumMode = Album.album_mode_default;
+
+    public RecycleAdapter(List<Image> lstImage, Context context, String displayView, String albumMode) {
+        this.lstImage = lstImage;
+        this.context = context;
+        this.displayView = displayView;
+        this.albumMode = albumMode;
+    }
 
     public RecycleAdapter(List<Image> lstImage, Context context, String displayView) {
         this.lstImage = lstImage;
@@ -109,10 +119,36 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
             }
 
         });
-
+        if (displayView.equals("card")) {
+            switch (albumMode) {
+                case Album.album_mode_default:
+                    holder.photoText.setVisibility(View.GONE);
+                    break;
+                case Album.album_mode_trash:
+                    holder.photoText.setVisibility(View.VISIBLE);
+                    break;
+                case Album.album_mode_favorite:
+                    holder.photoText.setVisibility(View.GONE);
+                    break;
+            }
+        }
         if (displayView.equals("list")) {
             String newDescription = setUpDescription(image.getDescription());
             holder.description.setText(newDescription);
+            switch (albumMode) {
+                case Album.album_mode_default:
+//                    holder.description.setText("... days");
+                    holder.imgViewMore.setVisibility(View.GONE);
+                    break;
+                case Album.album_mode_trash:
+                    holder.description.setText("... days");
+                    holder.imgViewMore.setVisibility(View.GONE);
+                    break;
+                case Album.album_mode_favorite:
+//                    holder.description.setText("... days");
+                    holder.imgViewMore.setVisibility(View.GONE);
+                    break;
+            }
         }
     }
 
@@ -125,17 +161,20 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgView;
+        ImageView imgView, imgViewMore;
         View overlayImage;
         TextView description;
+        TextView photoText;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             if (displayView.equals("card")) {
                 imgView = itemView.findViewById(R.id.image_view_photo);
+                photoText = itemView.findViewById(R.id.text_view_photo_text);
             }
             else {
                 imgView = itemView.findViewById(R.id.image_view_thumbnail);
                 description = itemView.findViewById(R.id.text_view_description);
+                imgViewMore = itemView.findViewById(R.id.image_view_more);
             }
 
         }

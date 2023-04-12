@@ -31,6 +31,7 @@ public class AlbumImageListFragment extends Fragment  {
 
     public RecycleAdapter recycleAdapter;
     private Album album;
+    private String albumMode = Album.album_mode_default;
     private String mode;
     private Context context = null;
     public AlbumImageListFragment() {
@@ -52,6 +53,9 @@ public class AlbumImageListFragment extends Fragment  {
 
         if (getArguments() != null) {
             album = (Album) getArguments().getSerializable("album");
+            if(album.getName() == "trash") {
+                albumMode = Album.album_mode_trash;
+            }
             mode = (String) getArguments().getSerializable("album_mode");
         }
 
@@ -74,7 +78,12 @@ public class AlbumImageListFragment extends Fragment  {
         LinearLayout layoutListTitle= layoutImageList.findViewById(R.id.layout_list_title);
         TextView albumName = layoutImageList.findViewById(R.id.text_view_album_name);
         TextView albumSubtitle = layoutImageList.findViewById(R.id.text_view_album_sub_title);
+        TextView headerRight = layoutImageList.findViewById(R.id.layout_header_right);
         ImageView backImageView = layoutImageList.findViewById(R.id.image_view_backward);
+
+        if(albumMode == Album.album_mode_trash) {
+            headerRight.setText("Left time");
+        }
 
         albumName.setText(album.getName());
         albumSubtitle.setText(String.format("%d images", album.getAlbumImages().size()));
@@ -89,7 +98,8 @@ public class AlbumImageListFragment extends Fragment  {
             }
         });
 
-        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode);
+        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode, albumMode);
+
         if(mode == "list") {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             rcvPhoto.setLayoutManager(linearLayoutManager);

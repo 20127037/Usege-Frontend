@@ -242,6 +242,7 @@ public class LibraryActivity extends AppCompatActivity {
             destinationAlbum.getAlbumImages().addAll(new ArrayList<Image>(selectedImages));
             // Đóng bottommsheet
             chooseAlbumBottomSheetDialog.dismiss();
+            Toast.makeText(this, "Add image success", Toast.LENGTH_SHORT).show();
             selectedImages.clear();
         });
     }

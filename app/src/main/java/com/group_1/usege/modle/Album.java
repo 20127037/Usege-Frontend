@@ -41,4 +41,8 @@ public class Album implements Serializable {
     public void setAlbumImages(List<Image> albumImages) {
         this.albumImages = albumImages;
     }
+
+    public static final String album_mode_favorite = "album_favorite";
+    public static final String album_mode_trash = "album_trash";
+    public static final String album_mode_default = "album_default";
 }
