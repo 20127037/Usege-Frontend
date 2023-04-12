@@ -10,6 +10,14 @@
     <string name="confirm_reset_password"><b>Confirm account</b></string>
     <string name="resend"><b>Resend</b></string>
     <string name="create_account"><b>Create an account</b></string>
+    <string name="label_statistic"><b>Statistic</b></string>
+    <string name="label_plan"><b>Plan</b></string>
+    <string name="label_used_space"><b>Used space:</b></string>
+    <string name="label_current_plan"><b>Your current plan:</b></string>
+    <string name="label_list_of_plans">List of plans:</string>
+    <string name="label_images">Images:</string>
+    <string name="label_albums">Albums:</string>
+    <string name="label_image_sharing_history">Image sharing history</string>
     <string name="email"><b>Email</b></string>
     <string name="empty" />
     <string name="input_6_digits_below"><b>Please input a 6-digit code below</b></string>
