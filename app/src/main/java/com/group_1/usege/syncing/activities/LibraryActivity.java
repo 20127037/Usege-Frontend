@@ -943,31 +943,6 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         selectedImages.clear();
     }
 
-    public void selectAllImages(View v) {
-        imageDisplayLayout = findViewById(R.id.layout_display_images);
-        LinearLayout test = (LinearLayout) imageDisplayLayout.getChildAt(0);
-        RecyclerView test1 = (RecyclerView) test.getChildAt(0);
-        int c = test1.getChildCount();
-        for (int i = 0; i < c; ++i) {
-            CardView cardView = (CardView) test1.getChildAt(i);
-            ImageView imageView = (ImageView) cardView.getChildAt(0);
-            imageView.setAlpha((float) 0.5);
-        }
-        selectedImages = new ArrayList<>(imgList);
-    }
-
-    public void showMoreOptions(View v) {
-        PopupMenu popupMenu = new PopupMenu(this, v);
-        popupMenu.getMenuInflater().inflate(R.menu.image_selection_more_options, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(menuItem -> {
-            Toast.makeText(getApplicationContext(), menuItem.getTitle().toString(), Toast.LENGTH_SHORT).show();
-            return true;
-        });
-        popupMenu.show();
-    }
-
-
-
     public static void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
         bottomMenu.setVisibility(View.VISIBLE);
         selectedImages.add(image);
