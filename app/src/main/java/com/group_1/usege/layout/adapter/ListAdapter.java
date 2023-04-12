@@ -10,14 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.group_1.usege.GlideAppModule;
 import com.group_1.usege.R;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.modle.Image;
+import com.group_1.usege.model.Image;
 
 import java.util.List;
 

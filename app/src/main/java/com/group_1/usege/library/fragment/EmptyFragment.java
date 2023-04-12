@@ -1,4 +1,4 @@
-package com.group_1.usege.syncing.fragment;
+package com.group_1.usege.library.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,8 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.group_1.usege.R;
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.io.Serializable;
 
@@ -112,6 +112,6 @@ public class EmptyFragment extends Fragment {
     }
 
     public void openBottomSheetDialog() {
-        libraryActivity.clickOpenSetUpSyncingBottomSheetDialog();
+        libraryActivity.clickOpenSetUplibraryBottomSheetDialog();
     }
 }

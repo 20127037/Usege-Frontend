@@ -1,4 +1,4 @@
-package com.group_1.usege.syncing.fragment;
+package com.group_1.usege.library.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.group_1.usege.R;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 public class EmptyAlbumImageFragment extends Fragment {
 

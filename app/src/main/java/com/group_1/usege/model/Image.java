@@ -1,4 +1,4 @@
-package com.group_1.usege.modle;
+package com.group_1.usege.model;
 
 import android.net.Uri;
 import android.os.Parcel;
@@ -6,7 +6,6 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

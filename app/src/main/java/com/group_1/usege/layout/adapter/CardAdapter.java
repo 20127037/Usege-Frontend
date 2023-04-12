@@ -19,9 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.group_1.usege.GlideAppModule;
 import com.group_1.usege.R;
+import com.group_1.usege.model.Image;
+import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
 

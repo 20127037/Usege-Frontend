@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.group_1.usege.R;
+import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.io.Serializable;
 import java.util.List;

@@ -3,12 +3,10 @@ package com.group_1.usege.api.apiservice;
 import android.content.Context;
 import android.util.Log;
 
-
-import com.google.gson.Gson;
 import com.group_1.usege.api.googlemaps.AddressComponent;
 import com.group_1.usege.api.googlemaps.GeocodeResponse;
 import com.group_1.usege.api.googlemaps.Result;
-import com.group_1.usege.modle.Image;
+import com.group_1.usege.model.Image;
 
 import retrofit2.Call;
 import retrofit2.Callback;

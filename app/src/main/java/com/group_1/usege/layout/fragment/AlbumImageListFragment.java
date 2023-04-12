@@ -17,12 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.CardAdapter;
 import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.io.Serializable;
 
@@ -60,7 +61,8 @@ public class AlbumImageListFragment extends Fragment {
 
         try {
             context = getActivity();
-        } catch (IllegalStateException e) {
+        }
+        catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
     }

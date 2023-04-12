@@ -14,7 +14,7 @@ import com.group_1.usege.account.dto.CreateAccountRequestDto;
 import com.group_1.usege.authen.model.CacheToken;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;

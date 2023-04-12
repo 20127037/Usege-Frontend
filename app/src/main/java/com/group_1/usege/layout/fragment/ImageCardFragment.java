@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.group_1.usege.R;
+import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.CardAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.io.Serializable;
 import java.util.List;
