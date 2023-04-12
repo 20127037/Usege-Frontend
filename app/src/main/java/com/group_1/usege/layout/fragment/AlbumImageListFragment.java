@@ -3,6 +3,7 @@ package com.group_1.usege.layout.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,7 @@ public class AlbumImageListFragment extends Fragment {
     public static AlbumImageListFragment newInstance(Album album, String mode) {
         AlbumImageListFragment fragment = new AlbumImageListFragment();
         Bundle args = new Bundle();
-        args.putSerializable("album", (Serializable) album);
+        args.putParcelable("album", (Parcelable) album);
         args.putSerializable("album_mode", (Serializable) mode);
         fragment.setArguments(args);
         return fragment;
@@ -53,7 +54,7 @@ public class AlbumImageListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            album = (Album) getArguments().getSerializable("album");
+            album = (Album) getArguments().getParcelable("album");
             mode = (String) getArguments().getSerializable("album_mode");
         }
 
