@@ -6,9 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".library.activities.LibraryActivity">
     <LinearLayout
+        android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true">
 
         <RelativeLayout
             android:id="@+id/title_bar"
@@ -122,15 +124,31 @@
                 android:src="@drawable/baseline_search" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_display_images"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_display_images"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/layout_title">
+
 
     </LinearLayout>
 
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_below="@+id/layout_title">-->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/layout_display_images"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+
+
+<!--        </LinearLayout>-->
+<!--    </ScrollView>-->
     <RelativeLayout
         android:id="@+id/layout_bottom_menu_for_selecting_images"
         android:layout_width="match_parent"
