@@ -1,5 +1,6 @@
 package com.group_1.usege.layout.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -18,7 +19,6 @@ import com.group_1.usege.modle.Image;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 
 import java.util.List;
-import android.app.Activity;
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
     private List<Image> lstImage;
     private Context context;
@@ -85,19 +85,25 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                     ImageView imageView = (ImageView)v;
                     imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
                     // FOR LOGIC
-                    LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+                    libActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
                 }
             }
             return true;
         });
 
         holder.imgView.setOnClickListener(v -> {
-            ImageView imageView = (ImageView)v;
-            if (imageView.getColorFilter() != null) {
-                // FOR UI
-                imageView.clearColorFilter();
-                // FOR LOGIC
-                LibraryActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    ImageView imageView = (ImageView) v;
+                    if (imageView.getColorFilter() != null) {
+                        // FOR UI
+                        imageView.clearColorFilter();
+                        // FOR LOGIC
+                        libActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+                    }
+                }
             }
         });
 
