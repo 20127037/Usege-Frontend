@@ -16,20 +16,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
-import com.group_1.usege.layout.adapter.RecycleAdapter;
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.model.Image;
+import com.group_1.usege.layout.adapter.CardAdapter;
+import com.group_1.usege.layout.adapter.ListAdapter;
+import com.group_1.usege.manipulation.impl.IClickItemImageListener;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class AlbumImageListFragment extends Fragment  {
-    TextView totalImage;
+public class AlbumImageListFragment extends Fragment {
+    LibraryActivity libraryActivity;
 
     public RecyclerView rcvPhoto;
-
-    public RecycleAdapter recycleAdapter;
+    public CardAdapter cardAdapter;
+    public ListAdapter listAdapter;
     private Album album;
     private String albumMode = Album.album_mode_default;
     private String mode;
@@ -75,7 +77,7 @@ public class AlbumImageListFragment extends Fragment  {
 
 
         rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
-        LinearLayout layoutListTitle= layoutImageList.findViewById(R.id.layout_list_title);
+        LinearLayout layoutListTitle = layoutImageList.findViewById(R.id.layout_list_title);
         TextView albumName = layoutImageList.findViewById(R.id.text_view_album_name);
         TextView albumSubtitle = layoutImageList.findViewById(R.id.text_view_album_sub_title);
         TextView headerRight = layoutImageList.findViewById(R.id.layout_header_right);
@@ -98,17 +100,30 @@ public class AlbumImageListFragment extends Fragment  {
             }
         });
 
-        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode, albumMode);
+        //recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode);
+//        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode, albumMode);
 
         if(mode == "list") {
+            listAdapter = new ListAdapter(album.getAlbumImages(), context, new IClickItemImageListener() {
+                @Override
+                public void onClickItemImage(Image image, int position) {
+                    onClickGoToDetails(image, position);
+                }
+            });
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             rcvPhoto.setLayoutManager(linearLayoutManager);
-            rcvPhoto.setAdapter(recycleAdapter);
+            rcvPhoto.setAdapter(listAdapter);
         } else if (mode == "card") {
             layoutListTitle.setVisibility(View.GONE);
+            cardAdapter = new CardAdapter(album.getAlbumImages(), context, new IClickItemImageListener() {
+                @Override
+                public void onClickItemImage(Image image, int position) {
+                    onClickGoToDetails(image, position);
+                }
+            });
             GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
             rcvPhoto.setLayoutManager(gridLayoutManager);
-            rcvPhoto.setAdapter(recycleAdapter);
+            rcvPhoto.setAdapter(cardAdapter);
             if (context.getClass().equals(LibraryActivity.class)) {
                 Activity activity = (Activity) context;
                 if (activity instanceof LibraryActivity) {
@@ -122,5 +137,10 @@ public class AlbumImageListFragment extends Fragment  {
         }
 
         return layoutImageList;
+
+    }
+
+    private void onClickGoToDetails(Image image, int position) {
+        libraryActivity.sendAndReceiveImage(image, position);
     }
 }

@@ -1,10 +1,11 @@
-package com.group_1.usege.syncing.activities;
+package com.group_1.usege.library.activities;
 
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -29,7 +30,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
@@ -42,26 +42,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
-
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
 import com.group_1.usege.layout.fragment.AlbumImageListFragment;
 import com.group_1.usege.layout.fragment.AlbumListFragment;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
-
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.syncing.fragment.EmptyAlbumFragment;
-import com.group_1.usege.syncing.fragment.EmptyAlbumImageFragment;
-import com.group_1.usege.syncing.fragment.EmptyFragment;
-
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.fragment.EmptyFragment;
+import com.group_1.usege.library.fragment.EmptyAlbumFragment;
+import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
+import com.group_1.usege.library.fragment.EmptyFragment;
+import com.group_1.usege.library.impl.SendAndReceiveImage;
+import com.group_1.usege.manipulation.activities.ImageActivity;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.model.Image;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,8 +70,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class LibraryActivity extends AppCompatActivity {
+;
 
+public class LibraryActivity extends AppCompatActivity implements SendAndReceiveImage {
+
+    Context context = this;
     FragmentTransaction ft;
     LinearLayout imageDisplayLayout;
     ImageCardFragment imageCardFragment;
@@ -102,6 +104,8 @@ public class LibraryActivity extends AppCompatActivity {
             add(new Album("trash")); // trash album
         }
     };
+
+    Album trashBin = albumList.get(1);
     private String displayView = "card";
     private String mode = imageMode;
     // mode image or album
@@ -112,6 +116,11 @@ public class LibraryActivity extends AppCompatActivity {
     private static final int Read_Permission = 101;
 
     RelativeLayout layoutLibFunctions;
+
+    int selectedImagePosition;
+
+    private static final int UPDATE_IMAGE = 1;
+    private static final int DELETE_IMAGE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +160,7 @@ public class LibraryActivity extends AppCompatActivity {
             mode = "album";
             clickOpenAlbumList();
         });
-        imgViewUpload.setOnClickListener(v -> clickOpenSetUpSyncingBottomSheetDialog());
+        imgViewUpload.setOnClickListener(v -> clickOpenSetUplibraryBottomSheetDialog());
 
         imgViewCard.setOnClickListener(v -> {
             displayView = "card";
@@ -193,6 +202,7 @@ public class LibraryActivity extends AppCompatActivity {
             }
         });
     }
+
     //    Start Album handler
     // menu bottom functions
     private Album destinationAlbum;
@@ -286,16 +296,16 @@ public class LibraryActivity extends AppCompatActivity {
 
         btnConfirm.setOnClickListener(event -> {
             fromAlbum.getAlbumImages().removeIf(s -> {
-                for(int i=0;i<selectedImages.size();i++) {
-                    if(s.getUri() == selectedImages.get(i).getUri()) {
+                for (int i = 0; i < selectedImages.size(); i++) {
+                    if (s.getUri() == selectedImages.get(i).getUri()) {
                         return true;
                     }
                 }
                 return false;
             });
-            System.out.println( String.format("before: %d", destinationAlbum.getAlbumImages().size()));
+            System.out.println(String.format("before: %d", destinationAlbum.getAlbumImages().size()));
             destinationAlbum.getAlbumImages().addAll(selectedImages);
-            System.out.println( String.format("after: %d", destinationAlbum.getAlbumImages().size()));
+            System.out.println(String.format("after: %d", destinationAlbum.getAlbumImages().size()));
             Toast.makeText(this, "move image success!", Toast.LENGTH_SHORT).show();
             selectedImages.clear();
             clickOpenAlbumImageList(fromAlbum);
@@ -303,11 +313,13 @@ public class LibraryActivity extends AppCompatActivity {
             chooseAlbumBottomSheetDialog.dismiss();
         });
     }
+
     public void setDestinationAlbum(Album album) {
         destinationAlbum = album;
     }
+
     public void clickOpenAlbumList() {
-        mode= albumMode;
+        mode = albumMode;
         // check empty list
         if (albumList.size() == 0) {
             ft = getSupportFragmentManager().beginTransaction();
@@ -325,6 +337,7 @@ public class LibraryActivity extends AppCompatActivity {
             ft.replace(R.id.layout_display_images, albumListFragment).commit();
         }
     }
+
     public void clickOpenAlbumCreateBottomSheetAndAddImage(int position) {
         Button btnConfirm;
         ImageView imageViewBackward;
@@ -367,6 +380,7 @@ public class LibraryActivity extends AppCompatActivity {
             createAlbumBottomSheetDialog.dismiss();
         });
     }
+
     public void clickOpenAlbumCreateBottomSheet() {
         Button btnConfirm;
         ImageView imageViewBackward;
@@ -433,11 +447,12 @@ public class LibraryActivity extends AppCompatActivity {
             clickOpenAlbumList();
         });
     }
+
     public void clickOpenAlbumImageList(Album album) {
         isOpeningAlbum = album;
         mode = imageInAlbumMode;
 //        if(album.getName() != "favorite" && album.getName() != "trash") {
-            layoutLibFunctions.setVisibility(View.GONE);
+        layoutLibFunctions.setVisibility(View.GONE);
 //        }
         if (album.getAlbumImages().size() > 0) {
             if (Objects.equals(displayView, "card")) {
@@ -455,12 +470,14 @@ public class LibraryActivity extends AppCompatActivity {
             ft.replace(R.id.layout_display_images, emptyFragment).commit();
         }
     }
+
     public void setShowLayoutLibFuntions() {
         layoutLibFunctions.setVisibility(View.VISIBLE);
     }
+
     public void clickOpenImageList() {
         // check empty list
-        mode="image";
+        mode = "image";
         if (imgList.size() == 0) {
             ft = getSupportFragmentManager().beginTransaction();
             emptyFragment = EmptyFragment.newInstance(mode, true);
@@ -477,44 +494,50 @@ public class LibraryActivity extends AppCompatActivity {
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
         }
     }
+
     public void triggerAlbumButton() {
         albumButton.callOnClick();
     }
-    //    End Album handler
 
-    public void clickOpenSetUpSyncingBottomSheetDialog() {
+    public void clickAddImageToAlbum() {
+
+    }
+
+    public void clickOpenSetUplibraryBottomSheetDialog() {
         Button btnConfirm;
         ImageView imageViewBackward;
 
         View viewDialog = getLayoutInflater().inflate(R.layout.layout_set_up_syncing, null);
 
         // Yêu cầu quyền truy cập
-        requestPermission();
+        Boolean result = requestPermission();
 
-        final BottomSheetDialog setUpSyncingBottomSheetDialog = new BottomSheetDialog(this);
-        setUpSyncingBottomSheetDialog.setContentView(viewDialog);
-        setUpSyncingBottomSheetDialog.show();
+        if (result == true) {
+            final BottomSheetDialog setUplibraryBottomSheetDialog = new BottomSheetDialog(this);
+            setUplibraryBottomSheetDialog.setContentView(viewDialog);
+            setUplibraryBottomSheetDialog.show();
 
-        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
-        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
-        imageViewBackward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpSyncingBottomSheetDialog.dismiss();
-            }
-        });
+            btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+            imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+            imageViewBackward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setUplibraryBottomSheetDialog.dismiss();
+                }
+            });
 
-        btnConfirm.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            btnConfirm.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
-            //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-            pickImageLauncher.launch(Intent.createChooser(intent, "Select Picture"));
+                //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                launcher.launch(Intent.createChooser(intent, "Select Picture"));
 
-            // Đóng bottommsheet
-            setUpSyncingBottomSheetDialog.dismiss();
-        });
+                // Đóng bottommsheet
+                setUplibraryBottomSheetDialog.dismiss();
+            });
+        }
     }
 
     public void openFilterBottomSheet(View filterIcon) {
@@ -753,10 +776,11 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
-    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 Intent data = result.getData();
+
                 if (result.getResultCode() == RESULT_OK && data != null) {
 
                     // Lấy nhiều ảnh
@@ -766,10 +790,17 @@ public class LibraryActivity extends AppCompatActivity {
                         for (int i = 0; i < countOfImages; i++) {
                             // Thêm dữ liệu
                             Uri imageURI = data.getClipData().getItemAt(i).getUri();
-                            Image image = getInformationOfImage(imageURI);
+                            //Image image = getInformationOfImage(imageURI);
+                            Image image = new Image();
+                            image.setUri(imageURI);
+                            image.setLocation("");
+                            image.setDescription("A favorite image");
+                            GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+                            getInformationThread.start();
                             // Đây là dữ liệu mẫu
 
                             //Image image = new Image("", 0F, "A favorite image", "", imageURI);
+
                             imgList.add(image);
                         }
 
@@ -777,30 +808,44 @@ public class LibraryActivity extends AppCompatActivity {
                     } else {
                         Uri imageURI = data.getData();
                         // Thêm dữ liệu
-                        Image image = getInformationOfImage(imageURI);
+                        //Image image = getInformationOfImage(imageURI);
                         // Đây là dữ liệu mẫu
                         //Image image = new Image("", 0F, "The beautiful place", "", imageURI);
+                        Image image = new Image();
+                        image.setUri(imageURI);
+                        image.setLocation("");
+                        image.setDescription("A favorite image");
+                        GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+                        getInformationThread.start();
+
                         imgList.add(image);
+//                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
+//                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
+
                     }
 
                     setStatusOfWidgets();
                 } else {
                     Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
                 }
+                // Thread
 
                 // Update Fragment View
                 updateImageViewDisplay();
             });
 
-    // Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
-    private void requestPermission() {
+    //Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
+    private Boolean requestPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
+                == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
         }
+        return false;
     }
+
 
     public void setStatusOfWidgets() {
         if (imgList.size() > 0) {
@@ -892,47 +937,10 @@ public class LibraryActivity extends AppCompatActivity {
     public String convertToString(float[] latLong) {
         String location = "";
         if (latLong != null) {
-            location = String.valueOf(latLong[0]) + ", " + String.valueOf(latLong[1]);
+            location = String.valueOf(latLong[0]) + "," + String.valueOf(latLong[1]);
         }
 
         return location;
-    }
-
-    public Image getInformationOfImage(Uri imageURI) {
-        String imagePath = null;
-        try {
-            imagePath = getImagePath(imageURI);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Tạo đối tượng ExifInterface để lấy thông tin ảnh
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(imagePath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Lấy các từ khóa đặc trưng của ảnh
-        List<String> tags = getTagsOfImage(imagePath);
-
-
-        // Lấy kích thước của ảnh
-        long sizeOfImage = getSizeOfImage(imagePath);
-
-        // Lấy thời gian chụp của ảnh
-        String dateTime = getDateTimeOfImage(exif);
-
-        // Lấy vị trí
-        float latLong[] = getLocationOfImage(exif);
-        String location = convertToString(latLong);
-
-        // Lưu thông tin vào Image
-
-        Image image = new Image(imageURI, tags, "A favarite image", dateTime, sizeOfImage, location);
-
-        return image;
     }
 
     private static float convertToDegree(String stringDMS, String ref) {
@@ -968,6 +976,121 @@ public class LibraryActivity extends AppCompatActivity {
         return result;
     }
 
+    @Override
+    public void sendAndReceiveImage(Image image, int position) {
+        selectedImagePosition = position;
+        Intent intent = new Intent(context, ImageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("object_image", image);
+        bundle.putSerializable("object_album", (Serializable) albumList);
+        intent.putExtras(bundle);
+        launcherSendAndReceiveImage.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    Bundle bundle = data.getExtras();
+                    if (bundle == null) {
+                        return;
+                    }
+                    // Nhận giá trị mới khi ảnh đã được cập nhật
+                    Image selectedImage = (Image) bundle.getParcelable("return_image");
+                    int task = bundle.getInt("task");
+
+                    switch (task) {
+                        case UPDATE_IMAGE: {
+                            // update description
+                            imgList.get(selectedImagePosition).setDescription(selectedImage.getDescription());
+                            break;
+                        }
+
+                        case DELETE_IMAGE: {
+                            // delete image
+                            imgList.remove(selectedImagePosition);
+
+                            List<Image> lstdeletedImage = new ArrayList<>();
+                            lstdeletedImage.add(selectedImage);
+                            trashBin.setAlbumImages(lstdeletedImage);
+                            updateImageViewDisplay();
+
+                            break;
+                        }
+                    }
+                } else {
+                    //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+                }
+            });
+
+    public class GetInformationThread extends Thread {
+        private Image image;
+        private Uri uri;
+
+        private GetInformationThread(Image image, Uri uri) {
+            this.image = image;
+            this.uri = uri;
+        }
+
+        @Override
+        public void run() {
+            String imagePath = null;
+            try {
+                imagePath = getImagePath(uri);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Tạo đối tượng ExifInterface để lấy thông tin ảnh
+            ExifInterface exif = null;
+            try {
+                exif = new ExifInterface(imagePath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Lấy kích thước của ảnh
+            long sizeOfImage = getSizeOfImage(imagePath);
+
+            // Lấy thời gian chụp của ảnh
+            String dateTime = getDateTimeOfImage(exif);
+
+            // Lấy vị trí
+            float latLong[] = getLocationOfImage(exif);
+            String location = convertToString(latLong);
+            String address = "";
+            if (location.length() > 0) {
+                //ApiGoogleMap callApi = new ApiGoogleMap(location, image, context);
+                //callApi.callApiGetAddress();
+            }
+            //Log.d("Location", "Address: " + address);
+
+            // Lưu thông tin vào Image
+            image.setDate(dateTime);
+            image.setSize(sizeOfImage);
+            //image.setLocation(address);
+            //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (imageCardFragment.cardAdapter != null || imageListFragment.listAdapter != null) {
+            imageCardFragment.cardAdapter.release();
+            imageListFragment.listAdapter.release();
+        }
+    }
+
+    public static void openBottomMenu(Image image) {
+        bottomMenu.setVisibility(View.VISIBLE);
+        selectedImages.add(image);
+        Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
+    }
+
     public void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
         switch (mode) {
             case imageInAlbumMode:
@@ -987,11 +1110,12 @@ public class LibraryActivity extends AppCompatActivity {
     public void removeBottomMenu(View v) {
         bottomMenu.setVisibility(View.GONE);
     }
-    
+
     public void removeSingleImageAndRemoveBottomMenuIfNoImageLeft(Image image) {
         selectedImages.remove(image);
         if (selectedImages.size() < 1) bottomMenu.setVisibility(View.GONE);
     }
+
     public RecyclerView getRecyclerViewOfImageLibrary() {
         imageDisplayLayout = findViewById(R.id.layout_display_images);
         LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
@@ -1047,5 +1171,4 @@ public class LibraryActivity extends AppCompatActivity {
         shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, null));
     }
-
 }

@@ -1,14 +1,7 @@
-package com.group_1.usege.modle;
-
-import android.net.Uri;
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
+package com.group_1.usege.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Album implements Serializable {
