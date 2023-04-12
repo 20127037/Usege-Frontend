@@ -71,11 +71,6 @@ public class ImageListFragment extends Fragment {
             public void onClickItemImage(Image image, int position) {
                 onClickGoToDetails(image, position);
             }
-
-            @Override
-            public void onLongClickItemImage(Image image) {
-
-            }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rcvPhoto.setLayoutManager(linearLayoutManager);

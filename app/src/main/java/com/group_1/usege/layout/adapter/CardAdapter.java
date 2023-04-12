@@ -1,5 +1,6 @@
 package com.group_1.usege.layout.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -57,20 +59,38 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 .load(uri)
                 .into(holder.imgView);
         Log.d("SIZE", "I: " + uri);
-        holder.layoutItemCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iClickItemImageListener.onClickItemImage(image, finalPosition);
+
+        holder.imgView.setOnClickListener(v -> {
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    ImageView imageView = (ImageView) v;
+                    if (imageView.getColorFilter() != null) {
+                        // FOR UI
+                        imageView.clearColorFilter();
+                        // FOR LOGIC
+                        libActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+                    } else {
+                        iClickItemImageListener.onClickItemImage(image, finalPosition);
+                    }
+                }
             }
         });
 
-        holder.layoutItemCard.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                LibraryActivity.openBottomMenu(image);
-                v.setAlpha((float) 0.5);
-                return true;
+        holder.imgView.setOnLongClickListener(v -> {
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    // FOR UI
+                    ImageView imageView = (ImageView)v;
+                    imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+                    // FOR LOGIC
+                    libActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+                }
             }
+            return true;
         });
     }
 
