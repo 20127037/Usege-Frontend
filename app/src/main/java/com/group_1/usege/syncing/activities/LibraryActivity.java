@@ -36,11 +36,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 import com.group_1.usege.R;
 import com.group_1.usege.api.apiservice.ApiGoogleMap;
 
@@ -59,6 +59,7 @@ import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.modle.Image;
+import com.group_1.usege.syncing.fragment.EmptyFragment;
 import com.group_1.usege.syncing.impl.SendAndReceiveImage;
 
 import java.io.File;
@@ -479,7 +480,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
                 }
 
                 List<String> dayComponents = Arrays.asList(creationDate.split("/"));
-                if (dayComponents.get(1).length() < 2) {
+                if(dayComponents.get(1).length() < 2) {
                     creationDateEditText.setBackgroundResource(R.drawable.edit_text_error);
                     Toast.makeText(this, "Please re-format the month with 2 digits", Toast.LENGTH_SHORT).show();
                     return;
@@ -965,5 +966,70 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         popupMenu.show();
     }
 
+
+
+    public static void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
+        bottomMenu.setVisibility(View.VISIBLE);
+        selectedImages.add(image);
+    }
+    public static void removeSingleImageAndRemoveBottomMenuIfNoImageLeft(Image image) {
+        selectedImages.remove(image);
+        if (selectedImages.size() < 1) bottomMenu.setVisibility(View.GONE);
+    }
+    public RecyclerView getRecyclerViewOfImageLibrary() {
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+        LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
+        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
+        return libraryRecyclerView;
+    }
+
+    public void removeBottomMenuAndAllImages(View v) {
+        // FOR UI
+        bottomMenu.setVisibility(View.GONE);
+        RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecyclerView.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) libraryRecyclerView.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.clearColorFilter();
+        }
+        // FOR LOGIC CODE
+        selectedImages.clear();
+    }
+
+    public void selectAllImages(View v) {
+        // FOR UI
+        RecyclerView libraryRecycleView = getRecyclerViewOfImageLibrary();
+        int c = libraryRecycleView.getChildCount();
+        for (int i = 0; i < c; ++i) {
+            CardView cardView = (CardView) libraryRecycleView.getChildAt(i);
+            ImageView imageView = (ImageView) cardView.getChildAt(0);
+            imageView.setColorFilter(ContextCompat.getColor(this, R.color.chosen_image));
+        }
+        // FOR LOGIC CODE
+        selectedImages = new ArrayList<>(imgList);
+    }
+
+    public void showMoreOptions(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.getMenuInflater().inflate(R.menu.image_selection_more_options, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            Toast.makeText(getApplicationContext(), menuItem.getTitle().toString(), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+        popupMenu.show();
+    }
+
+    public void shareImages(View v) {
+        ArrayList<Uri> imageUris = new ArrayList<>();
+        selectedImages.forEach((image) -> {
+            imageUris.add(image.getUri());
+        });
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, imageUris);
+        shareIntent.setType("image/*");
+        startActivity(Intent.createChooser(shareIntent, null));
+    }
 
 }

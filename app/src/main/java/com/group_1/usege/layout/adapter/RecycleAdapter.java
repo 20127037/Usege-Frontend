@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -39,7 +40,8 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         View view = null;
         if (displayView.equals("card")) {
             view = inflater.inflate(R.layout.item_photo, parent, false);
-        } else if (displayView.equals("list")) {
+        }
+        else if (displayView.equals("list")) {
             view = inflater.inflate(R.layout.layout_item_list, parent, false);
         }
 
@@ -72,17 +74,27 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         Image image = lstImage.get(position);
 
         Uri uri = image.getUri();
-        if (uri == null) {
-            return;
-        }
         Glide.with(context)
                 .load(uri)
                 .into(holder.imgView);
 
         holder.imgView.setOnLongClickListener(v -> {
-            LibraryActivity.openBottomMenu(image);
-            v.setAlpha((float) 0.5);
+            // FOR UI
+            ImageView imageView = (ImageView)v;
+            imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+            // FOR LOGIC
+            LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
             return true;
+        });
+
+        holder.imgView.setOnClickListener(v -> {
+            ImageView imageView = (ImageView)v;
+            if (imageView.getColorFilter() != null) {
+                // FOR UI
+                imageView.clearColorFilter();
+                // FOR LOGIC
+                LibraryActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+            }
         });
 
         if (displayView.equals("list")) {
@@ -101,13 +113,15 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
+        View overlayImage;
         TextView description;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             if (displayView.equals("card")) {
                 imgView = itemView.findViewById(R.id.image_view_photo);
-            } else {
+            }
+            else {
                 imgView = itemView.findViewById(R.id.image_view_thumbnail);
                 description = itemView.findViewById(R.id.text_view_description);
             }

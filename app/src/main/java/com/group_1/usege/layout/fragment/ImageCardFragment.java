@@ -11,11 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.CardAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.modle.Image;
 import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.layout.adapter.RecycleAdapter;
+import com.group_1.usege.modle.Image;
 
 import java.io.Serializable;
 import java.util.List;

@@ -184,7 +184,7 @@
                         android:layout_marginRight="20dp"
                         android:textColor="@color/confirmation"
                         android:textStyle="bold"
-                        android:onClick="removeBottomMenu"/>
+                        android:onClick="removeBottomMenuAndAllImages"/>
 
                     <Button
                         android:id="@+id/library_select_all_button"
@@ -207,7 +207,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:onClick="addToAlbum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/icon_add_to_album"
@@ -221,7 +220,8 @@
                     android:drawableTop="@drawable/icon_share_images"
                     android:text="Share"
                     android:gravity="center"
-                    android:layout_marginHorizontal="15dp"/>
+                    android:layout_marginHorizontal="15dp"
+                    android:onClick="shareImages"/>
 
                 <TextView
                     android:layout_width="wrap_content"
