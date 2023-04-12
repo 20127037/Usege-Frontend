@@ -3,5 +3,6 @@
     <dimen name="primary_margin_large">40dp</dimen>
     <dimen name="primary_margin_medium">25dp</dimen>
     <dimen name="primary_margin_small">10dp</dimen>
+    <dimen name="primary_margin_tiny">5dp</dimen>
 
 </resources>

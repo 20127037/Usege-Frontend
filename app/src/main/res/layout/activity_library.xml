@@ -73,6 +73,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/layout_library_functions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp">
@@ -189,6 +190,18 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/text_view_move_to_album"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/icon_add_to_album"
+                    android:text="Move to album"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="15dp"/>
+
+                <TextView
+                    android:id="@+id/text_view_add_to_album"
+                    android:onClick="addToAlbum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/icon_add_to_album"

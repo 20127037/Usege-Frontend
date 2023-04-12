@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".userInfo.activities.UserStatisticActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.05"
+        app:title="@string/label_statistic" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="@dimen/primary_margin_small"
+        app:layout_constraintHeight_percent="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/primary_margin_small">
+
+            <TextView
+                style="@style/Usege.Text.LabelTextView"
+                android:text="@string/label_used_space"
+                android:layout_marginEnd="@dimen/primary_margin_small"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/Usege.Text.LabelTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_used_space"
+                android:text="3.3/15 GB" />
+        </LinearLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:min="0"
+            android:max="100"
+            android:progress="20"
+            android:layout_marginTop="@dimen/primary_margin_small">
+
+        </com.google.android.material.progressindicator.LinearProgressIndicator>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/primary_margin_small">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/primary_margin_tiny"
+                    android:background="@drawable/layout_rounded_secondary_bg">
+
+                    <TextView
+                        style="@style/Usege.Text.LabelTextView"
+                        android:text="@string/label_images"
+                        android:layout_marginEnd="@dimen/primary_margin_small"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        style="@style/Usege.Text.LabelTextView"
+                        android:id="@+id/txt_total_imgs"
+                        android:text="29"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <Space
+                android:layout_width="@dimen/primary_margin_medium"
+                android:layout_height="match_parent"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/primary_margin_tiny"
+                    >
+
+                    <TextView
+                        style="@style/Usege.Text.LabelTextView"
+                        android:text="@string/label_albums"
+                        android:layout_marginEnd="@dimen/primary_margin_small"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        style="@style/Usege.Text.LabelTextView"
+                        android:id="@+id/txt_total_albums"
+                        android:text="29"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/primary_margin_small">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/Usege.Text.LabelTextView"
+                    android:text="@string/label_image_sharing_history"
+                    android:layout_marginEnd="@dimen/primary_margin_small"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/btn_search"
+                    android:background="@drawable/album_search_icon">
+
+                </ImageButton>
+            </RelativeLayout>
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/list_history">
+
+            </ListView>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
