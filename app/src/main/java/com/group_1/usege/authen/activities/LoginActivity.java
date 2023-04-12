@@ -12,9 +12,11 @@ import com.group_1.usege.account.activities.CreateAccountActivity;
 import com.group_1.usege.account.activities.ResetPasswordActivity;
 import com.group_1.usege.account.dto.CreateAccountRequestDto;
 import com.group_1.usege.authen.model.CacheToken;
+import com.group_1.usege.authen.model.LoginResponse;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
 import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;
@@ -28,13 +30,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 
 @AndroidEntryPoint
-public class LoginActivity extends ApiCallerActivity<CacheToken> {
+public class LoginActivity extends ApiCallerActivity<LoginResponse> {
 
     private EditTextFragment fragEmail, fragPassword;
     @Inject
     public TokenRepository tokenRepository;
     @Inject
     public AuthServiceGenerator authServiceGenerator;
+    @Inject
+    public UserInfoRepository userInfoRepository;
     private String currentEmail;
 
     public LoginActivity() {
@@ -84,9 +88,10 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     }
 
     @Override
-    protected void handleCallSuccess(CacheToken result) {
+    protected void handleCallSuccess(LoginResponse result) {
         Log.i("Login", result.toString());
-        tokenRepository.setToken(result);
+        tokenRepository.setToken(result.getCacheToken());
+        userInfoRepository.setInfo(result.getUserInfo());
         ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
     }
 

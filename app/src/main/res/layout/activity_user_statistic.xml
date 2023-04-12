@@ -50,6 +50,7 @@
             android:min="0"
             android:max="100"
             android:progress="20"
+            android:id="@+id/progress_used_space"
             android:layout_marginTop="@dimen/primary_margin_small">
 
         </com.google.android.material.progressindicator.LinearProgressIndicator>
@@ -62,12 +63,12 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="5dp">
+                app:cardCornerRadius="@dimen/primary_margin_small"
+                app:contentPadding="@dimen/primary_margin_small"
+                app:cardBackgroundColor="?attr/colorSecondaryContainer">
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/primary_margin_tiny"
-                    android:background="@drawable/layout_rounded_secondary_bg">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/Usege.Text.LabelTextView"
@@ -90,11 +91,12 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="5dp">
+                app:cardCornerRadius="@dimen/primary_margin_small"
+                app:contentPadding="@dimen/primary_margin_small"
+                app:cardBackgroundColor="?attr/colorSecondaryContainer">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/primary_margin_tiny"
                     >
 
                     <TextView

@@ -23,8 +23,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.group_1.usege.R;
 import com.group_1.usege.utilities.validator.PasswordValidator;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 
@@ -37,8 +35,6 @@ public class EditTextFragment extends Fragment {
     protected TextInputLayout textInputLayout;
     private TypedArray typedArray;
     private boolean isCheckRule;
-    @Inject
-    public PasswordValidator passwordValidator;
 
     public EditTextFragment() {
         super(R.layout.fragment_edit_text);
@@ -100,7 +96,7 @@ public class EditTextFragment extends Fragment {
             textInputLayout.setError(getContext().getResources().getString(R.string.filed_not_empty));
             return null;
         }
-        if (isCheckRule && !passwordValidator.checkPasswordFollowRules(input))
+        if (isCheckRule && !PasswordValidator.checkPasswordFollowRules(input))
         {
             setError(R.string.password_not_follow_rules);
             return null;

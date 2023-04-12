@@ -1,5 +1,7 @@
 package com.group_1.usege.authen.model;
 
+import com.group_1.usege.userInfo.model.UserInfo;
+
 public class CacheToken {
     private String accessToken;
     private Integer expiresIn;

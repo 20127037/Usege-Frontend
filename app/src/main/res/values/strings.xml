@@ -13,8 +13,13 @@
     <string name="label_statistic"><b>Statistic</b></string>
     <string name="label_plan"><b>Plan</b></string>
     <string name="label_used_space"><b>Used space:</b></string>
+    <string name="label_free">Free</string>
     <string name="label_current_plan"><b>Your current plan:</b></string>
     <string name="label_list_of_plans">List of plans:</string>
+    <string name="label_payment">Payment</string>
+    <string name="label_fill_visa">Please fill out your credit card information</string>
+    <string name="label_purchase">Purchase</string>
+    <string name="label_view_details"><u>View details</u></string>
     <string name="label_images">Images:</string>
     <string name="label_albums">Albums:</string>
     <string name="label_image_sharing_history">Image sharing history</string>
@@ -22,6 +27,9 @@
     <string name="empty" />
     <string name="input_6_digits_below"><b>Please input a 6-digit code below</b></string>
     <string name="password"><b>Password</b></string>
+    <string name="label_card_number"><b>Card number</b></string>
+    <string name="label_cvv"><b>CVV</b></string>
+    <string name="label_expired_date"><b>Expired date</b></string>
     <string name="retype"><b>Retype</b></string>
     <string name="submit"><b>Submit</b></string>
     <string name="forget_password"><b>Forget password</b></string>
@@ -32,4 +40,6 @@
     <string name="no"><b>No</b></string>
     <string name="confirm_code_has_been_sent">A verification code has been sent to your mailbox</string>
     <string name="confirm_code_could_be_resent_in">Code could be resent in </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
