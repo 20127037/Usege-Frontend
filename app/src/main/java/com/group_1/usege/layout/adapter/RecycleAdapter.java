@@ -85,20 +85,29 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                     ImageView imageView = (ImageView)v;
                     imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
                     // FOR LOGIC
-                    LibraryActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+                    libActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
                 }
             }
             return true;
         });
 
         holder.imgView.setOnClickListener(v -> {
-            ImageView imageView = (ImageView)v;
-            if (imageView.getColorFilter() != null) {
-                // FOR UI
-                imageView.clearColorFilter();
-                // FOR LOGIC
-                LibraryActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    // FOR UI
+                    ImageView imageView = (ImageView)v;
+                    if (imageView.getColorFilter() != null) {
+                        // FOR UI
+                        imageView.clearColorFilter();
+                        // FOR LOGIC
+                        libActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+                    }
+                }
             }
+
         });
 
         if (displayView.equals("list")) {
