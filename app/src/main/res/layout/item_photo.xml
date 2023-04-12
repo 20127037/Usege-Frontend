@@ -6,11 +6,10 @@
     app:cardCornerRadius="6dp"
     android:layout_margin="4dp">
 
-        <ImageView
-            android:id="@+id/image_view_photo"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            android:elevation="0dp"/>
+    <ImageView
+        android:id="@+id/image_view_photo"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop" />
 
 </androidx.cardview.widget.CardView>
