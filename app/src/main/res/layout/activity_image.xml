@@ -185,7 +185,7 @@
             android:id="@+id/text_view_photoshop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/photoshop"
+            android:drawableTop="@drawable/icon_photoshop"
             android:text="Photoshop"
             android:textSize="18sp"
             android:gravity="center"
@@ -205,17 +205,28 @@
             android:id="@+id/text_view_describe"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/describe"
+            android:drawableTop="@drawable/icon_describe"
             android:text="Describe"
             android:textSize="18sp"
             android:gravity="center"
             android:layout_weight="0.25"/>
 
         <TextView
-            android:id="@+id/text_view_delete"
+            android:id="@+id/text_view_delete_in_file"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/delete"
+            android:drawableTop="@drawable/icon_delete_images"
+            android:text="Delete"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_weight="0.25"/>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/text_view_delete_in_album"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/icon_cut_image"
             android:text="Delete"
             android:textSize="18sp"
             android:gravity="center"

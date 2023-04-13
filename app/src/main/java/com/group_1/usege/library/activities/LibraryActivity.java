@@ -52,7 +52,6 @@ import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.library.fragment.EmptyFragment;
-import com.group_1.usege.library.impl.SendAndReceiveImage;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
@@ -72,7 +71,7 @@ import java.util.Objects;
 
 ;
 
-public class LibraryActivity extends AppCompatActivity implements SendAndReceiveImage {
+public class LibraryActivity extends AppCompatActivity{
 
     Context context = this;
     FragmentTransaction ft;
@@ -92,7 +91,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
     public static final String imageMode = "image";
     public static final String albumMode = "album";
     public static final String imageInAlbumMode = "imageInAlbum";
-    public TextView moveToAlbum, addToAlbum;
+    public TextView moveToAlbum, addToAlbum, deleteImage, cutImage;
     public Album isOpeningAlbum;
     Button albumButton, fileButton;
     List<Image> imgList = new ArrayList<>();
@@ -111,13 +110,14 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
     // mode image or album
     private Boolean firstAccess = true;
     private Boolean filtered = false;
+
+    private Album selectedAlbum;
     public static List<Image> selectedImages = new ArrayList<>();
 
     private static final int Read_Permission = 101;
 
     RelativeLayout layoutLibFunctions;
 
-    int selectedImagePosition;
 
     private static final int UPDATE_IMAGE = 1;
     private static final int DELETE_IMAGE = 2;
@@ -131,6 +131,8 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         emptyFragment = EmptyFragment.newInstance(mode, false);
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
 
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+
         imgViewCard = findViewById(R.id.icon_card);
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
@@ -139,10 +141,13 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         albumButton = findViewById(R.id.btn_album);
         fileButton = findViewById(R.id.btn_file);
         bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
+
         // bootom menu functions
         layoutLibFunctions = findViewById(R.id.layout_library_functions);
         moveToAlbum = findViewById(R.id.text_view_move_to_album);
         addToAlbum = findViewById(R.id.text_view_add_to_album);
+        deleteImage = findViewById(R.id.text_view_delete_in_file);
+        cutImage = findViewById(R.id.text_view_delete_in_album);
 
         imgViewCard.setEnabled(false);
         imgViewCard.setAlpha((float) 0.5);
@@ -519,12 +524,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
 
             btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
             imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
-            imageViewBackward.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setUplibraryBottomSheetDialog.dismiss();
-                }
-            });
+            imageViewBackward.setOnClickListener(v -> setUplibraryBottomSheetDialog.dismiss());
 
             btnConfirm.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -702,40 +702,31 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             clonedImgList = new ArrayList<>(imgList);
         }
 
+        if (imgList.size() == 0) {
+            setStatusOfWidgets();
+            ft = getSupportFragmentManager().beginTransaction();
+            emptyFragment = EmptyFragment.newInstance(imageMode, true);
+            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+            return;
+        }
+
 
         if (displayView.equals("card")) {
             imgViewList.setAlpha(0.5F);
             imgViewCard.setAlpha(1F);
-            if (firstAccess == true) {
-                firstAccess = false;
 
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-            } else {
-//                imageCardFragment.recycleAdapter.notifyDataSetChanged();
-//                imageCardFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageCardFragment.getContext(), "card"));
-                ft = getSupportFragmentManager().beginTransaction();
-                imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-            }
+            ft = getSupportFragmentManager().beginTransaction();
+            imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+
         } else if (displayView.equals("list")) {
             imgViewList.setAlpha(1F);
             imgViewCard.setAlpha(0.5F);
-            if (firstAccess == true) {
-                firstAccess = false;
 
-                ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageListFragment).commit();
-            } else {
-//                imageListFragment.recycleAdapter.notifyDataSetChanged();
-//                imageListFragment.rcvPhoto.setAdapter(new RecycleAdapter(clonedImgList, imageListFragment.getContext(), "list"));
-                ft = getSupportFragmentManager().beginTransaction();
-                imageListFragment = ImageListFragment.newInstance(clonedImgList);
-                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+            ft = getSupportFragmentManager().beginTransaction();
+            imageListFragment = ImageListFragment.newInstance(clonedImgList);
+            ft.replace(R.id.layout_display_images, imageListFragment).commit();
 
-            }
         }
     }
 
@@ -800,6 +791,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
                             // Đây là dữ liệu mẫu
 
                             //Image image = new Image("", 0F, "A favorite image", "", imageURI);
+                            Log.e("NOTE", "URI1 " + image.getUri());
 
                             imgList.add(image);
                         }
@@ -976,13 +968,66 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         return result;
     }
 
-    @Override
-    public void sendAndReceiveImage(Image image, int position) {
-        selectedImagePosition = position;
+    public void sendAndReceiveImageInAlbum(Image image, int position, Album album) {
+        selectedAlbum = album;
+
         Intent intent = new Intent(context, ImageActivity.class);
         Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
         bundle.putParcelable("object_image", image);
-        bundle.putSerializable("object_album", (Serializable) albumList);
+        bundle.putParcelable("object_album", album);
+        //bundle.putSerializable("object_album", (Serializable) albumList);
+        intent.putExtras(bundle);
+        launcherSendAndReceiveImageInAlbum.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImageInAlbum = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    Bundle bundle = data.getExtras();
+                    if (bundle == null) {
+                        return;
+                    }
+                    // Nhận giá trị mới khi ảnh đã được cập nhật
+                    Image selectedImage = (Image) bundle.getParcelable("return_image");
+                    int position = bundle.getInt("position");
+                    int task = bundle.getInt("task");
+                    Album album = (Album) bundle.getParcelable("return_album");
+
+                    // Lấy vị trí album đang mở
+                    int index = albumList.indexOf(selectedAlbum);
+                    Album openedAlbum = albumList.get(index);
+
+                    switch (task) {
+                        case UPDATE_IMAGE: {
+                            // update description
+                            openedAlbum.setName(album.getName());
+                            openedAlbum.setAlbumImages(album.getAlbumImages());
+
+                            break;
+                        }
+
+                        case DELETE_IMAGE: {
+                            // delete image in album
+                            openedAlbum.getAlbumImages().remove(position);
+
+                            break;
+                        }
+                    }
+                    updateImageInAlbumViewDisplay();
+                } else {
+                    //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+                }
+            });
+
+    public void sendAndReceiveImage(Image image, int position) {
+        Intent intent = new Intent(context, ImageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        bundle.putParcelable("object_image", image);
+        //bundle.putSerializable("object_album", (Serializable) albumList);
         intent.putExtras(bundle);
         launcherSendAndReceiveImage.launch(intent);
     }
@@ -997,23 +1042,25 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
                         return;
                     }
                     // Nhận giá trị mới khi ảnh đã được cập nhật
+                    int position = bundle.getInt("position");
                     Image selectedImage = (Image) bundle.getParcelable("return_image");
                     int task = bundle.getInt("task");
 
                     switch (task) {
                         case UPDATE_IMAGE: {
                             // update description
-                            imgList.get(selectedImagePosition).setDescription(selectedImage.getDescription());
+                            imgList.get(position).setDescription(selectedImage.getDescription());
                             break;
                         }
 
                         case DELETE_IMAGE: {
                             // delete image
-                            imgList.remove(selectedImagePosition);
+                            imgList.remove(position);
 
-                            List<Image> lstdeletedImage = new ArrayList<>();
-                            lstdeletedImage.add(selectedImage);
-                            trashBin.setAlbumImages(lstdeletedImage);
+                            //List<Image> lstdeletedImage = new ArrayList<>();
+                            //lstdeletedImage.add(selectedImage);
+                            trashBin.getAlbumImages().add(selectedImage);
+
                             updateImageViewDisplay();
 
                             break;
@@ -1085,39 +1132,44 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
         }
     }
 
-    public static void openBottomMenu(Image image) {
-        bottomMenu.setVisibility(View.VISIBLE);
-        selectedImages.add(image);
-        Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
-    }
-
     public void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
+        // FOR UI
         switch (mode) {
             case imageInAlbumMode:
                 System.out.println("mode to album!");
                 moveToAlbum.setVisibility(View.VISIBLE);
                 addToAlbum.setVisibility(View.GONE);
+
+                cutImage.setVisibility(View.VISIBLE);
+                deleteImage.setVisibility(View.GONE);
                 break;
             default:
                 moveToAlbum.setVisibility(View.GONE);
                 addToAlbum.setVisibility(View.VISIBLE);
+
+                cutImage.setVisibility(View.GONE);
+                deleteImage.setVisibility(View.VISIBLE);
         }
+
+        imageDisplayLayout.setPadding(0,0,0,500);
         bottomMenu.setVisibility(View.VISIBLE);
+
+        // FOR CODE
         selectedImages.add(image);
         Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
     }
 
-    public void removeBottomMenu(View v) {
-        bottomMenu.setVisibility(View.GONE);
-    }
-
     public void removeSingleImageAndRemoveBottomMenuIfNoImageLeft(Image image) {
+        // FOR LOGIC
         selectedImages.remove(image);
-        if (selectedImages.size() < 1) bottomMenu.setVisibility(View.GONE);
+        // FOR UI
+        if (selectedImages.size() < 1) {
+            bottomMenu.setVisibility(View.GONE);
+            imageDisplayLayout.setPadding(0,0,0,0);
+        }
     }
 
     public RecyclerView getRecyclerViewOfImageLibrary() {
-        imageDisplayLayout = findViewById(R.id.layout_display_images);
         LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
         RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
         return libraryRecyclerView;
@@ -1126,6 +1178,7 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
     public void removeBottomMenuAndAllImages(View v) {
         // FOR UI
         bottomMenu.setVisibility(View.GONE);
+        imageDisplayLayout.setPadding(0,0,0,0);
         RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
         int c = libraryRecyclerView.getChildCount();
         for (int i = 0; i < c; ++i) {
@@ -1158,6 +1211,21 @@ public class LibraryActivity extends AppCompatActivity implements SendAndReceive
             return true;
         });
         popupMenu.show();
+    }
+
+    public void deleteImages(View v) {
+        trashBin.getAlbumImages().addAll(selectedImages);
+        imgList.removeAll(selectedImages);
+        selectedImages.clear();
+        bottomMenu.setVisibility(View.GONE);
+        updateImageViewDisplay();
+    }
+
+    public void cutImages(View v) {
+        isOpeningAlbum.getAlbumImages().removeAll(selectedImages);
+        selectedImages.clear();
+        bottomMenu.setVisibility(View.GONE);
+        updateImageInAlbumViewDisplay();
     }
 
     public void shareImages(View v) {

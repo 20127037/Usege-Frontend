@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -96,12 +97,23 @@ public class Image implements Parcelable {
         //////////////////
     }
 
+    public Image(Image img) {
+        this.uri = img.getUri();
+        this.date = img.getDate();
+        this.description = img.getDescription();
+        this.size = img.getSize();
+        this.location = img.location;
+        this.tags = img.tags;
+    }
+
     protected Image(Parcel in) {
         date = in.readString();
         size = in.readLong();
         description = in.readString();
         location = in.readString();
         uri = in.readParcelable(Uri.class.getClassLoader());
+        tags = new ArrayList<>();
+        in.readList(tags, null);
     }
 
     @Override
@@ -116,5 +128,6 @@ public class Image implements Parcelable {
         dest.writeString(description);
         dest.writeString(location);
         dest.writeParcelable(uri, flags);
+        dest.writeList(tags);
     }
 }
