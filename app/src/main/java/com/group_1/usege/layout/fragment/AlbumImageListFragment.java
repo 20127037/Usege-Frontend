@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class AlbumImageListFragment extends Fragment {
 
         try {
             context = getActivity();
+            libraryActivity = (LibraryActivity) getActivity();
         }
         catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
@@ -132,6 +134,7 @@ public class AlbumImageListFragment extends Fragment {
     }
 
     private void onClickGoToDetails(Image image, int position) {
-        libraryActivity.sendAndReceiveImage(image, position);
+        Log.e("P", "P: " + position);
+        libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
 }

@@ -29,14 +29,16 @@ import java.util.Locale;
 public class ImageActivity extends AppCompatActivity {
 
     LinearLayout layoutBottom;
-    TextView tvDatetime, tvSize, tvPhotoshop, tvFavorite, tvDescribe, tvDelete;
+    TextView tvDatetime, tvSize, tvPhotoshop, tvFavorite, tvDescribe, tvDelete, tvCut;
     ImageView ivImage, ivBack;
     EditText etDescription;
     Button btnReset, btnConfirm;
     View layoutTags, layoutButton;
     Context context = this;
-    Image image;
-    List<Album> lstAlbum;
+
+    private int position;
+    private Image image;
+    private Album album = null;
 
     private static final int UPDATE_IMAGE = 1;
     private static final int DELETE_IMAGE = 2;
@@ -51,10 +53,12 @@ public class ImageActivity extends AppCompatActivity {
             return;
         }
 
+        position = bundle.getInt("position");
         image = (Image) bundle.getParcelable("object_image");
-        lstAlbum = (List<Album>) bundle.getSerializable("object_album");
-        Log.d("Date", "D: " + image.getDate());
-        Log.e("COUNT", "C: " + lstAlbum.size());
+        album = (Album) bundle.getParcelable("object_album");
+
+        //lstAlbum = (List<Album>) bundle.getSerializable("object_album");
+        //Log.d("Date", "D: " + image.getDate());
         // Ánh xạ các widgets
         init();
         setValueToLayout();
@@ -70,12 +74,21 @@ public class ImageActivity extends AppCompatActivity {
         tvDescribe = findViewById(R.id.text_view_describe);
         tvPhotoshop = findViewById(R.id.text_view_photoshop);
         tvFavorite = findViewById(R.id.text_view_favorite);
-        tvDelete = findViewById(R.id.text_view_delete);
+        tvDelete = findViewById(R.id.text_view_delete_in_file);
+        tvCut = findViewById(R.id.text_view_delete_in_album);
         etDescription = findViewById(R.id.edit_text_description);
         btnReset = findViewById(R.id.btn_reset);
         btnConfirm = findViewById(R.id.btn_confirm);
         layoutTags = findViewById(R.id.layout_tags);
         layoutButton = findViewById(R.id.layout_reset_confirm);
+
+        if (album != null) {
+            tvCut.setVisibility(View.VISIBLE);
+            tvDelete.setVisibility(View.GONE);
+        } else {
+            tvCut.setVisibility(View.GONE);
+            tvDelete.setVisibility(View.VISIBLE);
+        }
 
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +119,12 @@ public class ImageActivity extends AppCompatActivity {
                 returnDataImageToLibraryActivity(DELETE_IMAGE);
             }
         });
+        tvCut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                returnDataImageToLibraryActivity(DELETE_IMAGE);
+            }
+        });
 
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +148,11 @@ public class ImageActivity extends AppCompatActivity {
 
                 // Lưu vào image
                 image.setDescription(etDescription.getText().toString());
+                if (album != null) {
+                    album.getAlbumImages()
+                            .get(position)
+                            .setDescription(etDescription.getText().toString());
+                }
                 etDescription.setText(image.getDescription());
                 Log.d("Text", image.getDescription());
                 // Thiết lập text view describe
@@ -147,8 +171,13 @@ public class ImageActivity extends AppCompatActivity {
     public void returnDataImageToLibraryActivity(int task) {
         Intent returnIntent = new Intent();
         Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
         bundle.putParcelable("return_image", image);
         bundle.putInt("task", task);
+        if (album != null) {
+            bundle.putParcelable("return_album", album);
+        }
+
         returnIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
@@ -163,7 +192,7 @@ public class ImageActivity extends AppCompatActivity {
         tvDatetime.setText(date);
 
         // Hiển thị hình ảnh
-        Log.d("URI", "I: " + image.getUri());
+        //Log.d("URI", "I: " + image.getUri());
         Glide.with(this)
                 .load(image.getUri())
                 .into(ivImage);
