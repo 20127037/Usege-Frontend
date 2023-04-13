@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.model.Image;
 import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.model.Image;
@@ -27,6 +29,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     private List<Image> lstImage;
     private Context context;
     private IClickItemImageListener iClickItemImageListener;
+
+    private String albumMode = Album.album_mode_default;
+
+    public CardAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener, String albumMode) {
+        this.lstImage = lstImage;
+        this.context = context;
+        this.iClickItemImageListener = listener;
+        this.albumMode = albumMode;
+    }
 
     public CardAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener) {
         this.lstImage = lstImage;
@@ -56,6 +67,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 .load(uri)
                 .into(holder.imgView);
         Log.d("SIZE", "I: " + uri);
+
+        switch (albumMode) {
+            case Album.album_mode_default:
+                holder.photoText.setVisibility(View.GONE);
+                break;
+            case Album.album_mode_trash:
+                holder.photoText.setVisibility(View.VISIBLE);
+                break;
+            case Album.album_mode_favorite:
+                holder.photoText.setVisibility(View.GONE);
+                break;
+            default:
+                holder.photoText.setVisibility(View.GONE);
+        }
 
         holder.imgView.setOnClickListener(v -> {
             if (context.getClass().equals(LibraryActivity.class)) {
@@ -105,12 +130,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         CardView layoutItemCard;
         ImageView imgView;
+        TextView photoText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imgView = itemView.findViewById(R.id.image_view_photo);
             layoutItemCard = itemView.findViewById(R.id.layout_item_card);
+            photoText = itemView.findViewById(R.id.text_view_photo_text);
         }
     }
 
