@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -17,11 +15,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.group_1.usege.GlideAppModule;
 import com.group_1.usege.R;
-import com.group_1.usege.model.Image;
 import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
+import com.group_1.usege.model.Image;
 
 import java.util.List;
 
@@ -83,11 +80,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 Activity activity = (Activity) context;
                 if (activity instanceof LibraryActivity) {
                     LibraryActivity libActivity = (LibraryActivity) activity;
-                    // FOR UI
                     ImageView imageView = (ImageView)v;
-                    imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
-                    // FOR LOGIC
-                    libActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+                    if (imageView.getColorFilter() == null) {
+                        // FOR UI
+                        imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+                        // FOR LOGIC
+                        libActivity.selectSingleImageAndOpenBottomMenuIfNotYet(image);
+                    }
                 }
             }
             return true;

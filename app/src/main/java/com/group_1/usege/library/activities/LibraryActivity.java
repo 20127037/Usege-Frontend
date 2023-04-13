@@ -131,6 +131,8 @@ public class LibraryActivity extends AppCompatActivity{
         emptyFragment = EmptyFragment.newInstance(mode, false);
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
 
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
+
         imgViewCard = findViewById(R.id.icon_card);
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
@@ -139,6 +141,7 @@ public class LibraryActivity extends AppCompatActivity{
         albumButton = findViewById(R.id.btn_album);
         fileButton = findViewById(R.id.btn_file);
         bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
+
         // bootom menu functions
         layoutLibFunctions = findViewById(R.id.layout_library_functions);
         moveToAlbum = findViewById(R.id.text_view_move_to_album);
@@ -520,12 +523,7 @@ public class LibraryActivity extends AppCompatActivity{
 
             btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
             imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
-            imageViewBackward.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setUplibraryBottomSheetDialog.dismiss();
-                }
-            });
+            imageViewBackward.setOnClickListener(v -> setUplibraryBottomSheetDialog.dismiss());
 
             btnConfirm.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -1133,14 +1131,8 @@ public class LibraryActivity extends AppCompatActivity{
         }
     }
 
-    public static void openBottomMenu(Image image) {
-        bottomMenu.setVisibility(View.VISIBLE);
-        Image imgTemp = new Image(image);
-        selectedImages.add(imgTemp);
-        Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
-    }
-
     public void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
+        // FOR UI
         switch (mode) {
             case imageInAlbumMode:
                 System.out.println("mode to album!");
@@ -1157,22 +1149,26 @@ public class LibraryActivity extends AppCompatActivity{
                 cutImage.setVisibility(View.GONE);
                 deleteImage.setVisibility(View.VISIBLE);
         }
+
+        imageDisplayLayout.setPadding(0,0,0,500);
         bottomMenu.setVisibility(View.VISIBLE);
+
+        // FOR CODE
         selectedImages.add(image);
         Log.d("selectedImages' size", String.valueOf(selectedImages.size()));
     }
 
-    public void removeBottomMenu(View v) {
-        bottomMenu.setVisibility(View.GONE);
-    }
-
     public void removeSingleImageAndRemoveBottomMenuIfNoImageLeft(Image image) {
+        // FOR LOGIC
         selectedImages.remove(image);
-        if (selectedImages.size() < 1) bottomMenu.setVisibility(View.GONE);
+        // FOR UI
+        if (selectedImages.size() < 1) {
+            bottomMenu.setVisibility(View.GONE);
+            imageDisplayLayout.setPadding(0,0,0,0);
+        }
     }
 
     public RecyclerView getRecyclerViewOfImageLibrary() {
-        imageDisplayLayout = findViewById(R.id.layout_display_images);
         LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
         RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
         return libraryRecyclerView;
@@ -1181,6 +1177,7 @@ public class LibraryActivity extends AppCompatActivity{
     public void removeBottomMenuAndAllImages(View v) {
         // FOR UI
         bottomMenu.setVisibility(View.GONE);
+        imageDisplayLayout.setPadding(0,0,0,0);
         RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
         int c = libraryRecyclerView.getChildCount();
         for (int i = 0; i < c; ++i) {
