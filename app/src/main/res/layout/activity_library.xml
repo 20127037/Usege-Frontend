@@ -132,23 +132,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_below="@id/layout_title">
-
-
     </LinearLayout>
 
-<!--    <ScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_below="@+id/layout_title">-->
-<!--        <LinearLayout-->
-<!--            android:id="@+id/layout_display_images"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:orientation="vertical">-->
-
-
-<!--        </LinearLayout>-->
-<!--    </ScrollView>-->
     <RelativeLayout
         android:id="@+id/layout_bottom_menu_for_selecting_images"
         android:layout_width="match_parent"
