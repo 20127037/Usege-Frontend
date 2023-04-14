@@ -4,6 +4,96 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".library.activities.ImageCombinationActivity">
+    tools:context=".library.activities.ImageCombinationActivity"
+    android:orientation="vertical">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/backward_from_image_combination_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_backward_arrow"
+            android:layout_centerVertical="true"
+            android:onClick="backToPreviousActivity" />
+
+        <Button
+            android:id="@+id/combine_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_alignParentRight="true"
+            android:text="Combine"
+            android:onClick="combineImagesFromContainer" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/image_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="1200px"
+        android:layout_margin="10dp"
+        android:background="@drawable/bottom_menu" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:id="@+id/resource_queue_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:orientation="horizontal"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="100dp">
+
+            </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/image_combination_bottom_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:background="@drawable/bottom_menu"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove"
+                android:drawableTop="@drawable/icon_delete_images"
+                android:layout_marginRight="40dp"
+                android:onClick="removeImageFromResourceQueue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear all"
+                android:drawableTop="@drawable/icon_clear_all"
+                android:layout_marginRight="40dp"
+                android:onClick="clearResourceQueue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto align"
+                android:drawableTop="@drawable/icon_auto_align"
+                android:layout_marginRight="40dp"
+                android:onClick="autoAlignCurrentImagesInContainer" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add more"
+                android:drawableTop="@drawable/icon_add_to_album"
+                android:onClick="addMoreImagesToResourceQueue" />
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

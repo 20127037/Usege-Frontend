@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -59,7 +60,6 @@ import com.group_1.usege.model.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1206,10 +1206,23 @@ public class LibraryActivity extends AppCompatActivity{
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.getMenuInflater().inflate(R.menu.image_selection_more_options, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(menuItem -> {
-            Toast.makeText(getApplicationContext(), menuItem.getTitle().toString(), Toast.LENGTH_SHORT).show();
-            return true;
+            switch (menuItem.getItemId()) {
+                case R.id.combine_image_menu_item:
+                    Intent intent = new Intent(this, ImageCombinationActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    return true;
+                default:
+                    return super.onMenuItemSelected(0, menuItem);
+            }
         });
         popupMenu.show();
+    }
+
+    public void combineImages() {
+        System.out.println("Hello lnthuy");
     }
 
     public void deleteImages(View v) {
