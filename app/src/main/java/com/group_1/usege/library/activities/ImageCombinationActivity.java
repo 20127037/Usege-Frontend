@@ -1,18 +1,26 @@
 package com.group_1.usege.library.activities;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
@@ -25,9 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImageCombinationActivity extends AppCompatActivity {
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     Context context;
     public List<Image> selectedImages = new ArrayList<>();
-    GridLayout imageContainerLinearLayout;
+    GridLayout imageContainerGridLayout;
     LinearLayout resourceQueueLayout;
     FragmentTransaction ft;
     ImageResourceQueueCardFragment imageResourceQueueCardFragment;
@@ -40,7 +49,7 @@ public class ImageCombinationActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         selectedImages = bundle.getParcelableArrayList("data");
 
-        imageContainerLinearLayout = findViewById(R.id.image_container_linear_layout);
+        imageContainerGridLayout = findViewById(R.id.image_container_grid_layout);
         resourceQueueLayout = findViewById(R.id.resource_queue_linear_layout);
 
         ft = getSupportFragmentManager().beginTransaction();
@@ -52,7 +61,7 @@ public class ImageCombinationActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(30,30,30,30);
 
-        imageContainerLinearLayout.setOnDragListener( (v, e) -> {
+        imageContainerGridLayout.setOnDragListener( (v, e) -> {
             switch(e.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     if (e.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
@@ -73,7 +82,7 @@ public class ImageCombinationActivity extends AppCompatActivity {
                             .apply(new RequestOptions() .override(400, 300).centerCrop())
                             .into(newImageView);
 
-                    imageContainerLinearLayout.addView(newImageView);
+                    imageContainerGridLayout.addView(newImageView);
 
                     return true;
 
@@ -87,14 +96,37 @@ public class ImageCombinationActivity extends AppCompatActivity {
             return false;
 
         });
-
     }
 
     public void backToPreviousActivity(View v) {
         this.finish();
     }
 
-    public void combineImagesFromContainer(View v) {
+    Bitmap getBitmapFromView(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
+    private Boolean requestPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+        return false;
+    }
+    public void combineImagesFromContainer(View v) throws InterruptedException {
+        if (requestPermission()) {
+            Bitmap bitmap = getBitmapFromView(imageContainerGridLayout);
+            String savedImageURL = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "myScreenshot", "Image of myScreenshot");
+            Toast.makeText(context, "Successfully combining images", Toast.LENGTH_SHORT).show();
+            Thread.sleep(1000);
+            this.finish();
+        }
 
     }
 

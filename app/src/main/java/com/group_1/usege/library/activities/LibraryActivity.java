@@ -1227,11 +1227,13 @@ public class LibraryActivity extends AppCompatActivity{
             Toast.makeText(context, "You has reached the limit of 9 limit", Toast.LENGTH_SHORT).show();
             return;
         }
+
         Intent intent = new Intent(this, ImageCombinationActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
         intent.putExtras(bundle);
         startActivity(intent);
+        removeBottomMenuAndAllImages(null);
     }
 
     public void deleteImages(View v) {

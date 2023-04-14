@@ -13,7 +13,7 @@
         android:padding="10dp">
 
         <ImageView
-            android:id="@+id/backward_from_image_combination_activity"
+            android:id="@+id/backward_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_backward_arrow"
@@ -32,7 +32,7 @@
     </RelativeLayout>
 
     <GridLayout
-        android:id="@+id/image_container_linear_layout"
+        android:id="@+id/image_container_grid_layout"
         android:layout_width="match_parent"
         android:layout_height="1200px"
         android:layout_margin="10dp"
