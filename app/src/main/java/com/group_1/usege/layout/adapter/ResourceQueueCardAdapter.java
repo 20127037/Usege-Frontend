@@ -53,6 +53,10 @@ public class ResourceQueueCardAdapter extends RecyclerView.Adapter<ResourceQueue
             return true;
         });
 
+        holder.resourceQueueImageView.setOnClickListener(v -> {
+            v.setVisibility(View.GONE);
+        });
+
     }
 
     @Override
@@ -68,7 +72,6 @@ public class ResourceQueueCardAdapter extends RecyclerView.Adapter<ResourceQueue
         public ResourceQueueCardViewHolder(@NonNull View itemView) {
             super(itemView);
             resourceQueueImageView = itemView.findViewById(R.id.resource_queue_image_view);
-
         }
     }
 }

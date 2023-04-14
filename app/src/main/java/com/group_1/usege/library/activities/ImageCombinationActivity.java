@@ -56,12 +56,16 @@ public class ImageCombinationActivity extends AppCompatActivity {
         imageResourceQueueCardFragment = ImageResourceQueueCardFragment.newInstance(selectedImages);
         ft.replace(R.id.resource_queue_linear_layout, imageResourceQueueCardFragment).commit();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(30,30,30,30);
+        imageContainerGridLayout.setOnDragListener(myDragListener);
+    }
 
-        imageContainerGridLayout.setOnDragListener( (v, e) -> {
+    View.OnDragListener myDragListener = new View.OnDragListener() {
+        @Override
+        public boolean onDrag(View v, DragEvent e) {
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(30,30,30,30);
             switch(e.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     if (e.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
@@ -77,7 +81,7 @@ public class ImageCombinationActivity extends AppCompatActivity {
                     ImageView newContainerImageView = new ImageView(context);
                     newContainerImageView.setLayoutParams(layoutParams);
 
-                    Glide.with(this)
+                    Glide.with(context)
                             .load(dragData)
                             .apply(new RequestOptions() .override(400, 300).centerCrop())
                             .into(newContainerImageView);
@@ -99,22 +103,13 @@ public class ImageCombinationActivity extends AppCompatActivity {
                     break;
             }
             return false;
-
-        });
-
-    }
+        }
+    };
 
     public void backToPreviousActivity(View v) {
         this.finish();
     }
 
-    Bitmap getBitmapFromView(View view) {
-        Bitmap bitmap = Bitmap.createBitmap(
-                view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
-    }
     private Boolean requestPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -125,27 +120,31 @@ public class ImageCombinationActivity extends AppCompatActivity {
         }
         return false;
     }
-    public void combineImagesFromContainer(View v) throws InterruptedException {
+
+    Bitmap getBitmapFromView(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
+
+    public void combineImagesFromContainer(View v) {
+        if (imageContainerGridLayout.getChildCount() < 2) {
+            Toast.makeText(context, "Oops, your container seems to be so spacious", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (requestPermission()) {
             Bitmap bitmap = getBitmapFromView(imageContainerGridLayout);
             String savedImageURL = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "myScreenshot", "Image of myScreenshot");
             Toast.makeText(context, "Successfully combining images", Toast.LENGTH_SHORT).show();
-            Thread.sleep(1000);
             this.finish();
         }
 
     }
 
-    public void removeImageFromResourceQueue(View v) {
-
-    }
-
-    public void clearResourceQueue(View v) {
-
-    }
-
-    public void autoAlignCurrentImagesInContainer(View v) {
-
+    public void clearContainer(View v) {
+        imageContainerGridLayout.removeAllViews();
     }
 
     public void addMoreImagesToResourceQueue(View v) {

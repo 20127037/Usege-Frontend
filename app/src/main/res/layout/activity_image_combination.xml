@@ -71,26 +71,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Remove"
-                android:drawableTop="@drawable/icon_delete_images"
-                android:layout_marginRight="40dp"
-                android:onClick="removeImageFromResourceQueue"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Clear all"
+                android:text="Clear container"
                 android:drawableTop="@drawable/icon_clear_all"
-                android:layout_marginRight="40dp"
-                android:onClick="clearResourceQueue"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Auto align"
-                android:drawableTop="@drawable/icon_auto_align"
-                android:layout_marginRight="40dp"
-                android:onClick="autoAlignCurrentImagesInContainer" />
+                android:layout_marginRight="50dp"
+                android:onClick="clearContainer"/>
 
             <TextView
                 android:layout_width="wrap_content"
