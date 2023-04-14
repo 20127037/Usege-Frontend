@@ -31,15 +31,16 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <GridLayout
         android:id="@+id/image_container_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="1200px"
         android:layout_margin="10dp"
         android:background="@drawable/bottom_menu"
-        android:orientation="horizontal">
+        android:columnCount="3"
+        android:rowCount="3">
 
-    </LinearLayout>
+    </GridLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

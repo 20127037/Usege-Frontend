@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.group_1.usege.R;
 import com.group_1.usege.layout.fragment.ImageResourceQueueCardFragment;
 import com.group_1.usege.model.Image;
@@ -25,7 +27,7 @@ import java.util.List;
 public class ImageCombinationActivity extends AppCompatActivity {
     Context context;
     public List<Image> selectedImages = new ArrayList<>();
-    LinearLayout imageContainerLinearLayout;
+    GridLayout imageContainerLinearLayout;
     LinearLayout resourceQueueLayout;
     FragmentTransaction ft;
     ImageResourceQueueCardFragment imageResourceQueueCardFragment;
@@ -67,10 +69,12 @@ public class ImageCombinationActivity extends AppCompatActivity {
 
                     ImageView newImageView = new ImageView(context);
                     newImageView.setLayoutParams(layoutParams);
+
                     Glide.with(this)
                             .load(dragData)
-                            .override(600,300)
+                            .apply(new RequestOptions() .override(300, 300).centerCrop())
                             .into(newImageView);
+
                     imageContainerLinearLayout.addView(newImageView);
 
                     return true;

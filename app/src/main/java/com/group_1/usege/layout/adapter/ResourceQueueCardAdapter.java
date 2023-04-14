@@ -49,69 +49,10 @@ public class ResourceQueueCardAdapter extends RecyclerView.Adapter<ResourceQueue
             ClipData dragData = new ClipData((CharSequence) v.getTag(), new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN }, item);
             View.DragShadowBuilder myShadow = new MyDragShadowBuilder(v);
             v.startDragAndDrop(dragData, myShadow, v, 0);
-            v.setVisibility(View.INVISIBLE);
+            v.setVisibility(View.VISIBLE);
             return true;
         });
 
-//        holder.resourceQueueImageView.setOnDragListener( (v, e) -> {
-//            switch(e.getAction()) {
-//
-//                case DragEvent.ACTION_DRAG_STARTED:
-//                    if (e.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-//                        ((ImageView)v).setColorFilter(Color.BLUE);
-//                        v.invalidate();
-//                        return true;
-//
-//                    }
-//                    return false;
-//
-//                case DragEvent.ACTION_DRAG_ENTERED:
-//                    ((ImageView)v).setColorFilter(Color.GREEN);
-//                    v.invalidate();
-//                    return true;
-//
-//                case DragEvent.ACTION_DRAG_LOCATION:
-//                    return true;
-//
-//                case DragEvent.ACTION_DRAG_EXITED:
-//                    ((ImageView)v).setColorFilter(Color.BLUE);
-//                    v.invalidate();
-//                    return true;
-//
-//                case DragEvent.ACTION_DROP:
-//
-//                    // Get the item containing the dragged data.
-//                    ClipData.Item item = e.getClipData().getItemAt(0);
-//
-//                    // Get the text data from the item.
-//                    CharSequence dragData = item.getText();
-//
-//                    // Display a message containing the dragged data.
-//                    System.out.println("Drag data is" + dragData);
-//
-//                    // Turn off color tints.
-//                    ((ImageView)v).clearColorFilter();
-//
-//                    // Invalidate the view to force a redraw.
-//                    v.invalidate();
-//
-//                    // Return true. DragEvent.getResult() returns true.
-//                    return true;
-//
-//                case DragEvent.ACTION_DRAG_ENDED:
-//
-//                    ((ImageView)v).clearColorFilter();
-//
-//                    v.invalidate();
-//
-//                    return true;
-//                default:
-//                    Log.e("DragDrop Example","Unknown action type received by View.OnDragListener.");
-//                    break;
-//            }
-//
-//            return false;
-//        });
     }
 
     @Override
