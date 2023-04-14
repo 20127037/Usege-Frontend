@@ -1208,11 +1208,7 @@ public class LibraryActivity extends AppCompatActivity{
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.combine_image_menu_item:
-                    Intent intent = new Intent(this, ImageCombinationActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
+                    combineImages();
                     return true;
                 default:
                     return super.onMenuItemSelected(0, menuItem);
@@ -1222,7 +1218,20 @@ public class LibraryActivity extends AppCompatActivity{
     }
 
     public void combineImages() {
-        System.out.println("Hello lnthuy");
+        int selectedImagesSize = selectedImages.size();
+        if (selectedImagesSize < 2) {
+            Toast.makeText(context, "Please select more images", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (selectedImagesSize > 9) {
+            Toast.makeText(context, "You has reached the limit of 9 limit", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(this, ImageCombinationActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     public void deleteImages(View v) {

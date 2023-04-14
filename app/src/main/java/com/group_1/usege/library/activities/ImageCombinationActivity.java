@@ -56,12 +56,10 @@ public class ImageCombinationActivity extends AppCompatActivity {
             switch(e.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     if (e.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-
                         v.invalidate();
                         return true;
                     }
                     return false;
-
                 case DragEvent.ACTION_DROP:
                     ClipData.Item item = e.getClipData().getItemAt(0);
                     Uri dragData = item.getUri();
@@ -72,7 +70,7 @@ public class ImageCombinationActivity extends AppCompatActivity {
 
                     Glide.with(this)
                             .load(dragData)
-                            .apply(new RequestOptions() .override(300, 300).centerCrop())
+                            .apply(new RequestOptions() .override(400, 300).centerCrop())
                             .into(newImageView);
 
                     imageContainerLinearLayout.addView(newImageView);
