@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".syncing.activities.LibraryActivity">
+    tools:context=".library.activities.LibraryActivity">
     <LinearLayout
+        android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true">
 
         <RelativeLayout
             android:id="@+id/title_bar"
@@ -122,14 +124,22 @@
                 android:src="@drawable/baseline_search" />
         </RelativeLayout>
 
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scroll_view_display_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/layout_title">
         <LinearLayout
             android:id="@+id/layout_display_images"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/layout_bottom_menu_for_selecting_images"
@@ -219,12 +229,25 @@
                     android:onClick="shareImages"/>
 
                 <TextView
+                    android:id="@+id/text_view_delete_in_file"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/icon_delete_images"
                     android:text="Delete"
                     android:gravity="center"
-                    android:layout_marginHorizontal="15dp"/>
+                    android:layout_marginHorizontal="15dp"
+                    android:onClick="deleteImages"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/text_view_delete_in_album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/icon_cut_image"
+                    android:text="Delete"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="15dp"
+                    android:onClick="cutImages"/>
 
                 <TextView
                     android:layout_width="wrap_content"
