@@ -1,5 +1,8 @@
 package com.group_1.usege.layout.adapter;
 
+import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -33,17 +36,82 @@ public class ResourceQueueCardAdapter extends RecyclerView.Adapter<ResourceQueue
         return new ResourceQueueCardViewHolder(view);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ResourceQueueCardViewHolder holder, int position) {
         Image image = resourceQueueImageList.get(position);
-        if (image == null) {
-            return;
-        }
+        if (image == null) return;
         Uri uri = image.getUri();
+        Glide.with(context).load(uri).into(holder.resourceQueueImageView);
+        holder.resourceQueueImageView.setTag("RESOURE_QUEUE_IMAGE_VIEW");
+        holder.resourceQueueImageView.setOnLongClickListener(v -> {
+            ClipData.Item item = new ClipData.Item(uri);
+            ClipData dragData = new ClipData((CharSequence) v.getTag(), new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN }, item);
+            View.DragShadowBuilder myShadow = new MyDragShadowBuilder(v);
+            v.startDragAndDrop(dragData, myShadow, v, 0);
+            v.setVisibility(View.INVISIBLE);
+            return true;
+        });
 
-        Glide.with(context)
-                .load(uri)
-                .into(holder.resourceQueueImage);
+//        holder.resourceQueueImageView.setOnDragListener( (v, e) -> {
+//            switch(e.getAction()) {
+//
+//                case DragEvent.ACTION_DRAG_STARTED:
+//                    if (e.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+//                        ((ImageView)v).setColorFilter(Color.BLUE);
+//                        v.invalidate();
+//                        return true;
+//
+//                    }
+//                    return false;
+//
+//                case DragEvent.ACTION_DRAG_ENTERED:
+//                    ((ImageView)v).setColorFilter(Color.GREEN);
+//                    v.invalidate();
+//                    return true;
+//
+//                case DragEvent.ACTION_DRAG_LOCATION:
+//                    return true;
+//
+//                case DragEvent.ACTION_DRAG_EXITED:
+//                    ((ImageView)v).setColorFilter(Color.BLUE);
+//                    v.invalidate();
+//                    return true;
+//
+//                case DragEvent.ACTION_DROP:
+//
+//                    // Get the item containing the dragged data.
+//                    ClipData.Item item = e.getClipData().getItemAt(0);
+//
+//                    // Get the text data from the item.
+//                    CharSequence dragData = item.getText();
+//
+//                    // Display a message containing the dragged data.
+//                    System.out.println("Drag data is" + dragData);
+//
+//                    // Turn off color tints.
+//                    ((ImageView)v).clearColorFilter();
+//
+//                    // Invalidate the view to force a redraw.
+//                    v.invalidate();
+//
+//                    // Return true. DragEvent.getResult() returns true.
+//                    return true;
+//
+//                case DragEvent.ACTION_DRAG_ENDED:
+//
+//                    ((ImageView)v).clearColorFilter();
+//
+//                    v.invalidate();
+//
+//                    return true;
+//                default:
+//                    Log.e("DragDrop Example","Unknown action type received by View.OnDragListener.");
+//                    break;
+//            }
+//
+//            return false;
+//        });
     }
 
     @Override
@@ -55,10 +123,10 @@ public class ResourceQueueCardAdapter extends RecyclerView.Adapter<ResourceQueue
     }
 
     public class ResourceQueueCardViewHolder extends RecyclerView.ViewHolder {
-        private ImageView resourceQueueImage;
+        private ImageView resourceQueueImageView;
         public ResourceQueueCardViewHolder(@NonNull View itemView) {
             super(itemView);
-            resourceQueueImage = itemView.findViewById(R.id.resource_queue_image_view);
+            resourceQueueImageView = itemView.findViewById(R.id.resource_queue_image_view);
 
         }
     }
