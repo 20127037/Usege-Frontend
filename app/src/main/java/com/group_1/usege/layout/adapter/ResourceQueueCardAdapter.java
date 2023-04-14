@@ -43,10 +43,10 @@ public class ResourceQueueCardAdapter extends RecyclerView.Adapter<ResourceQueue
         if (image == null) return;
         Uri uri = image.getUri();
         Glide.with(context).load(uri).into(holder.resourceQueueImageView);
-        holder.resourceQueueImageView.setTag("RESOURE_QUEUE_IMAGE_VIEW");
+
         holder.resourceQueueImageView.setOnLongClickListener(v -> {
             ClipData.Item item = new ClipData.Item(uri);
-            ClipData dragData = new ClipData((CharSequence) v.getTag(), new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN }, item);
+            ClipData dragData = new ClipData("RESOURE_QUEUE_IMAGE_VIEW", new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN }, item);
             View.DragShadowBuilder myShadow = new MyDragShadowBuilder(v);
             v.startDragAndDrop(dragData, myShadow, v, 0);
             v.setVisibility(View.VISIBLE);

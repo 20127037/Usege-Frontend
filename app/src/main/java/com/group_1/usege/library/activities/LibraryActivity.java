@@ -1233,6 +1233,7 @@ public class LibraryActivity extends AppCompatActivity{
         bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
         intent.putExtras(bundle);
         startActivity(intent);
+
         removeBottomMenuAndAllImages(null);
     }
 

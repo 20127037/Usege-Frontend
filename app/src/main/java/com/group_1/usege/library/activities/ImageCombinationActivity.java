@@ -70,19 +70,24 @@ public class ImageCombinationActivity extends AppCompatActivity {
                     }
                     return false;
                 case DragEvent.ACTION_DROP:
-                    ClipData.Item item = e.getClipData().getItemAt(0);
-                    Uri dragData = item.getUri();
+                    ClipData.Item resourceItem = e.getClipData().getItemAt(0);
+                    Uri dragData = resourceItem.getUri();
                     v.invalidate();
 
-                    ImageView newImageView = new ImageView(context);
-                    newImageView.setLayoutParams(layoutParams);
+                    ImageView newContainerImageView = new ImageView(context);
+                    newContainerImageView.setLayoutParams(layoutParams);
 
                     Glide.with(this)
                             .load(dragData)
                             .apply(new RequestOptions() .override(400, 300).centerCrop())
-                            .into(newImageView);
+                            .into(newContainerImageView);
 
-                    imageContainerGridLayout.addView(newImageView);
+                    imageContainerGridLayout.addView(newContainerImageView);
+
+                    newContainerImageView.setOnLongClickListener(containerImageView -> {
+                        imageContainerGridLayout.removeView(containerImageView);
+                        return true;
+                    });
 
                     return true;
 
@@ -96,6 +101,7 @@ public class ImageCombinationActivity extends AppCompatActivity {
             return false;
 
         });
+
     }
 
     public void backToPreviousActivity(View v) {
