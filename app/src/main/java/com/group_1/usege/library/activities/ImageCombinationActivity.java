@@ -1,9 +1,11 @@
 package com.group_1.usege.library.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -107,7 +109,10 @@ public class ImageCombinationActivity extends AppCompatActivity {
     };
 
     public void backToPreviousActivity(View v) {
-        this.finish();
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("action", "back");
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
     private Boolean requestPermission() {
@@ -137,10 +142,12 @@ public class ImageCombinationActivity extends AppCompatActivity {
         if (requestPermission()) {
             Bitmap bitmap = getBitmapFromView(imageContainerGridLayout);
             String savedImageURL = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "myScreenshot", "Image of myScreenshot");
-            Toast.makeText(context, "Successfully combining images", Toast.LENGTH_SHORT).show();
-            this.finish();
-        }
 
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("action", "combine ok");
+            setResult(Activity.RESULT_OK, returnIntent);
+            finish();
+        }
     }
 
     public void clearContainer(View v) {
@@ -148,6 +155,9 @@ public class ImageCombinationActivity extends AppCompatActivity {
     }
 
     public void addMoreImagesToResourceQueue(View v) {
-
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("action", "add more");
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 }

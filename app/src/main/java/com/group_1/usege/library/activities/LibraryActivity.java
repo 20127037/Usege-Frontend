@@ -1217,13 +1217,33 @@ public class LibraryActivity extends AppCompatActivity{
         popupMenu.show();
     }
 
+    private final ActivityResultLauncher<Intent> imageCombinationLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent intent = result.getData();
+
+                if (result.getResultCode() == RESULT_OK && intent != null) {
+                    String action = intent.getStringExtra("action");
+
+                    if (Objects.equals(action, "back")) {
+                        removeBottomMenuAndAllImages(null);
+                    }
+                    else if (Objects.equals(action, "add more")) {
+                        Toast.makeText(this, "Now you can continue selecting images", Toast.LENGTH_LONG).show();
+                    }
+                    else if (Objects.equals(action, "combine ok")) {
+                        Toast.makeText(this, "Successfully combing images", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
+                }
+            });
+
     public void combineImages() {
         int selectedImagesSize = selectedImages.size();
-        if (selectedImagesSize < 2) {
-            Toast.makeText(context, "Please select more images", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        else if (selectedImagesSize > 9) {
+
+        if (selectedImagesSize > 9) {
             Toast.makeText(context, "You has reached the limit of 9 limit", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -1232,9 +1252,7 @@ public class LibraryActivity extends AppCompatActivity{
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
         intent.putExtras(bundle);
-        startActivity(intent);
-
-        removeBottomMenuAndAllImages(null);
+        imageCombinationLauncher.launch(intent);
     }
 
     public void deleteImages(View v) {
