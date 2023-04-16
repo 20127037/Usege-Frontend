@@ -69,6 +69,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 ;
 
@@ -159,11 +160,17 @@ public class LibraryActivity extends AppCompatActivity {
 
 
         fileButton.setOnClickListener(v -> {
-            mode = "image";
+            fileButton.setTextColor(getResources().getColor(R.color.white));
+            fileButton.setBackground(getResources().getDrawable(R.drawable.file_button_border));
+            albumButton.setTextColor(getResources().getColor(R.color.black));
+            albumButton.setBackground(getResources().getDrawable(R.drawable.album_button_border));
             clickOpenImageList();
         });
         albumButton.setOnClickListener(v -> {
-            mode = "album";
+            albumButton.setTextColor(getResources().getColor(R.color.white));
+            albumButton.setBackground(getResources().getDrawable(R.drawable.file_button_border));
+            fileButton.setTextColor(getResources().getColor(R.color.black));
+            fileButton.setBackground(getResources().getDrawable(R.drawable.album_button_border));
             clickOpenAlbumList();
         });
         imgViewUpload.setOnClickListener(v -> clickOpenSetUplibraryBottomSheetDialog());
@@ -449,7 +456,7 @@ public class LibraryActivity extends AppCompatActivity {
             // Đóng bottommsheet
             createAlbumBottomSheetDialog.dismiss();
 
-            clickOpenAlbumList();
+            triggerAlbumButton();
         });
     }
 
@@ -476,7 +483,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     public void clickOpenImageList() {
         // check empty list
-        mode = "image";
+        mode = imageMode;
         if (imgList.size() == 0) {
             ft = getSupportFragmentManager().beginTransaction();
             emptyFragment = EmptyFragment.newInstance(mode, true);
@@ -511,6 +518,65 @@ public class LibraryActivity extends AppCompatActivity {
         clickOpenAlbumImageList(albumList.get(1));
         Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
     }
+
+    public void deleteAlbum(Album deleteAlbum) {
+        albumList.removeIf(v -> v.getName() == deleteAlbum.getName());
+        Toast.makeText(this, "Delete album successfully!", Toast.LENGTH_SHORT).show();
+        triggerAlbumButton();
+    }
+    public  void renameAlbum(Album renamedAlbum) {
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_rename_album, null);
+
+        final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        createAlbumBottomSheetDialog.setContentView(viewDialog);
+        createAlbumBottomSheetDialog.show();
+
+        EditText editTextName = viewDialog.findViewById(R.id.edit_text_new_name);
+        Button btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        ImageView backIcon = viewDialog.findViewById(R.id.image_view_backward);
+        editTextName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String newText = editable.toString();
+                if (newText.length() > 0) {
+                    btnConfirm.setEnabled(true);
+                    btnConfirm.setAlpha((float) 1);
+                } else {
+                    btnConfirm.setEnabled(false);
+                    btnConfirm.setAlpha((float) 0.5);
+                }
+            }
+        });
+
+        btnConfirm.setOnClickListener(e -> {
+            String newName = String.valueOf(editTextName.getText());
+            Album album = albumList.stream().filter(v -> v.getName() == renamedAlbum.getName()).findFirst().orElse(null);
+            if(album != null) {
+                album.setName(newName);
+                Toast.makeText(this, "Rename album successfully!", Toast.LENGTH_SHORT).show();
+                clickOpenAlbumImageList(album);
+            } else {
+                Toast.makeText(this, "There is some error, please try again!", Toast.LENGTH_SHORT).show();
+            }
+            createAlbumBottomSheetDialog.dismiss();
+        });
+
+        backIcon.setOnClickListener(v -> {
+            createAlbumBottomSheetDialog.dismiss();
+        });
+    }
+
+    // ======== End album handler
 
     public void clickOpenSetUplibraryBottomSheetDialog() {
         Button btnConfirm;

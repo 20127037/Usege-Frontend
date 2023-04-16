@@ -124,9 +124,14 @@ public class AlbumImageListFragment extends Fragment {
             popupMenu.getMenuInflater().inflate(R.menu.image_selection_album_more_options, popupMenu.getMenu());
 
             popupMenu.setOnMenuItemClickListener(item -> {
+                Activity activity = (Activity) context;
                 switch (item.getItemId()) {
                     case R.id.rename_image_menu_item:
-                        // Do something when the "Favorite" item is clicked
+                        // Do something when the "rename" item is clicked
+                        if (activity instanceof LibraryActivity) {
+                            LibraryActivity libActivity = (LibraryActivity) activity;
+                            libActivity.renameAlbum(album);
+                        }
                         return true;
                     case R.id.make_a_presentation_menu_item:
                         // Do something when the "Combine" item is clicked
@@ -138,7 +143,11 @@ public class AlbumImageListFragment extends Fragment {
                         // Do something when the "Make a presentation" item is clicked
                         return true;
                     case R.id.delete_menu_item:
-                        // Do something when the "Make a presentation" item is clicked
+                        // Do something when the "Delete" item is clicked
+                        if (activity instanceof LibraryActivity) {
+                            LibraryActivity libActivity = (LibraryActivity) activity;
+                            libActivity.deleteAlbum(album);
+                        }
                         return true;
                     default:
                         return false;
