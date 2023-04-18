@@ -30,8 +30,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private IClickItemImageListener iClickItemImageListener;
     private String albumMode = Album.album_mode_default;
 
-    public ListAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener, String albumMode) {
-        this.lstImage = lstImage;
+    public ListAdapter(Context context, IClickItemImageListener listener, String albumMode) {
         this.context = context;
         this.iClickItemImageListener = listener;
         this.albumMode = albumMode;
@@ -104,32 +103,24 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     return false;
                 }
             });
-        }
-        holder.layoutItemList.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return false;
-            }
-        });
 
-        switch (albumMode) {
-            case Album.album_mode_default:
+            switch (albumMode) {
+                case Album.album_mode_default:
 //                    holder.description.setText("... days");
 //                holder.imgViewMore.setVisibility(View.VISIBLE);
-                break;
-            case Album.album_mode_trash:
-                holder.description.setText("... days");
+                    break;
+                case Album.album_mode_trash:
+                    imageViewHolder.description.setText("... days");
 //                holder.imgViewMore.setVisibility(View.GONE);
-                break;
-            case Album.album_mode_favorite:
+                    break;
+                case Album.album_mode_favorite:
 //                    holder.description.setText("... days");
 //                holder.imgViewMore.setVisibility(View.VISIBLE);
-                break;
-            default:
+                    break;
+                default:
 //                holder.imgViewMore.setVisibility(View.VISIBLE);
+            }
         }
-    }
-
     }
 
     @Override
@@ -147,8 +138,6 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ImageView imgView, imgViewMore;
         TextView description;
         public ImageViewHolder(@NonNull View itemView) {
-
-        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imgView = itemView.findViewById(R.id.image_view_photo);

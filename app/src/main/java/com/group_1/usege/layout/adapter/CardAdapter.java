@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -35,8 +36,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private String albumMode = Album.album_mode_default;
 
-    public CardAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener, String albumMode) {
-        this.lstImage = lstImage;
+    public CardAdapter(Context context, IClickItemImageListener listener, String albumMode) {
         this.context = context;
         this.iClickItemImageListener = listener;
         this.albumMode = albumMode;
@@ -92,37 +92,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .into(imageViewHolder.imgView);
             Log.d("SIZE", "I: " + uri);
 
-        switch (albumMode) {
-            case Album.album_mode_default:
-                holder.photoText.setVisibility(View.GONE);
-                break;
-            case Album.album_mode_trash:
-                holder.photoText.setVisibility(View.VISIBLE);
-                break;
-            case Album.album_mode_favorite:
-                holder.photoText.setVisibility(View.GONE);
-                break;
-            default:
-                holder.photoText.setVisibility(View.GONE);
-        }
-
-        holder.imgView.setOnClickListener(v -> {
-            if (context.getClass().equals(LibraryActivity.class)) {
-                Activity activity = (Activity) context;
-                if (activity instanceof LibraryActivity) {
-                    LibraryActivity libActivity = (LibraryActivity) activity;
-                    ImageView imageView = (ImageView) v;
-                    if (imageView.getColorFilter() != null) {
-                        // FOR UI
-                        imageView.clearColorFilter();
-                        // FOR LOGIC
-                        libActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
-                    } else {
-                        iClickItemImageListener.onClickItemImage(image, finalPosition);
-                    }
-                }
-            }
-        });
             imageViewHolder.imgView.setOnClickListener(v -> {
                 if (context.getClass().equals(LibraryActivity.class)) {
                     Activity activity = (Activity) context;
@@ -157,6 +126,20 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
                 return true;
             });
+
+            switch (albumMode) {
+                case Album.album_mode_default:
+                    imageViewHolder.photoText.setVisibility(View.GONE);
+                    break;
+                case Album.album_mode_trash:
+                    imageViewHolder.photoText.setVisibility(View.VISIBLE);
+                    break;
+                case Album.album_mode_favorite:
+                    imageViewHolder.photoText.setVisibility(View.GONE);
+                    break;
+                default:
+                    imageViewHolder.photoText.setVisibility(View.GONE);
+            }
         }
 
     }

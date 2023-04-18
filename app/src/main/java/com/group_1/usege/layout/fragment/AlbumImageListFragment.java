@@ -122,7 +122,7 @@ public class AlbumImageListFragment extends Fragment {
 //        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode, albumMode);
 
         if(mode == "list") {
-            listAdapter = new ListAdapter(album.getAlbumImages(), context, new IClickItemImageListener() {
+            listAdapter = new ListAdapter(context, new IClickItemImageListener() {
                 @Override
                 public void onClickItemImage(Image image, int position) {
                     onClickGoToDetails(image, position);
