@@ -52,7 +52,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = null;
-        view = inflater.inflate(R.layout.item_photo, parent, false);
+        if(albumMode == Album.album_mode_trash) {
+            view = inflater.inflate(R.layout.item_photo_trash_item, parent, false);
+        } else {
+            view = inflater.inflate(R.layout.item_photo, parent, false);
+        }
 
         return new ViewHolder(view);
     }
@@ -70,17 +74,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         Log.d("SIZE", "I: " + uri);
 
         switch (albumMode) {
-            case Album.album_mode_default:
-                holder.photoText.setVisibility(View.GONE);
-                break;
+//            case Album.album_mode_default:
+//                holder.photoText.setVisibility(View.GONE);
+//                break;
             case Album.album_mode_trash:
                 holder.photoText.setVisibility(View.VISIBLE);
                 break;
-            case Album.album_mode_favorite:
-                holder.photoText.setVisibility(View.GONE);
-                break;
-            default:
-                holder.photoText.setVisibility(View.GONE);
+//            case Album.album_mode_favorite:
+//                holder.photoText.setVisibility(View.GONE);
+//                break;
+//            default:
+//                holder.photoText.setVisibility(View.GONE);
         }
 
         holder.imgView.setOnClickListener(v -> {
