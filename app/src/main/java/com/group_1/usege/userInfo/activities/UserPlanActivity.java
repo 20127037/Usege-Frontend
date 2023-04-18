@@ -8,6 +8,7 @@ import com.group_1.usege.R;
 import com.group_1.usege.userInfo.fragments.StoragePlanDetailsFragment;
 import com.group_1.usege.userInfo.fragments.StoragePlanListFragment;
 import com.group_1.usege.userInfo.model.StoragePlan;
+import com.group_1.usege.userInfo.model.StoragePlanAbility;
 import com.group_1.usege.userInfo.model.UserPlan;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterServiceGenerator;
@@ -21,7 +22,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class UserPlanActivity extends AuthApiCallerActivity<UserPlan> implements BackSignalReceiver, ViewDetailsSignalReceiver {
+public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> implements BackSignalReceiver, ViewDetailsSignalReceiver {
 
     private StoragePlanListFragment fragPlanList;
     private StoragePlanDetailsFragment fragPlanDetails;
@@ -31,7 +32,7 @@ public class UserPlanActivity extends AuthApiCallerActivity<UserPlan> implements
     public UserInfoRepository userInfoRepository;
     private FragmentManager fm;
 
-    private UserPlan cachePlan;
+    private StoragePlan[] cachePlan;
 
     public UserPlanActivity()
     {
@@ -44,20 +45,42 @@ public class UserPlanActivity extends AuthApiCallerActivity<UserPlan> implements
         fm = getSupportFragmentManager();
         fragPlanList = (StoragePlanListFragment)fm.findFragmentById(R.id.frag_plan_list);
         fragPlanDetails = (StoragePlanDetailsFragment)fm.findFragmentById(R.id.frag_plan_details);
+        fm.beginTransaction()
+                .show(fragPlanList)
+                .hide(fragPlanDetails)
+                .commit();
     }
 
     protected void onResume()
     {
         super.onResume();
+//        handleCallSuccess(new StoragePlan[]{
+//                new StoragePlan("Basic", 0, false, 0, new StoragePlanAbility[]{
+//                        new StoragePlanAbility("A", true),
+//                        new StoragePlanAbility("B", true),
+//                        new StoragePlanAbility("C", false)
+//                }),
+//                new StoragePlan("Standard", 103, false, 1, new StoragePlanAbility[]{
+//                        new StoragePlanAbility("A", true),
+//                        new StoragePlanAbility("B", true),
+//                        new StoragePlanAbility("C", true)
+//                }),
+//                new StoragePlan("Premium", 206, true, 2, new StoragePlanAbility[]{
+//                        new StoragePlanAbility("A", true),
+//                        new StoragePlanAbility("B", true),
+//                        new StoragePlanAbility("C", true)
+//                })
+//        });
         startCallApi(masterServiceGenerator
                 .getService(tokenRepository.getToken().getAccessToken())
                 .getUserPlan(userInfoRepository.getInfo().getUserId()));
     }
 
     @Override
-    protected void handleCallSuccess(UserPlan body) {
+    protected void handleCallSuccess(StoragePlan[] body) {
         cachePlan = body;
-        fragPlanList.setUserPlan(cachePlan);
+        fragPlanList.setUserPlan(new UserPlan(userInfoRepository.getInfo().getPlan(), body));
+//        fragPlanList.setUserPlan(new UserPlan("Standard", body));
     }
 
     @Override
@@ -76,7 +99,7 @@ public class UserPlanActivity extends AuthApiCallerActivity<UserPlan> implements
                 .show(fragPlanDetails)
                 .hide(fragPlanList)
                 .commit();
-        StoragePlan plan = CollectionUtilities.find(cachePlan.getPlans(), e -> e.getName().equals(id));
+        StoragePlan plan = CollectionUtilities.find(cachePlan, e -> e.getName().equals(id));
         fragPlanDetails.setPlan(plan);
     }
 }

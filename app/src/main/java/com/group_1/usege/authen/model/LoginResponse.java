@@ -3,15 +3,15 @@ package com.group_1.usege.authen.model;
 import com.group_1.usege.userInfo.model.UserInfo;
 
 public class LoginResponse {
-    private CacheToken cacheToken;
+    private CacheToken token;
     private UserInfo userInfo;
 
-    public CacheToken getCacheToken() {
-        return cacheToken;
+    public CacheToken getToken() {
+        return token;
     }
 
-    public void setCacheToken(CacheToken cacheToken) {
-        this.cacheToken = cacheToken;
+    public void setToken(CacheToken token) {
+        this.token = token;
     }
 
     public UserInfo getUserInfo() {

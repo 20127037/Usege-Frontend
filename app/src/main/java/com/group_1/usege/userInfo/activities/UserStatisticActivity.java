@@ -47,6 +47,7 @@ public class UserStatisticActivity extends AuthApiCallerActivity<UserStatistic> 
     protected void onResume()
     {
         super.onResume();
+//        handleCallSuccess(new UserStatistic(10000000, MathUtilities.gbToKb(15), 100, 100));
         startCallApi(masterServiceGenerator
                 .getService(tokenRepository.getToken().getAccessToken())
                 .getUserStatistic(userInfoRepository.getInfo().getUserId()));

@@ -1,16 +1,12 @@
 package com.group_1.usege.userInfo.model;
 
 public class StoragePlanAbility {
-    private String id;
     private String description;
     private boolean isCovered;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public StoragePlanAbility(String description, boolean isCovered) {
+        this.description = description;
+        this.isCovered = isCovered;
     }
 
     public String getDescription() {

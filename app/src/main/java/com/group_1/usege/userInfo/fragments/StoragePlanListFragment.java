@@ -61,7 +61,7 @@ public class StoragePlanListFragment extends Fragment {
         private final Consumer<String> viewDetailsCallback;
 
         public StoragePlanListAdapter(@NonNull Context context, Consumer<String> viewDetailsCallback) {
-            super(context, R.layout.item_plan);
+            super(context, R.layout.item_plan, R.id.txt_name);
             this.viewDetailsCallback = viewDetailsCallback;
         }
 

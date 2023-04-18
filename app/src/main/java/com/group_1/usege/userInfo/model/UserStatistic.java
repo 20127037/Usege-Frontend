@@ -6,6 +6,13 @@ public class UserStatistic {
     private int countImg;
     private int countAlbum;
 
+    public UserStatistic(long usedSpaceInKb, long maxSpaceInKb, int countImg, int countAlbum) {
+        this.usedSpaceInKb = usedSpaceInKb;
+        this.maxSpaceInKb = maxSpaceInKb;
+        this.countImg = countImg;
+        this.countAlbum = countAlbum;
+    }
+
     public long getUsedSpaceInKb() {
         return usedSpaceInKb;
     }

@@ -1,6 +1,13 @@
 package com.group_1.usege.userInfo.model;
 
 public class UserPlan {
+    private String currentPlan;
+    private StoragePlan[] plans;
+
+    public UserPlan(String currentPlan, StoragePlan[] plans) {
+        this.currentPlan = currentPlan;
+        this.plans = plans;
+    }
 
     public String getCurrentPlan() {
         return currentPlan;
@@ -17,7 +24,4 @@ public class UserPlan {
     public void setPlans(StoragePlan[] plans) {
         this.plans = plans;
     }
-
-    private String currentPlan;
-    private StoragePlan[] plans;
 }

@@ -17,6 +17,7 @@ import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
 import com.group_1.usege.syncing.activities.LibraryActivity;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
+import com.group_1.usege.userInfo.services.MasterServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;
@@ -27,16 +28,19 @@ import com.group_1.usege.utilities.view.EditTextFragment;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 
 @AndroidEntryPoint
-public class LoginActivity extends ApiCallerActivity<LoginResponse> {
+public class LoginActivity extends ApiCallerActivity<CacheToken> {
 
     private EditTextFragment fragEmail, fragPassword;
     @Inject
     public TokenRepository tokenRepository;
     @Inject
     public AuthServiceGenerator authServiceGenerator;
+    @Inject
+    public MasterServiceGenerator masterServiceGenerator;
     @Inject
     public UserInfoRepository userInfoRepository;
     private String currentEmail;
@@ -88,11 +92,19 @@ public class LoginActivity extends ApiCallerActivity<LoginResponse> {
     }
 
     @Override
-    protected void handleCallSuccess(LoginResponse result) {
+    protected void handleCallSuccess(CacheToken result) {
         Log.i("Login", result.toString());
-        tokenRepository.setToken(result.getCacheToken());
-        userInfoRepository.setInfo(result.getUserInfo());
-        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
+        tokenRepository.setToken(result);
+        masterServiceGenerator
+                .getService(tokenRepository.getToken().getAccessToken())
+                .getUserInfo(result.getUserId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    userInfoRepository.setInfo(s.body());
+                    ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
+                }, e -> {
+
+                });
     }
 
     protected void handleUserNotConfirmed() {

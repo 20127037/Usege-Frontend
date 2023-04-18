@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 
 public interface AuthService {
     @POST(".")
-    Single<Response<LoginResponse>> login(@Body CreateAccountRequestDto request);
+    Single<Response<CacheToken>> login(@Body CreateAccountRequestDto request);
     @PUT(".")
     Single<Response<CacheToken>> refresh(@Query("refresh_token") String refreshToken);
 }

@@ -14,7 +14,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import retrofit2.Response;
 
-@AndroidEntryPoint
 public abstract class AuthApiCallerActivity<S> extends ApiCallerActivity<S> {
 
     @Inject

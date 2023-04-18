@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,7 +46,7 @@ public class StoragePlanDetailsFragment extends Fragment {
         adapter = new StoragePlanAbilityAdapter(getContext());
         listAbilities.setAdapter(adapter);
         txtName = view.findViewById(R.id.txt_name);
-        Button btnBack = view.findViewById(R.id.btn_back);
+        ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
             if (backSignalReceiver != null)
                 backSignalReceiver.back();

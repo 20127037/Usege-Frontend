@@ -33,7 +33,6 @@
         app:layout_constraintHeight_percent="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:visibility="gone"
         android:id="@+id/frag_plan_details"
         android:name="com.group_1.usege.userInfo.fragments.StoragePlanDetailsFragment"/>
 
