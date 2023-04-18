@@ -3,10 +3,6 @@ package com.group_1.usege.layout.fragment;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,12 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.group_1.usege.R;
-import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.CardAdapter;
+import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.pagination.PaginationScrollListener;
+import com.group_1.usege.model.Image;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,7 +64,9 @@ public class ImageCardFragment  extends Fragment {
 
         try {
             context = getActivity();
-            libraryActivity = (LibraryActivity) getActivity();
+            if (context instanceof LibraryActivity) {
+                libraryActivity = (LibraryActivity) context;
+            }
         }
         catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");

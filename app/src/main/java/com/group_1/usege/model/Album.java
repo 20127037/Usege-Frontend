@@ -62,6 +62,11 @@ public class Album implements Parcelable {
         this.albumImages = albumImages;
     }
 
+
+    public static final String album_mode_favorite = "album_favorite";
+    public static final String album_mode_trash = "album_trash";
+    public static final String album_mode_default = "album_default";
+
     @Override
     public int describeContents() {
         return 0;

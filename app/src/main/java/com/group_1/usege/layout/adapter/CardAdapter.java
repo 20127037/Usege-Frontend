@@ -17,9 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.model.Image;
 import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.model.Image;
 
 import java.util.List;
 
@@ -31,6 +32,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private IClickItemImageListener iClickItemImageListener;
     private Boolean isLoadingAdd = false;
+
+    private String albumMode = Album.album_mode_default;
+
+    public CardAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener, String albumMode) {
+        this.lstImage = lstImage;
+        this.context = context;
+        this.iClickItemImageListener = listener;
+        this.albumMode = albumMode;
+    }
 
     public CardAdapter(Context context, IClickItemImageListener listener) {
         this.context = context;
@@ -82,6 +92,37 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .into(imageViewHolder.imgView);
             Log.d("SIZE", "I: " + uri);
 
+        switch (albumMode) {
+            case Album.album_mode_default:
+                holder.photoText.setVisibility(View.GONE);
+                break;
+            case Album.album_mode_trash:
+                holder.photoText.setVisibility(View.VISIBLE);
+                break;
+            case Album.album_mode_favorite:
+                holder.photoText.setVisibility(View.GONE);
+                break;
+            default:
+                holder.photoText.setVisibility(View.GONE);
+        }
+
+        holder.imgView.setOnClickListener(v -> {
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    ImageView imageView = (ImageView) v;
+                    if (imageView.getColorFilter() != null) {
+                        // FOR UI
+                        imageView.clearColorFilter();
+                        // FOR LOGIC
+                        libActivity.removeSingleImageAndRemoveBottomMenuIfNoImageLeft(image);
+                    } else {
+                        iClickItemImageListener.onClickItemImage(image, finalPosition);
+                    }
+                }
+            }
+        });
             imageViewHolder.imgView.setOnClickListener(v -> {
                 if (context.getClass().equals(LibraryActivity.class)) {
                     Activity activity = (Activity) context;
@@ -132,12 +173,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class ImageViewHolder extends RecyclerView.ViewHolder {
         CardView layoutItemCard;
         ImageView imgView;
+        TextView photoText;
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imgView = itemView.findViewById(R.id.image_view_photo);
             layoutItemCard = itemView.findViewById(R.id.layout_item_card);
+            photoText = itemView.findViewById(R.id.text_view_photo_text);
         }
     }
 

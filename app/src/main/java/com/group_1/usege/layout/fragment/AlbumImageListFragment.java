@@ -3,8 +3,8 @@ package com.group_1.usege.layout.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +42,7 @@ public class AlbumImageListFragment extends Fragment {
     public ListAdapter listAdapter;
     private List<Image> lstVisibleImage;
     private Album album;
+    private String albumMode = Album.album_mode_default;
     private String mode;
     private Context context = null;
     private Boolean isLoading = false;
@@ -70,6 +71,9 @@ public class AlbumImageListFragment extends Fragment {
 
         if (getArguments() != null) {
             album = (Album) getArguments().getParcelable("album");
+            if(album.getName() == "trash") {
+                albumMode = Album.album_mode_trash;
+            }
             mode = (String) getArguments().getSerializable("album_mode");
             totalPage = album.getAlbumImages().size() / countItemInPage + 1;
         }
@@ -94,7 +98,12 @@ public class AlbumImageListFragment extends Fragment {
         LinearLayout layoutListTitle = layoutImageList.findViewById(R.id.layout_list_title);
         TextView albumName = layoutImageList.findViewById(R.id.text_view_album_name);
         TextView albumSubtitle = layoutImageList.findViewById(R.id.text_view_album_sub_title);
+        TextView headerRight = layoutImageList.findViewById(R.id.layout_header_right);
         ImageView backImageView = layoutImageList.findViewById(R.id.image_view_backward);
+
+        if(albumMode == Album.album_mode_trash) {
+            headerRight.setText("Left time");
+        }
 
         albumName.setText(album.getName());
         albumSubtitle.setText(String.format("%d images", album.getAlbumImages().size()));
@@ -110,13 +119,15 @@ public class AlbumImageListFragment extends Fragment {
         });
 
         //recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode);
-        if (mode == "list") {
-            listAdapter = new ListAdapter(context, new IClickItemImageListener() {
+//        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode, albumMode);
+
+        if(mode == "list") {
+            listAdapter = new ListAdapter(album.getAlbumImages(), context, new IClickItemImageListener() {
                 @Override
                 public void onClickItemImage(Image image, int position) {
                     onClickGoToDetails(image, position);
                 }
-            });
+            }, albumMode);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             rcvPhoto.setLayoutManager(linearLayoutManager);
             rcvPhoto.setAdapter(listAdapter);
@@ -148,7 +159,7 @@ public class AlbumImageListFragment extends Fragment {
                 public void onClickItemImage(Image image, int position) {
                     onClickGoToDetails(image, position);
                 }
-            });
+            }, albumMode);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
             rcvPhoto.setLayoutManager(gridLayoutManager);
             rcvPhoto.setAdapter(cardAdapter);
