@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -60,7 +61,6 @@ import com.group_1.usege.model.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1276,7 +1276,6 @@ public class LibraryActivity extends AppCompatActivity {
     public void showMoreOptions(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.getMenuInflater().inflate(R.menu.image_selection_more_options, popupMenu.getMenu());
-
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.favorite_image_menu_item:
@@ -1288,7 +1287,7 @@ public class LibraryActivity extends AppCompatActivity {
                     Toast.makeText(context, "Add to favorite success", Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.combine_image_menu_item:
-                    // Do something when the "Combine" item is clicked
+                    combineImages();
                     return true;
                 case R.id.compress_image_menu_item:
                     // Do something when the "Compress" item is clicked
@@ -1297,10 +1296,49 @@ public class LibraryActivity extends AppCompatActivity {
                     // Do something when the "Make a presentation" item is clicked
                     return true;
                 default:
-                    return false;
+                    return super.onMenuItemSelected(0, menuItem);
+
             }
         });
         popupMenu.show();
+    }
+
+    private final ActivityResultLauncher<Intent> imageCombinationLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent intent = result.getData();
+
+                if (result.getResultCode() == RESULT_OK && intent != null) {
+                    String action = intent.getStringExtra("action");
+
+                    if (Objects.equals(action, "back")) {
+                        removeBottomMenuAndAllImages(null);
+                    }
+                    else if (Objects.equals(action, "add more")) {
+                        Toast.makeText(this, "Now you can continue selecting images", Toast.LENGTH_LONG).show();
+                    }
+                    else if (Objects.equals(action, "combine ok")) {
+                        Toast.makeText(this, "Successfully combing images", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
+                }
+            });
+
+    public void combineImages() {
+        int selectedImagesSize = selectedImages.size();
+
+        if (selectedImagesSize > 9) {
+            Toast.makeText(context, "You has reached the limit of 9 limit", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, ImageCombinationActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
+        intent.putExtras(bundle);
+        imageCombinationLauncher.launch(intent);
     }
 
     public void deleteImages(View v) {
