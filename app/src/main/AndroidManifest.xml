@@ -63,5 +63,4 @@
             android:exported="true"
             android:label="@string/login"></activity>
     </application>
-
 </manifest>

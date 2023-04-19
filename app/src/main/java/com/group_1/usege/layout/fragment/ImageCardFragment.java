@@ -14,6 +14,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.CardAdapter;
 import com.group_1.usege.library.activities.LibraryActivity;
@@ -32,8 +37,11 @@ public class ImageCardFragment  extends Fragment {
     public RecyclerView rcvPhoto;
 
     public CardAdapter cardAdapter;
+
     private List<Image> lstImage;
     private List<Image> lstVisibleImage;
+    private List<Image> favoriteListImage = new ArrayList<Image>();
+
     private Context context = null;
     private Boolean isLoading = false;
     private Boolean isLastPage = false;
@@ -53,13 +61,27 @@ public class ImageCardFragment  extends Fragment {
         return fragment;
     }
 
+    public static ImageCardFragment newInstance(List<Image> images, List<Image> favoriteImages) {
+        ImageCardFragment fragment = new ImageCardFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("List_images", (Serializable) images);
+        args.putSerializable("List_favorite_images", (Serializable) favoriteImages);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
+
             lstImage = (List<Image>) getArguments().getSerializable("List_images");
             totalPage = lstImage.size() / countItemInPage + 1;
+
+            if((List<Image>) getArguments().getSerializable("List_favorite_images") != null) {
+                favoriteListImage = new ArrayList<Image>((List<Image>) getArguments().getSerializable("List_favorite_images"));
+            }
         }
 
         try {
@@ -81,7 +103,34 @@ public class ImageCardFragment  extends Fragment {
 
         rcvPhoto = layoutImageCard.findViewById(R.id.rcv_photo);
 
-        cardAdapter = new CardAdapter(context, new IClickItemImageListener() {
+        if(favoriteListImage.size() > 0) {
+            RecyclerView rcvFavoritePhoto = layoutImageCard.findViewById(R.id.rcv_favorite_photo);
+            View viewDivider = layoutImageCard.findViewById(R.id.view_divider);
+            TextView textviewFavorite = layoutImageCard.findViewById(R.id.text_view_favorite);
+
+            rcvFavoritePhoto.setVisibility(View.VISIBLE);
+            viewDivider.setVisibility(View.VISIBLE);
+            textviewFavorite.setVisibility(View.VISIBLE);
+
+            ArrayList<Image> firstSixItems;
+            if(favoriteListImage.size() > 6) {
+                firstSixItems = new ArrayList<>(favoriteListImage.subList(0, 6));
+            } else {
+                firstSixItems = new ArrayList<>(favoriteListImage.subList(0, favoriteListImage.size()));
+            }
+            CardAdapter favoriteCardAdapter = new CardAdapter(firstSixItems, context, new IClickItemImageListener() {
+                @Override
+                public void onClickItemImage(Image image, int position) {
+                    onClickGoToDetails(image, position);
+                }
+            });
+
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
+            rcvFavoritePhoto.setLayoutManager(gridLayoutManager);
+            rcvFavoritePhoto.setAdapter(favoriteCardAdapter);
+        }
+        
+         cardAdapter = new CardAdapter(context, new IClickItemImageListener() {
             @Override
             public void onClickItemImage(Image image, int position) {
                 onClickGoToDetails(image, position);

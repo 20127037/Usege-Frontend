@@ -66,7 +66,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = null;
+
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        if(albumMode == Album.album_mode_trash) {
+            view = inflater.inflate(R.layout.item_photo_trash_item, parent, false);
+        } else {
+            view = inflater.inflate(R.layout.item_photo, parent, false);
+        }
 
         if (viewType == TYPE_ITEM) {
             view = inflater.inflate(R.layout.item_photo, parent, false);
