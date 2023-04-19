@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +30,7 @@ import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class AlbumImageListFragment extends Fragment {
     LibraryActivity libraryActivity;
@@ -85,6 +89,72 @@ public class AlbumImageListFragment extends Fragment {
         TextView albumSubtitle = layoutImageList.findViewById(R.id.text_view_album_sub_title);
         TextView headerRight = layoutImageList.findViewById(R.id.layout_header_right);
         ImageView backImageView = layoutImageList.findViewById(R.id.image_view_backward);
+        ImageView imageViewMore = layoutImageList.findViewById(R.id.image_view_more);
+
+        imageViewMore.setOnClickListener(v -> {
+            if(albumMode == Album.album_mode_trash) {
+                PopupMenu popupMenu = new PopupMenu(context, v);
+                popupMenu.getMenuInflater().inflate(R.menu.image_selection_album_trash_more_options, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    Activity activity = (Activity) context;
+                    switch (item.getItemId()) {
+                        case R.id.restore_all_menu_item:
+                            if (activity instanceof LibraryActivity) {
+                                LibraryActivity libActivity = (LibraryActivity) activity;
+                                libActivity.restoreAllTrash();
+                            }
+                            // Do something when the "Favorite" item is clicked
+                            return true;
+                        case R.id.empty_bin_menu_item:
+                            // Do something when the "Combine" item is clicked
+                            if (activity instanceof LibraryActivity) {
+                                LibraryActivity libActivity = (LibraryActivity) activity;
+                                libActivity.clearTrash();
+                            }
+                            return true;
+                        default:
+                            return false;
+                    }
+                });
+                popupMenu.show();
+                return;
+            }
+            PopupMenu popupMenu = new PopupMenu(context, v);
+            popupMenu.getMenuInflater().inflate(R.menu.image_selection_album_more_options, popupMenu.getMenu());
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                Activity activity = (Activity) context;
+                switch (item.getItemId()) {
+                    case R.id.rename_image_menu_item:
+                        // Do something when the "rename" item is clicked
+                        if (activity instanceof LibraryActivity) {
+                            LibraryActivity libActivity = (LibraryActivity) activity;
+                            libActivity.renameAlbum(album);
+                        }
+                        return true;
+                    case R.id.make_a_presentation_menu_item:
+                        // Do something when the "Combine" item is clicked
+                        return true;
+                    case R.id.unlock_image_menu_item:
+                        // Do something when the "Compress" item is clicked
+                        return true;
+                    case R.id.compress_menu_item:
+                        // Do something when the "Make a presentation" item is clicked
+                        return true;
+                    case R.id.delete_menu_item:
+                        // Do something when the "Delete" item is clicked
+                        if (activity instanceof LibraryActivity) {
+                            LibraryActivity libActivity = (LibraryActivity) activity;
+                            libActivity.deleteAlbum(album);
+                        }
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            popupMenu.show();
+        });
 
         if(albumMode == Album.album_mode_trash) {
             headerRight.setText("Left time");
