@@ -36,12 +36,15 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
@@ -74,6 +77,8 @@ import java.util.Objects;
 public class LibraryActivity extends AppCompatActivity{
 
     Context context = this;
+    DrawerLayout rootDrawerLayout;
+    NavigationView rootNavigationView;
     FragmentTransaction ft;
     LinearLayout imageDisplayLayout;
     ImageCardFragment imageCardFragment;
@@ -86,7 +91,7 @@ public class LibraryActivity extends AppCompatActivity{
     EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
     static RelativeLayout bottomMenu;
-    ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
+    ImageView rootMenuImageView, imgViewUpload, imgViewCard, imgViewList, filterButton;
     // card list mode: image, album, imageInAlbum
     public static final String imageMode = "image";
     public static final String albumMode = "album";
@@ -131,8 +136,11 @@ public class LibraryActivity extends AppCompatActivity{
         emptyFragment = EmptyFragment.newInstance(mode, false);
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
 
+        rootDrawerLayout = findViewById(R.id.root_drawer_layout);
+//        rootNavigationView = findViewById(R.id.root_navigation_view);
         imageDisplayLayout = findViewById(R.id.layout_display_images);
 
+        rootMenuImageView = findViewById(R.id.root_menu_image_view);
         imgViewCard = findViewById(R.id.icon_card);
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
@@ -142,7 +150,7 @@ public class LibraryActivity extends AppCompatActivity{
         fileButton = findViewById(R.id.btn_file);
         bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
 
-        // bootom menu functions
+        // bottom menu functions
         layoutLibFunctions = findViewById(R.id.layout_library_functions);
         moveToAlbum = findViewById(R.id.text_view_move_to_album);
         addToAlbum = findViewById(R.id.text_view_add_to_album);
@@ -206,6 +214,11 @@ public class LibraryActivity extends AppCompatActivity{
                     break;
             }
         });
+    }
+
+    public void openNavigationDrawer(View v) {
+        System.out.println("HELLO");
+        rootDrawerLayout.openDrawer(GravityCompat.START);
     }
 
     //    Start Album handler

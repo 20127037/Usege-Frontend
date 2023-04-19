@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+    <item
+        android:id="@+id/nav_library"
+        android:title="My Library" />
+
+    <item
+        android:id="@+id/nav_external_library"
+        android:title="Online library" />
+
+    <item
+        android:id="@+id/nav_plan"
+        android:title="Use plan and Upgrade" />
+
+    <item
+        android:id="@+id/nav_statistic"
+        android:title="Statistic" />
+
+</menu>
