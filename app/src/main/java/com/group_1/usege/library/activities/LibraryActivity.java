@@ -602,7 +602,7 @@ public class LibraryActivity extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
                 //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-                launcher.launch(Intent.createChooser(intent, "Select Picture"));
+                launcherPickImage.launch(Intent.createChooser(intent, "Select Picture"));
 
                 // Đóng bottommsheet
                 setUplibraryBottomSheetDialog.dismiss();
@@ -837,7 +837,7 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
-    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> launcherPickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 Intent data = result.getData();
@@ -863,7 +863,7 @@ public class LibraryActivity extends AppCompatActivity {
                             //Image image = new Image("", 0F, "A favorite image", "", imageURI);
                             Log.e("NOTE", "URI1 " + image.getUri());
 
-                            imgList.add(image);
+                            imgList.add(0, image);
                         }
 
                         // Lấy 1 ảnh
@@ -880,7 +880,7 @@ public class LibraryActivity extends AppCompatActivity {
                         GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                         getInformationThread.start();
 
-                        imgList.add(image);
+                        imgList.add(0, image);
 //                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
 //                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
 
