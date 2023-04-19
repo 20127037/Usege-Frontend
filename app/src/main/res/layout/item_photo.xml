@@ -4,12 +4,31 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="6dp"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    android:id="@+id/layout_item_card">
 
-    <ImageView
-        android:id="@+id/image_view_photo"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:scaleType="centerCrop" />
+        >
+        <ImageView
+            android:id="@+id/image_view_photo"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            />
+        <TextView
+            android:id="@+id/text_view_photo_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="... days left"
+            android:background="@color/background_trash"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

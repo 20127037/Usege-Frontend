@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.util.List;
 import java.util.Objects;

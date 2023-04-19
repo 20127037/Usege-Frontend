@@ -1,4 +1,4 @@
-package com.group_1.usege.modle;
+package com.group_1.usege.model;
 
 import android.net.Uri;
 import android.os.Parcel;
@@ -35,6 +35,10 @@ public class Image implements Parcelable {
         return location;
     }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public Uri getUri() {
         return uri;
     }
@@ -43,10 +47,20 @@ public class Image implements Parcelable {
         this.uri = uri;
     }
 
-    public String getDate() { return date; }
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public long getSize() {
         return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 
     public List<String> getTags() { return tags; }
@@ -83,12 +97,23 @@ public class Image implements Parcelable {
         //////////////////
     }
 
+    public Image(Image img) {
+        this.uri = img.getUri();
+        this.date = img.getDate();
+        this.description = img.getDescription();
+        this.size = img.getSize();
+        this.location = img.location;
+        this.tags = img.tags;
+    }
+
     protected Image(Parcel in) {
         date = in.readString();
         size = in.readLong();
         description = in.readString();
         location = in.readString();
         uri = in.readParcelable(Uri.class.getClassLoader());
+        tags = new ArrayList<>();
+        in.readList(tags, null);
     }
 
     @Override
@@ -99,9 +124,10 @@ public class Image implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(date);
-        dest.writeFloat(size);
+        dest.writeLong(size);
         dest.writeString(description);
         dest.writeString(location);
         dest.writeParcelable(uri, flags);
+        dest.writeList(tags);
     }
 }

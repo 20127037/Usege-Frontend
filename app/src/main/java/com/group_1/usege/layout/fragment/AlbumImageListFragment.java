@@ -3,6 +3,8 @@ package com.group_1.usege.layout.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,21 +18,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
-import com.group_1.usege.layout.adapter.RecycleAdapter;
-import com.group_1.usege.modle.Album;
-import com.group_1.usege.modle.Image;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.model.Album;
+import com.group_1.usege.model.Image;
+import com.group_1.usege.layout.adapter.CardAdapter;
+import com.group_1.usege.layout.adapter.ListAdapter;
+import com.group_1.usege.manipulation.impl.IClickItemImageListener;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class AlbumImageListFragment extends Fragment  {
-    TextView totalImage;
+public class AlbumImageListFragment extends Fragment {
+    LibraryActivity libraryActivity;
 
     public RecyclerView rcvPhoto;
-
-    public RecycleAdapter recycleAdapter;
+    public CardAdapter cardAdapter;
+    public ListAdapter listAdapter;
     private Album album;
+    private String albumMode = Album.album_mode_default;
     private String mode;
     private Context context = null;
     public AlbumImageListFragment() {
@@ -40,7 +45,7 @@ public class AlbumImageListFragment extends Fragment  {
     public static AlbumImageListFragment newInstance(Album album, String mode) {
         AlbumImageListFragment fragment = new AlbumImageListFragment();
         Bundle args = new Bundle();
-        args.putSerializable("album", (Serializable) album);
+        args.putParcelable("album", (Parcelable) album);
         args.putSerializable("album_mode", (Serializable) mode);
         fragment.setArguments(args);
         return fragment;
@@ -51,12 +56,16 @@ public class AlbumImageListFragment extends Fragment  {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            album = (Album) getArguments().getSerializable("album");
+            album = (Album) getArguments().getParcelable("album");
+            if(album.getName() == "trash") {
+                albumMode = Album.album_mode_trash;
+            }
             mode = (String) getArguments().getSerializable("album_mode");
         }
 
         try {
             context = getActivity();
+            libraryActivity = (LibraryActivity) getActivity();
         }
         catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
@@ -71,10 +80,15 @@ public class AlbumImageListFragment extends Fragment  {
 
 
         rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
-        LinearLayout layoutListTitle= layoutImageList.findViewById(R.id.layout_list_title);
+        LinearLayout layoutListTitle = layoutImageList.findViewById(R.id.layout_list_title);
         TextView albumName = layoutImageList.findViewById(R.id.text_view_album_name);
         TextView albumSubtitle = layoutImageList.findViewById(R.id.text_view_album_sub_title);
+        TextView headerRight = layoutImageList.findViewById(R.id.layout_header_right);
         ImageView backImageView = layoutImageList.findViewById(R.id.image_view_backward);
+
+        if(albumMode == Album.album_mode_trash) {
+            headerRight.setText("Left time");
+        }
 
         albumName.setText(album.getName());
         albumSubtitle.setText(String.format("%d images", album.getAlbumImages().size()));
@@ -89,16 +103,30 @@ public class AlbumImageListFragment extends Fragment  {
             }
         });
 
-        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode);
+        //recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode);
+//        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode, albumMode);
+
         if(mode == "list") {
+            listAdapter = new ListAdapter(album.getAlbumImages(), context, new IClickItemImageListener() {
+                @Override
+                public void onClickItemImage(Image image, int position) {
+                    onClickGoToDetails(image, position);
+                }
+            }, albumMode);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             rcvPhoto.setLayoutManager(linearLayoutManager);
-            rcvPhoto.setAdapter(recycleAdapter);
+            rcvPhoto.setAdapter(listAdapter);
         } else if (mode == "card") {
             layoutListTitle.setVisibility(View.GONE);
+            cardAdapter = new CardAdapter(album.getAlbumImages(), context, new IClickItemImageListener() {
+                @Override
+                public void onClickItemImage(Image image, int position) {
+                    onClickGoToDetails(image, position);
+                }
+            }, albumMode);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
             rcvPhoto.setLayoutManager(gridLayoutManager);
-            rcvPhoto.setAdapter(recycleAdapter);
+            rcvPhoto.setAdapter(cardAdapter);
             if (context.getClass().equals(LibraryActivity.class)) {
                 Activity activity = (Activity) context;
                 if (activity instanceof LibraryActivity) {
@@ -112,5 +140,11 @@ public class AlbumImageListFragment extends Fragment  {
         }
 
         return layoutImageList;
+
+    }
+
+    private void onClickGoToDetails(Image image, int position) {
+        Log.e("P", "P: " + position);
+        libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
 }
