@@ -56,11 +56,13 @@ public abstract class AuthApiCallerActivity<S> extends ApiCallerActivity<S> {
     protected final void startCallApi(Single<Response<S>> provider)
     {
         previousCall = () -> super.startCallApi(provider);
+        previousCall.run();
     }
 
     protected final void startCallApiSilent(Single<Response<S>> provider)
     {
         previousCall = () -> super.startCallApiSilent(provider);
+        previousCall.run();
     }
 
     /**
@@ -73,6 +75,11 @@ public abstract class AuthApiCallerActivity<S> extends ApiCallerActivity<S> {
     @Override
     protected void handleCallFail(ErrorResponse errorResponse)
     {
+        if (errorResponse.getStatus() == 401)
+        {
+            tryRefreshToken();
+            return;
+        }
         switch (errorResponse.getMessage())
         {
             case ResponseMessages.TOKEN_EXPIRED:

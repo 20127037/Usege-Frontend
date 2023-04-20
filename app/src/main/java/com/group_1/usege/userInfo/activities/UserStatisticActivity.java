@@ -26,8 +26,6 @@ public class UserStatisticActivity extends AuthApiCallerActivity<UserStatistic> 
     private TextView txtCountImg;
     private TextView txtCountAlbums;
     @Inject
-    public UserInfoRepository userInfoRepository;
-    @Inject
     public MasterServiceGenerator masterServiceGenerator;
 
     public UserStatisticActivity()
@@ -50,7 +48,7 @@ public class UserStatisticActivity extends AuthApiCallerActivity<UserStatistic> 
 //        handleCallSuccess(new UserStatistic(10000000, MathUtilities.gbToKb(15), 100, 100));
         startCallApi(masterServiceGenerator
                 .getService(tokenRepository.getToken().getAccessToken())
-                .getUserStatistic(userInfoRepository.getInfo().getUserId()));
+                .getUserStatistic(tokenRepository.getToken().getUserId()));
     }
 
     private void setUsedSpace(long usedSpace, long maxSpace)

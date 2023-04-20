@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.group_1.usege.R;
 import com.group_1.usege.userInfo.model.StoragePlan;
 import com.group_1.usege.userInfo.model.UserPlan;
+import com.group_1.usege.utilities.interfaces.SubmitSignalReceiver;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalReceiver;
 
 import java.util.function.Consumer;
@@ -26,6 +27,7 @@ public class StoragePlanListFragment extends Fragment {
     private TextView txtCurrentPlanName;
     private StoragePlanListAdapter adapter;
     private ViewDetailsSignalReceiver viewDetailsSignalReceiver;
+    private SubmitSignalReceiver submitSignalReceiver;
 
     public StoragePlanListFragment()
     {
@@ -37,6 +39,8 @@ public class StoragePlanListFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof ViewDetailsSignalReceiver)
             this.viewDetailsSignalReceiver = (ViewDetailsSignalReceiver)context;
+        if (context instanceof SubmitSignalReceiver)
+            this.submitSignalReceiver = (SubmitSignalReceiver)context;
     }
 
     @Override
@@ -44,7 +48,7 @@ public class StoragePlanListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         txtCurrentPlanName = view.findViewById(R.id.txt_current_plan_name);
         ListView planList = view.findViewById(R.id.list_plans);
-        adapter = new StoragePlanListAdapter(getContext(), id -> this.viewDetailsSignalReceiver.view(id));
+        adapter = new StoragePlanListAdapter(getContext(), id -> this.viewDetailsSignalReceiver.view(id), id -> this.submitSignalReceiver.submit(id));
         planList.setAdapter(adapter);
     }
 
@@ -59,10 +63,12 @@ public class StoragePlanListFragment extends Fragment {
     private static class StoragePlanListAdapter extends ArrayAdapter<StoragePlan> {
 
         private final Consumer<String> viewDetailsCallback;
+        private final Consumer<String> purchaseCallback;
 
-        public StoragePlanListAdapter(@NonNull Context context, Consumer<String> viewDetailsCallback) {
+        public StoragePlanListAdapter(@NonNull Context context, Consumer<String> viewDetailsCallback, Consumer<String> purchaseCallback) {
             super(context, R.layout.item_plan, R.id.txt_name);
             this.viewDetailsCallback = viewDetailsCallback;
+            this.purchaseCallback = purchaseCallback;
         }
 
         @Override
@@ -80,7 +86,10 @@ public class StoragePlanListFragment extends Fragment {
             txtName.setText(plan.getName());
             btnViewDetails.setOnClickListener(v -> viewDetailsCallback.accept(plan.getName()));
             btnPurchase.setEnabled(plan.isCanPurchased());
-
+            btnPurchase.setOnClickListener(v -> {
+                if (purchaseCallback != null)
+                    purchaseCallback.accept(plan.getName());
+            });
             return createdView;
         }
     }

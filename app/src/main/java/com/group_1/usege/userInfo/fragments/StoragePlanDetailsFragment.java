@@ -19,6 +19,7 @@ import com.group_1.usege.R;
 import com.group_1.usege.userInfo.model.StoragePlan;
 import com.group_1.usege.userInfo.model.StoragePlanAbility;
 import com.group_1.usege.utilities.interfaces.BackSignalReceiver;
+import com.group_1.usege.utilities.interfaces.SubmitSignalReceiver;
 
 public class StoragePlanDetailsFragment extends Fragment {
 
@@ -26,6 +27,9 @@ public class StoragePlanDetailsFragment extends Fragment {
     private TextView txtName;
     private StoragePlanAbilityAdapter adapter;
     private BackSignalReceiver backSignalReceiver;
+    private SubmitSignalReceiver submitSignalReceiver;
+    private Button btnPurchase;
+    private StoragePlan currentPlan;
 
     public StoragePlanDetailsFragment() {
         super(R.layout.fragment_storage_plan_details);
@@ -36,6 +40,8 @@ public class StoragePlanDetailsFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof BackSignalReceiver)
             this.backSignalReceiver = (BackSignalReceiver)context;
+        if (context instanceof SubmitSignalReceiver)
+            this.submitSignalReceiver = (SubmitSignalReceiver)context;
     }
 
 
@@ -51,6 +57,12 @@ public class StoragePlanDetailsFragment extends Fragment {
             if (backSignalReceiver != null)
                 backSignalReceiver.back();
         });
+        btnPurchase = view.findViewById(R.id.btn_purchase);
+        btnPurchase.setOnClickListener(v -> {
+            if (submitSignalReceiver != null)
+                submitSignalReceiver.submit(currentPlan.getName());
+        });
+
     }
 
     private static class StoragePlanAbilityAdapter extends ArrayAdapter<StoragePlanAbility> {
@@ -74,7 +86,9 @@ public class StoragePlanDetailsFragment extends Fragment {
     {
         if (plan == null)
             return;
+        currentPlan = plan;
         txtName.setText(plan.getName());
+        btnPurchase.setEnabled(plan.isCanPurchased());
         adapter.clear();
         adapter.addAll(plan.getAbilities());
     }

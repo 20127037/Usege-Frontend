@@ -12,12 +12,16 @@
     <string name="create_account"><b>Create an account</b></string>
     <string name="label_statistic"><b>Statistic</b></string>
     <string name="label_plan"><b>Plan</b></string>
+    <string name="label_total_price"><b>Price</b></string>
     <string name="label_used_space"><b>Used space:</b></string>
     <string name="label_free">Free</string>
     <string name="label_current_plan"><b>Your current plan:</b></string>
     <string name="label_list_of_plans">List of plans:</string>
     <string name="label_payment">Payment</string>
     <string name="label_fill_visa">Please fill out your credit card information</string>
+    <string name="label_payment_description">You are purchasing</string>
+    <string name="embedded_payment_plan">Plan: %1$s</string>
+    <string name="embedded_payment_price">Total price: %1$.0f $</string>
     <string name="label_purchase">Purchase</string>
     <string name="label_view_details"><u>View details</u></string>
     <string name="label_images">Images:</string>

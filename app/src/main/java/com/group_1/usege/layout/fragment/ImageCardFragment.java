@@ -118,12 +118,13 @@ public class ImageCardFragment  extends Fragment {
             } else {
                 firstSixItems = new ArrayList<>(favoriteListImage.subList(0, favoriteListImage.size()));
             }
-            CardAdapter favoriteCardAdapter = new CardAdapter(firstSixItems, context, new IClickItemImageListener() {
+            CardAdapter favoriteCardAdapter = new CardAdapter(context, new IClickItemImageListener() {
                 @Override
                 public void onClickItemImage(Image image, int position) {
                     onClickGoToDetails(image, position);
                 }
             });
+            favoriteCardAdapter.setData(firstSixItems);
 
             GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
             rcvFavoritePhoto.setLayoutManager(gridLayoutManager);

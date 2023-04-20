@@ -12,9 +12,11 @@ import com.group_1.usege.userInfo.model.StoragePlanAbility;
 import com.group_1.usege.userInfo.model.UserPlan;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterServiceGenerator;
+import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.AuthApiCallerActivity;
 import com.group_1.usege.utilities.collection.CollectionUtilities;
 import com.group_1.usege.utilities.interfaces.BackSignalReceiver;
+import com.group_1.usege.utilities.interfaces.SubmitSignalReceiver;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalReceiver;
 
 import javax.inject.Inject;
@@ -22,7 +24,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> implements BackSignalReceiver, ViewDetailsSignalReceiver {
+public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> implements BackSignalReceiver, ViewDetailsSignalReceiver, SubmitSignalReceiver {
 
     private StoragePlanListFragment fragPlanList;
     private StoragePlanDetailsFragment fragPlanDetails;
@@ -73,7 +75,7 @@ public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> imple
 //        });
         startCallApi(masterServiceGenerator
                 .getService(tokenRepository.getToken().getAccessToken())
-                .getUserPlan(userInfoRepository.getInfo().getUserId()));
+                .getUserPlan(tokenRepository.getToken().getUserId()));
     }
 
     @Override
@@ -101,5 +103,14 @@ public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> imple
                 .commit();
         StoragePlan plan = CollectionUtilities.find(cachePlan, e -> e.getName().equals(id));
         fragPlanDetails.setPlan(plan);
+    }
+
+    @Override
+    public void submit(String id) {
+        StoragePlan plan = CollectionUtilities.find(cachePlan, e -> e.getName().equals(id));
+        Bundle bundle = new Bundle();
+        bundle.putString(PaymentActivity.PLAN_NAME_KEY, plan.getName());
+        bundle.putFloat(PaymentActivity.PRICE_KEY, plan.getPrice());
+        ActivityUtilities.TransitActivity(this, PaymentActivity.class, bundle);
     }
 }

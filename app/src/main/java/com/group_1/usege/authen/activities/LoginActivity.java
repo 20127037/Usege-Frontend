@@ -15,6 +15,8 @@ import com.group_1.usege.authen.model.CacheToken;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
 import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
@@ -39,9 +41,9 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     @Inject
     public AuthServiceGenerator authServiceGenerator;
     @Inject
-    public MasterServiceGenerator masterServiceGenerator;
-    @Inject
     public UserInfoRepository userInfoRepository;
+    @Inject
+    public MasterServiceGenerator masterServiceGenerator;
     private String currentEmail;
 
     public LoginActivity() {
@@ -94,15 +96,21 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     protected void handleCallSuccess(CacheToken result) {
         Log.i("Login", result.toString());
         tokenRepository.setToken(result);
+//        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
         masterServiceGenerator
                 .getService(tokenRepository.getToken().getAccessToken())
                 .getUserInfo(result.getUserId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
-                    userInfoRepository.setInfo(s.body());
-                    ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
+                    if (s.isSuccessful())
+                    {
+                        userInfoRepository.setInfo(s.body());
+                        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
+                    }
+                    else
+                        setCallApiFail();
                 }, e -> {
-
+                    setCallApiFail();
                 });
     }
 

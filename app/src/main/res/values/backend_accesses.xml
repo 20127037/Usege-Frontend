@@ -6,4 +6,5 @@
     <string name="service_account">account</string>
     <string name="service_auth">auth</string>
     <string name="service_master">master</string>
+    <string name="service_payment">payment</string>
 </resources>

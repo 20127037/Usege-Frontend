@@ -43,7 +43,12 @@
             </intent-filter>
         </activity>
 
-
+        <activity
+            android:name=".userInfo.activities.UserPlanActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".userInfo.activities.UserStatisticActivity"
+            android:exported="true"/>
         <activity
             android:name=".userInfo.activities.PaymentActivity"
             android:exported="true"
