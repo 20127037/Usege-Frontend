@@ -9,6 +9,6 @@ import java.util.List;
 
 public class TrashCardAdapter extends CardAdapter{
     public TrashCardAdapter(List<Image> lstImage, Context context, IClickItemImageListener listener) {
-        super(lstImage, context, listener);
+        super(context, listener);
     }
 }
