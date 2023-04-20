@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 @Singleton
 public class BusyHandingProgressManager {
 
+    @Inject
     public BusyHandingProgressManager()
     {
 

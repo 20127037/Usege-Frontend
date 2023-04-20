@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="success_confirm_account">Your account has been confirmed</string>
+    <string name="success_payment">You have successfully upgraded your account</string>
     <string name="success_reset_password">Your password has been changed successfully</string>
     <string name="alert_confirm_account">Your account has not been confirmed! Do you want to resend the confirm code?</string>
 </resources>

@@ -6,11 +6,12 @@ import com.group_1.usege.R;
 import com.group_1.usege.utilities.api.BaseServiceGenerator;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.android.scopes.ActivityScoped;
 
-@ActivityScoped
+@Singleton
 public class AuthServiceGenerator extends BaseServiceGenerator<AuthService> {
 
     @Inject

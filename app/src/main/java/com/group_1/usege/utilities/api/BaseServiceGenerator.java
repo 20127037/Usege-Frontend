@@ -58,7 +58,7 @@ public abstract class BaseServiceGenerator<S> {
         tokenHttpClient.addInterceptor(chain -> {
             Request original = chain.request();
             Request.Builder builder1 = original.newBuilder()
-                    .header("Authorization", token);
+                    .header("Authorization", "Bearer " + token);
             Request request = builder1.build();
             return chain.proceed(request);
         });

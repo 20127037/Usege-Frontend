@@ -9,4 +9,7 @@ public interface ResponseMessages {
     String CODE_MISMATCH =  "CODE_MISMATCH";
     String CODE_EXPIRED = "CODE_EXPIRED";
     String USER_NOT_FOUND = "USER_NOT_FOUND";
+
+    String TOKEN_EXPIRED = "TOKEN_EXPIRED";
+    String UNAUTHORIZED = "UNAUTHORIZED";
 }

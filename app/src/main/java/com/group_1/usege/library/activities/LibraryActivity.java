@@ -74,8 +74,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-;
-
 public class LibraryActivity extends AppCompatActivity {
 
     Context context = this;
@@ -195,11 +193,17 @@ public class LibraryActivity extends AppCompatActivity {
 
 
         fileButton.setOnClickListener(v -> {
-            mode = "image";
+            fileButton.setTextColor(getResources().getColor(R.color.white));
+            fileButton.setBackground(getResources().getDrawable(R.drawable.file_button_border));
+            albumButton.setTextColor(getResources().getColor(R.color.black));
+            albumButton.setBackground(getResources().getDrawable(R.drawable.album_button_border));
             clickOpenImageList();
         });
         albumButton.setOnClickListener(v -> {
-            mode = "album";
+            albumButton.setTextColor(getResources().getColor(R.color.white));
+            albumButton.setBackground(getResources().getDrawable(R.drawable.file_button_border));
+            fileButton.setTextColor(getResources().getColor(R.color.black));
+            fileButton.setBackground(getResources().getDrawable(R.drawable.album_button_border));
             clickOpenAlbumList();
         });
         imgViewUpload.setOnClickListener(v -> clickOpenSetUplibraryBottomSheetDialog());
@@ -299,6 +303,7 @@ public class LibraryActivity extends AppCompatActivity {
             destinationAlbum.getAlbumImages().addAll(new ArrayList<Image>(selectedImages));
             // Đóng bottommsheet
             chooseAlbumBottomSheetDialog.dismiss();
+            Toast.makeText(this, "Add image success", Toast.LENGTH_SHORT).show();
             selectedImages.clear();
         });
     }
@@ -490,7 +495,7 @@ public class LibraryActivity extends AppCompatActivity {
             // Đóng bottommsheet
             createAlbumBottomSheetDialog.dismiss();
 
-            clickOpenAlbumList();
+            triggerAlbumButton();
         });
     }
 
@@ -501,15 +506,9 @@ public class LibraryActivity extends AppCompatActivity {
         layoutLibFunctions.setVisibility(View.GONE);
 //        }
         if (album.getAlbumImages().size() > 0) {
-            if (Objects.equals(displayView, "card")) {
-                ft = getSupportFragmentManager().beginTransaction();
-                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, "card");
-                ft.replace(R.id.layout_display_images, albumImagesList).commit();
-            } else {
-                ft = getSupportFragmentManager().beginTransaction();
-                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, "list");
-                ft.replace(R.id.layout_display_images, albumImagesList).commit();
-            }
+            ft = getSupportFragmentManager().beginTransaction();
+            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, displayView);
+            ft.replace(R.id.layout_display_images, albumImagesList).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();
             EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
@@ -523,7 +522,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     public void clickOpenImageList() {
         // check empty list
-        mode = "image";
+        mode = imageMode;
         if (imgList.size() == 0) {
             ft = getSupportFragmentManager().beginTransaction();
             emptyFragment = EmptyFragment.newInstance(mode, true);
@@ -532,7 +531,8 @@ public class LibraryActivity extends AppCompatActivity {
         }
         if (Objects.equals(displayView, "card")) {
             ft = getSupportFragmentManager().beginTransaction();
-            imageCardFragment = ImageCardFragment.newInstance(imgList);
+            List<Image> favoriteImgList = albumList.get(0).getAlbumImages();
+            imageCardFragment = ImageCardFragment.newInstance(imgList, favoriteImgList);
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();
@@ -545,9 +545,75 @@ public class LibraryActivity extends AppCompatActivity {
         albumButton.callOnClick();
     }
 
-    public void clickAddImageToAlbum() {
-
+    public void restoreAllTrash() {
+        imgList.addAll(new ArrayList<Image>(albumList.get(1).getAlbumImages()));
+        albumList.get(1).getAlbumImages().clear();
+        clickOpenAlbumImageList(albumList.get(1));
+        Toast.makeText(context, "Restore all image successfully!", Toast.LENGTH_SHORT).show();
     }
+
+    public void clearTrash() {
+        albumList.get(1).getAlbumImages().clear();
+        clickOpenAlbumImageList(albumList.get(1));
+        Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void deleteAlbum(Album deleteAlbum) {
+        albumList.removeIf(v -> Objects.equals(v.getName(), deleteAlbum.getName()));
+        Toast.makeText(this, "Delete album successfully!", Toast.LENGTH_SHORT).show();
+        triggerAlbumButton();
+    }
+    public  void renameAlbum(Album renamedAlbum) {
+        View viewDialog = getLayoutInflater().inflate(R.layout.layout_rename_album, null);
+
+        final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
+        createAlbumBottomSheetDialog.setContentView(viewDialog);
+        createAlbumBottomSheetDialog.show();
+
+        EditText editTextName = viewDialog.findViewById(R.id.edit_text_new_name);
+        Button btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+        ImageView backIcon = viewDialog.findViewById(R.id.image_view_backward);
+        editTextName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String newText = editable.toString();
+                if (newText.length() > 0) {
+                    btnConfirm.setEnabled(true);
+                    btnConfirm.setAlpha((float) 1);
+                } else {
+                    btnConfirm.setEnabled(false);
+                    btnConfirm.setAlpha((float) 0.5);
+                }
+            }
+        });
+
+        btnConfirm.setOnClickListener(e -> {
+            String newName = String.valueOf(editTextName.getText());
+            Album album = albumList.stream().filter(v -> Objects.equals(v.getName(), renamedAlbum.getName())).findFirst().orElse(null);
+            if(album != null) {
+                album.setName(newName);
+                Toast.makeText(this, "Rename album successfully!", Toast.LENGTH_SHORT).show();
+                clickOpenAlbumImageList(album);
+            } else {
+                Toast.makeText(this, "There is some error, please try again!", Toast.LENGTH_SHORT).show();
+            }
+            createAlbumBottomSheetDialog.dismiss();
+        });
+
+        backIcon.setOnClickListener(v -> createAlbumBottomSheetDialog.dismiss());
+    }
+
+    // ======== End album handler
 
     public void clickOpenSetUplibraryBottomSheetDialog() {
         Button btnConfirm;
@@ -573,7 +639,7 @@ public class LibraryActivity extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
                 //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-                launcher.launch(Intent.createChooser(intent, "Select Picture"));
+                launcherPickImage.launch(Intent.createChooser(intent, "Select Picture"));
 
                 // Đóng bottommsheet
                 setUplibraryBottomSheetDialog.dismiss();
@@ -757,7 +823,7 @@ public class LibraryActivity extends AppCompatActivity {
             imgViewCard.setAlpha(1F);
 
             ft = getSupportFragmentManager().beginTransaction();
-            imageCardFragment = ImageCardFragment.newInstance(clonedImgList);
+            imageCardFragment = ImageCardFragment.newInstance(clonedImgList, new ArrayList<Image>(albumList.get(0).getAlbumImages()));
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
 
         } else if (displayView.equals("list")) {
@@ -808,7 +874,7 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
-    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> launcherPickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 Intent data = result.getData();
@@ -834,7 +900,7 @@ public class LibraryActivity extends AppCompatActivity {
                             //Image image = new Image("", 0F, "A favorite image", "", imageURI);
                             Log.e("NOTE", "URI1 " + image.getUri());
 
-                            imgList.add(image);
+                            imgList.add(0, image);
                         }
 
                         // Lấy 1 ảnh
@@ -851,7 +917,7 @@ public class LibraryActivity extends AppCompatActivity {
                         GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                         getInformationThread.start();
 
-                        imgList.add(image);
+                        imgList.add(0, image);
 //                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
 //                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
 
@@ -1247,13 +1313,28 @@ public class LibraryActivity extends AppCompatActivity {
     public void showMoreOptions(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.getMenuInflater().inflate(R.menu.image_selection_more_options, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(menuItem -> {
-            switch (menuItem.getItemId()) {
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.favorite_image_menu_item:
+                    // Do something when the "Favorite" item is clicked
+                    albumList.get(0).getAlbumImages().addAll(new ArrayList<Image>(selectedImages));
+                    bottomMenu.setVisibility(View.GONE);
+                    selectedImages.clear();
+                    updateImageViewDisplay();
+                    Toast.makeText(context, "Add to favorite success", Toast.LENGTH_SHORT).show();
+                    return true;
                 case R.id.combine_image_menu_item:
                     combineImages();
                     return true;
+                case R.id.compress_image_menu_item:
+                    // Do something when the "Compress" item is clicked
+                    return true;
+                case R.id.make_a_presentation_menu_item:
+                    // Do something when the "Make a presentation" item is clicked
+                    return true;
                 default:
-                    return super.onMenuItemSelected(0, menuItem);
+                    return super.onMenuItemSelected(0, item);
+
             }
         });
         popupMenu.show();

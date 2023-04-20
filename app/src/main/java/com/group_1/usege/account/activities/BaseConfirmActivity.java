@@ -25,6 +25,15 @@ public abstract class BaseConfirmActivity extends ApiCallerActivity<Void> implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        confirmCodeFragment = (ConfirmCodeFragment) getSupportFragmentManager().findFragmentById(R.id.frag_confirm_code);
+        Button btnSubmit = findViewById(R.id.btn_submit);
+        btnSubmit.setOnClickListener(v -> confirm());
+    }
+
+    public void onResume()
+    {
+        super.onResume();
         Bundle tranBundle = getIntent().getBundleExtra(ActivityUtilities.TRAN_ACT_BUNDLE);
         if (tranBundle != null)
         {
@@ -33,9 +42,6 @@ public abstract class BaseConfirmActivity extends ApiCallerActivity<Void> implem
             if (resend)
                 resend();
         }
-        confirmCodeFragment = (ConfirmCodeFragment) getSupportFragmentManager().findFragmentById(R.id.frag_confirm_code);
-        Button btnSubmit = findViewById(R.id.btn_submit);
-        btnSubmit.setOnClickListener(v -> confirm());
     }
 
     public void confirm()
