@@ -16,7 +16,6 @@ import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -69,9 +68,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-
-;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -520,7 +516,7 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     public void deleteAlbum(Album deleteAlbum) {
-        albumList.removeIf(v -> v.getName() == deleteAlbum.getName());
+        albumList.removeIf(v -> Objects.equals(v.getName(), deleteAlbum.getName()));
         Toast.makeText(this, "Delete album successfully!", Toast.LENGTH_SHORT).show();
         triggerAlbumButton();
     }
@@ -560,7 +556,7 @@ public class LibraryActivity extends AppCompatActivity {
 
         btnConfirm.setOnClickListener(e -> {
             String newName = String.valueOf(editTextName.getText());
-            Album album = albumList.stream().filter(v -> v.getName() == renamedAlbum.getName()).findFirst().orElse(null);
+            Album album = albumList.stream().filter(v -> Objects.equals(v.getName(), renamedAlbum.getName())).findFirst().orElse(null);
             if(album != null) {
                 album.setName(newName);
                 Toast.makeText(this, "Rename album successfully!", Toast.LENGTH_SHORT).show();
@@ -571,9 +567,7 @@ public class LibraryActivity extends AppCompatActivity {
             createAlbumBottomSheetDialog.dismiss();
         });
 
-        backIcon.setOnClickListener(v -> {
-            createAlbumBottomSheetDialog.dismiss();
-        });
+        backIcon.setOnClickListener(v -> createAlbumBottomSheetDialog.dismiss());
     }
 
     // ======== End album handler
@@ -1296,7 +1290,7 @@ public class LibraryActivity extends AppCompatActivity {
                     // Do something when the "Make a presentation" item is clicked
                     return true;
                 default:
-                    return super.onMenuItemSelected(0, menuItem);
+                    return super.onMenuItemSelected(0, item);
 
             }
         });
