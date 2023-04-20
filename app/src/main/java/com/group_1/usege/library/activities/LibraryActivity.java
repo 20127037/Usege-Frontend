@@ -4,6 +4,7 @@ import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,17 +33,21 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
@@ -56,6 +62,9 @@ import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
+import com.group_1.usege.utilities.activities.ActivityUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +81,7 @@ import java.util.Objects;
 public class LibraryActivity extends AppCompatActivity {
 
     Context context = this;
+    DrawerLayout rootDrawerLayout;
     FragmentTransaction ft;
     LinearLayout imageDisplayLayout;
     ImageCardFragment imageCardFragment;
@@ -128,9 +138,49 @@ public class LibraryActivity extends AppCompatActivity {
         ft = getSupportFragmentManager().beginTransaction();
         emptyFragment = EmptyFragment.newInstance(mode, false);
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
+        // handle toggle Menu
+        DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
+        NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
+        rootNavigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        // Do something when a menu item is clicked
+                        Intent intentSettings;
+                        switch (item.getItemId()) {
+                            case R.id.nav_library:
+                                // Handle menu item 1 click
+                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
+                                break;
+                            case R.id.nav_external_library:
+                                // Handle menu item 2 click
+//                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
+//                                startActivity(intentSettings);
+                                break;
+                            case R.id.nav_plan:
+                                // Handle menu item 2 click
+                                ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
+                                break;
+                            case R.id.nav_statistic:
+                                // Handle menu item 2 click
+                                ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
+                                break;
+                            // Add more cases for other menu items as needed
+                        }
+                        return false;
+                    }
+                });
+        ImageView rootMenuImageView = findViewById(R.id.root_menu_image_view);
+        rootMenuImageView.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
 
         imageDisplayLayout = findViewById(R.id.layout_display_images);
-
         imgViewCard = findViewById(R.id.icon_card);
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
@@ -140,7 +190,7 @@ public class LibraryActivity extends AppCompatActivity {
         fileButton = findViewById(R.id.btn_file);
         bottomMenu = findViewById(R.id.layout_bottom_menu_for_selecting_images);
 
-        // bootom menu functions
+        // bottom menu functions
         layoutLibFunctions = findViewById(R.id.layout_library_functions);
         moveToAlbum = findViewById(R.id.text_view_move_to_album);
         addToAlbum = findViewById(R.id.text_view_add_to_album);
@@ -210,6 +260,12 @@ public class LibraryActivity extends AppCompatActivity {
                     break;
             }
         });
+    }
+
+    // ============ handle navigation drawer ============
+    public void openNavigationDrawer(View v) {
+        System.out.println("HELLO");
+        rootDrawerLayout.openDrawer(GravityCompat.START);
     }
 
     //    Start Album handler
@@ -520,7 +576,8 @@ public class LibraryActivity extends AppCompatActivity {
         Toast.makeText(this, "Delete album successfully!", Toast.LENGTH_SHORT).show();
         triggerAlbumButton();
     }
-    public  void renameAlbum(Album renamedAlbum) {
+
+    public void renameAlbum(Album renamedAlbum) {
         View viewDialog = getLayoutInflater().inflate(R.layout.layout_rename_album, null);
 
         final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
@@ -557,7 +614,7 @@ public class LibraryActivity extends AppCompatActivity {
         btnConfirm.setOnClickListener(e -> {
             String newName = String.valueOf(editTextName.getText());
             Album album = albumList.stream().filter(v -> Objects.equals(v.getName(), renamedAlbum.getName())).findFirst().orElse(null);
-            if(album != null) {
+            if (album != null) {
                 album.setName(newName);
                 Toast.makeText(this, "Rename album successfully!", Toast.LENGTH_SHORT).show();
                 clickOpenAlbumImageList(album);
@@ -1307,15 +1364,12 @@ public class LibraryActivity extends AppCompatActivity {
 
                     if (Objects.equals(action, "back")) {
                         removeBottomMenuAndAllImages(null);
-                    }
-                    else if (Objects.equals(action, "add more")) {
+                    } else if (Objects.equals(action, "add more")) {
                         Toast.makeText(this, "Now you can continue selecting images", Toast.LENGTH_LONG).show();
-                    }
-                    else if (Objects.equals(action, "combine ok")) {
+                    } else if (Objects.equals(action, "combine ok")) {
                         Toast.makeText(this, "Successfully combing images", Toast.LENGTH_LONG).show();
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
                 }
             });
