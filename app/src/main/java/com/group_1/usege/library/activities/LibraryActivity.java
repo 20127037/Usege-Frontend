@@ -56,6 +56,10 @@ import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.userInfo.model.UserInfo;
+import com.group_1.usege.userInfo.repository.UserInfoRepository;
+import com.group_1.usege.userInfo.services.MasterServiceGenerator;
+import com.group_1.usege.utilities.activities.AuthApiCallerActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +73,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class LibraryActivity extends AppCompatActivity {
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+
+@AndroidEntryPoint
+public class LibraryActivity extends AuthApiCallerActivity<UserInfo> {
 
     Context context = this;
     FragmentTransaction ft;
@@ -79,7 +89,10 @@ public class LibraryActivity extends AppCompatActivity {
     AlbumCardFragment albumCardFragment;
     AlbumListFragment albumListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
-
+    @Inject
+    public MasterServiceGenerator masterServiceGenerator;
+    @Inject
+    public UserInfoRepository userInfoRepository;
     EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
     EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
@@ -120,10 +133,13 @@ public class LibraryActivity extends AppCompatActivity {
     private static final int UPDATE_IMAGE = 1;
     private static final int DELETE_IMAGE = 2;
 
+    public LibraryActivity() {
+        super(R.layout.activity_library);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_library);
 
         ft = getSupportFragmentManager().beginTransaction();
         emptyFragment = EmptyFragment.newInstance(mode, false);
@@ -1134,6 +1150,26 @@ public class LibraryActivity extends AppCompatActivity {
                     //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
                 }
             });
+
+
+    protected void onResume()
+    {
+        super.onResume();
+        try {
+            startCallApi(masterServiceGenerator
+                    .getService(tokenRepository.getToken().getAccessToken())
+                    .getUserInfo(tokenRepository.getToken().getUserId()));
+        }
+        catch (Exception e)
+        {
+            Log.e("Library", e.getMessage());
+        }
+    }
+
+    @Override
+    protected void handleCallSuccess(UserInfo body) {
+        userInfoRepository.setInfo(body);
+    }
 
     public class GetInformationThread extends Thread {
         private Image image;

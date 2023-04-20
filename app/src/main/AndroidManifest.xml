@@ -34,8 +34,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".library.activities.LibraryActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -72,6 +71,6 @@
         <activity
             android:name=".authen.activities.LoginActivity"
             android:exported="true"
-            android:label="@string/login"></activity>
+            android:label="@string/login"/>
     </application>
 </manifest>

@@ -97,21 +97,8 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
         Log.i("Login", result.toString());
         tokenRepository.setToken(result);
 //        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
-        masterServiceGenerator
-                .getService(tokenRepository.getToken().getAccessToken())
-                .getUserInfo(result.getUserId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    if (s.isSuccessful())
-                    {
-                        userInfoRepository.setInfo(s.body());
-                        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
-                    }
-                    else
-                        setCallApiFail();
-                }, e -> {
-                    setCallApiFail();
-                });
+        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
+
     }
 
     protected void handleUserNotConfirmed() {

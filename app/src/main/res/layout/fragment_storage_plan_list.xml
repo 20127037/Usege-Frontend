@@ -15,7 +15,6 @@
         <TextView
             style="@style/Usege.Text.LabelTextView"
             android:text="@string/label_current_plan"
-            android:id="@+id/txt_current_plan_name"
             android:layout_marginEnd="@dimen/primary_margin_small"
             android:textStyle="bold" />
 
@@ -32,7 +31,7 @@
                 style="@style/Usege.Text.LabelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txt_used_space"
+                android:id="@+id/txt_current_plan_name"
                 android:text="Standard"/>
 
         </com.google.android.material.card.MaterialCardView>
