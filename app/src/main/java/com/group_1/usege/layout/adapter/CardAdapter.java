@@ -23,6 +23,7 @@ import com.group_1.usege.model.Image;
 import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -47,6 +48,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.iClickItemImageListener = listener;
     }
 
+    public CardAdapter(ArrayList<Image> firstSixItems, Context context, IClickItemImageListener listener) {
+        this.context = context;
+        this.iClickItemImageListener = listener;
+        this.lstImage = firstSixItems;
+    }
+
     public void setData(List<Image> images) {
         this.lstImage = images;
         notifyDataSetChanged();
@@ -66,7 +73,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = null;
+
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        if(albumMode == Album.album_mode_trash) {
+            view = inflater.inflate(R.layout.item_photo_trash_item, parent, false);
+        } else {
+            view = inflater.inflate(R.layout.item_photo, parent, false);
+        }
 
         if (viewType == TYPE_ITEM) {
             view = inflater.inflate(R.layout.item_photo, parent, false);
@@ -129,16 +143,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             switch (albumMode) {
                 case Album.album_mode_default:
-                    imageViewHolder.photoText.setVisibility(View.GONE);
+//                    imageViewHolder.photoText.setVisibility(View.GONE);
                     break;
                 case Album.album_mode_trash:
                     imageViewHolder.photoText.setVisibility(View.VISIBLE);
                     break;
                 case Album.album_mode_favorite:
-                    imageViewHolder.photoText.setVisibility(View.GONE);
+//                    imageViewHolder.photoText.setVisibility(View.GONE);
                     break;
                 default:
-                    imageViewHolder.photoText.setVisibility(View.GONE);
+//                    imageViewHolder.photoText.setVisibility(View.GONE);
             }
         }
 

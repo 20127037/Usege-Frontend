@@ -11,9 +11,5 @@ import dagger.hilt.android.components.ActivityComponent;
 @Module
 @InstallIn(ActivityComponent.class)
 public class ActivityModule {
-    @Provides
-    public static PasswordValidator providePasswordValidator()
-    {
-        return new PasswordValidator();
-    }
+
 }

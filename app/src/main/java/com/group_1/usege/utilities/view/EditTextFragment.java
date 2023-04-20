@@ -10,35 +10,38 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.group_1.usege.R;
 import com.group_1.usege.utilities.validator.PasswordValidator;
+import com.kal.rackmonthpicker.RackMonthPicker;
+import com.kal.rackmonthpicker.listener.OnCancelMonthDialogListener;
 
-import javax.inject.Inject;
-
-import dagger.hilt.android.AndroidEntryPoint;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
  * Utility fragment for showing an edit text with associated label
  */
-@AndroidEntryPoint
 public class EditTextFragment extends Fragment {
     protected TextInputEditText editText;
     protected TextInputLayout textInputLayout;
     private TypedArray typedArray;
     private boolean isCheckRule;
-    @Inject
-    public PasswordValidator passwordValidator;
 
     public EditTextFragment() {
         super(R.layout.fragment_edit_text);
@@ -83,6 +86,32 @@ public class EditTextFragment extends Fragment {
             textInputLayout.setErrorIconDrawable(0);
             if (inputType == (InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT))
                 textInputLayout.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
+            else if (inputType == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE))
+            {
+                editText.setOnClickListener(v -> {
+                    YearMonth now = YearMonth.now();
+                    RackMonthPicker picker = new RackMonthPicker(v.getContext())
+                            .setLocale(Locale.ENGLISH)
+                            .setSelectedMonth(now.getMonthValue())
+                            .setPositiveButton((month, startDate, endDate, year, monthLabel) -> {
+                                YearMonth value = YearMonth.of(year, month);
+                                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/yy", Locale.getDefault());
+                                editText.setText(value.format(dateFormat));
+                            })
+                            .setNegativeButton(AppCompatDialog::dismiss);
+                    picker.show();
+                });
+                editText.setCursorVisible(false);
+                editText.setOnFocusChangeListener((v, hasFocus) -> {
+                    if (hasFocus)
+                    {
+                        InputMethodManager imm = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                });
+                editText.setShowSoftInputOnFocus(false);
+//                editText.setInputType(InputType.TYPE_NULL);
+            }
             textInputLayout.setStartIconDrawable(leftDrawable);
         } catch (IllegalStateException exception) {
             Log.e(EditTextFragment.class.getName(), exception.getMessage());
@@ -94,13 +123,26 @@ public class EditTextFragment extends Fragment {
         textInputLayout.setError(getContext().getResources().getString(errRes));
     }
 
+    public static List<String> getValues(EditTextFragment... fragments)
+    {
+        List<String> values = new ArrayList<>();
+        for (EditTextFragment fragment : fragments)
+        {
+            String value = fragment.getValue();
+            if (value == null)
+                return null;
+            values.add(value);
+        }
+        return values;
+    }
+
     public String getValue() {
         String input = editText.getText().toString();
         if (input.isEmpty()) {
             textInputLayout.setError(getContext().getResources().getString(R.string.filed_not_empty));
             return null;
         }
-        if (isCheckRule && !passwordValidator.checkPasswordFollowRules(input))
+        if (isCheckRule && !PasswordValidator.checkPasswordFollowRules(input))
         {
             setError(R.string.password_not_follow_rules);
             return null;
