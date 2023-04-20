@@ -4,6 +4,7 @@ import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +62,9 @@ import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
+import com.group_1.usege.utilities.activities.ActivityUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +82,6 @@ public class LibraryActivity extends AppCompatActivity {
 
     Context context = this;
     DrawerLayout rootDrawerLayout;
-    NavigationView rootNavigationView;
     FragmentTransaction ft;
     LinearLayout imageDisplayLayout;
     ImageCardFragment imageCardFragment;
@@ -91,7 +94,7 @@ public class LibraryActivity extends AppCompatActivity {
     EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
     static RelativeLayout bottomMenu;
-    ImageView rootMenuImageView, imgViewUpload, imgViewCard, imgViewList, filterButton;
+    ImageView imgViewUpload, imgViewCard, imgViewList, filterButton;
     // card list mode: image, album, imageInAlbum
     public static final String imageMode = "image";
     public static final String albumMode = "album";
@@ -137,27 +140,37 @@ public class LibraryActivity extends AppCompatActivity {
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
         // handle toggle Menu
         DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
-        rootNavigationView = findViewById(R.id.root_navigation_view);
+        NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
         rootNavigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         // Do something when a menu item is clicked
+                        Intent intentSettings;
                         switch (item.getItemId()) {
                             case R.id.nav_library:
                                 // Handle menu item 1 click
+                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
                                 break;
                             case R.id.nav_external_library:
                                 // Handle menu item 2 click
-                                Intent intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
-                                startActivity(intentSettings);
+//                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
+//                                startActivity(intentSettings);
+                                break;
+                            case R.id.nav_plan:
+                                // Handle menu item 2 click
+                                ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
+                                break;
+                            case R.id.nav_statistic:
+                                // Handle menu item 2 click
+                                ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
                                 break;
                             // Add more cases for other menu items as needed
                         }
                         return false;
                     }
                 });
-        rootMenuImageView = findViewById(R.id.root_menu_image_view);
+        ImageView rootMenuImageView = findViewById(R.id.root_menu_image_view);
         rootMenuImageView.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -563,7 +576,8 @@ public class LibraryActivity extends AppCompatActivity {
         Toast.makeText(this, "Delete album successfully!", Toast.LENGTH_SHORT).show();
         triggerAlbumButton();
     }
-    public  void renameAlbum(Album renamedAlbum) {
+
+    public void renameAlbum(Album renamedAlbum) {
         View viewDialog = getLayoutInflater().inflate(R.layout.layout_rename_album, null);
 
         final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
@@ -600,7 +614,7 @@ public class LibraryActivity extends AppCompatActivity {
         btnConfirm.setOnClickListener(e -> {
             String newName = String.valueOf(editTextName.getText());
             Album album = albumList.stream().filter(v -> Objects.equals(v.getName(), renamedAlbum.getName())).findFirst().orElse(null);
-            if(album != null) {
+            if (album != null) {
                 album.setName(newName);
                 Toast.makeText(this, "Rename album successfully!", Toast.LENGTH_SHORT).show();
                 clickOpenAlbumImageList(album);
