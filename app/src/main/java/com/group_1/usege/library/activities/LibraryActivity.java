@@ -69,6 +69,7 @@ import com.group_1.usege.utilities.activities.AuthApiCallerActivity;
 import com.group_1.usege.userInfo.activities.UserPlanActivity;
 import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
+import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +89,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 @AndroidEntryPoint
-public class LibraryActivity extends AuthApiCallerActivity<UserInfo> {
+public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     Context context = this;
     DrawerLayout rootDrawerLayout;
@@ -147,6 +148,8 @@ public class LibraryActivity extends AuthApiCallerActivity<UserInfo> {
         super(R.layout.activity_library);
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,17 +165,16 @@ public class LibraryActivity extends AuthApiCallerActivity<UserInfo> {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         // Do something when a menu item is clicked
-                        Intent intentSettings;
                         switch (item.getItemId()) {
-                            case R.id.nav_library:
-                                // Handle menu item 1 click
-                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
-                                break;
-                            case R.id.nav_external_library:
-                                // Handle menu item 2 click
-//                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
-//                                startActivity(intentSettings);
-                                break;
+//                            case R.id.nav_library:
+//                                // Handle menu item 1 click
+//                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
+//                                break;
+//                            case R.id.nav_external_library:
+//                                // Handle menu item 2 click
+////                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
+////                                startActivity(intentSettings);
+//                                break;
                             case R.id.nav_plan:
                                 // Handle menu item 2 click
                                 ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
@@ -276,6 +278,11 @@ public class LibraryActivity extends AuthApiCallerActivity<UserInfo> {
                     break;
             }
         });
+    }
+    @Override
+    public int navigateId()
+    {
+        return R.id.nav_library;
     }
 
     // ============ handle navigation drawer ============

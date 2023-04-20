@@ -54,6 +54,7 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assignLayoutView();
+        checkHasLoggedIn();
     }
 
     private void assignLayoutView()
@@ -98,7 +99,18 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
         tokenRepository.setToken(result);
 //        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
         ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
+    }
 
+    /**
+     * If user has refresh token => try to get new access without inputting login account information
+     */
+    private void checkHasLoggedIn()
+    {
+        CacheToken cacheToken = tokenRepository.firstCheckToken();
+        if (cacheToken == null)
+            return;
+        startCallApi(authServiceGenerator.getService()
+                .refresh(cacheToken.getRefreshToken()));
     }
 
     protected void handleUserNotConfirmed() {
@@ -112,6 +124,8 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
 
     @Override
     protected void handleCallFail(ErrorResponse errorResponse) {
+        if (errorResponse.getStatus() == 401)
+            tokenRepository.setToken(null);
         switch (errorResponse.getMessage())
         {
             case ResponseMessages.USER_NOT_FOUND:
