@@ -42,6 +42,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".userInfo.activities.PaymentActivity"
+            android:exported="true"
+            android:label="@string/label_payment"/>
         <activity
             android:name=".account.activities.ConfirmResetPassword"
             android:exported="true"

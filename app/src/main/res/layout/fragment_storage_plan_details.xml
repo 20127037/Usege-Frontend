@@ -40,10 +40,9 @@
         android:layout_height="0dp"
         app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toBottomOf="@id/list_abilities"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         style="@style/Widget.MaterialComponents.Button"
-        app:backgroundTint="?attr/colorTertiary"
+        android:id="@+id/btn_purchase"
         android:text="@string/label_purchase" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
