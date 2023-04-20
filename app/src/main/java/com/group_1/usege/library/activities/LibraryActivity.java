@@ -16,6 +16,7 @@ import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
@@ -74,7 +76,7 @@ import java.util.Objects;
 
 ;
 
-public class LibraryActivity extends AppCompatActivity{
+public class LibraryActivity extends AppCompatActivity {
 
     Context context = this;
     DrawerLayout rootDrawerLayout;
@@ -135,12 +137,39 @@ public class LibraryActivity extends AppCompatActivity{
         ft = getSupportFragmentManager().beginTransaction();
         emptyFragment = EmptyFragment.newInstance(mode, false);
         ft.replace(R.id.layout_display_images, emptyFragment).commit();
-
-        rootDrawerLayout = findViewById(R.id.root_drawer_layout);
-//        rootNavigationView = findViewById(R.id.root_navigation_view);
-        imageDisplayLayout = findViewById(R.id.layout_display_images);
-
+        // handle toggle Menu
+        DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
+        rootNavigationView = findViewById(R.id.root_navigation_view);
+        rootNavigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        // Do something when a menu item is clicked
+                        switch (item.getItemId()) {
+                            case R.id.nav_library:
+                                // Handle menu item 1 click
+                                break;
+                            case R.id.nav_external_library:
+                                // Handle menu item 2 click
+                                Intent intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
+                                startActivity(intentSettings);
+                                break;
+                            // Add more cases for other menu items as needed
+                        }
+                        return false;
+                    }
+                });
         rootMenuImageView = findViewById(R.id.root_menu_image_view);
+        rootMenuImageView.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+
+        imageDisplayLayout = findViewById(R.id.layout_display_images);
         imgViewCard = findViewById(R.id.icon_card);
         imgViewList = findViewById(R.id.icon_list);
         imgViewUpload = findViewById(R.id.icon_cloud_upload);
@@ -216,6 +245,7 @@ public class LibraryActivity extends AppCompatActivity{
         });
     }
 
+    // ============ handle navigation drawer ============
     public void openNavigationDrawer(View v) {
         System.out.println("HELLO");
         rootDrawerLayout.openDrawer(GravityCompat.START);
@@ -225,8 +255,7 @@ public class LibraryActivity extends AppCompatActivity{
     // menu bottom functions
     private Album destinationAlbum;
 
-    public void addToAlbum(View v) { // call in XML file
-//        System.out.println("select size" + selectedImages.size());
+    public void addToAlbum(View v) {
         bottomMenu.setVisibility(View.GONE);
         //  -------------------------
         Button btnConfirm;
@@ -1163,7 +1192,7 @@ public class LibraryActivity extends AppCompatActivity{
                 deleteImage.setVisibility(View.VISIBLE);
         }
 
-        imageDisplayLayout.setPadding(0,0,0,500);
+        imageDisplayLayout.setPadding(0, 0, 0, 500);
         bottomMenu.setVisibility(View.VISIBLE);
 
         // FOR CODE
@@ -1177,7 +1206,7 @@ public class LibraryActivity extends AppCompatActivity{
         // FOR UI
         if (selectedImages.size() < 1) {
             bottomMenu.setVisibility(View.GONE);
-            imageDisplayLayout.setPadding(0,0,0,0);
+            imageDisplayLayout.setPadding(0, 0, 0, 0);
         }
     }
 
@@ -1190,7 +1219,7 @@ public class LibraryActivity extends AppCompatActivity{
     public void removeBottomMenuAndAllImages(View v) {
         // FOR UI
         bottomMenu.setVisibility(View.GONE);
-        imageDisplayLayout.setPadding(0,0,0,0);
+        imageDisplayLayout.setPadding(0, 0, 0, 0);
         RecyclerView libraryRecyclerView = getRecyclerViewOfImageLibrary();
         int c = libraryRecyclerView.getChildCount();
         for (int i = 0; i < c; ++i) {
@@ -1240,15 +1269,12 @@ public class LibraryActivity extends AppCompatActivity{
 
                     if (Objects.equals(action, "back")) {
                         removeBottomMenuAndAllImages(null);
-                    }
-                    else if (Objects.equals(action, "add more")) {
+                    } else if (Objects.equals(action, "add more")) {
                         Toast.makeText(this, "Now you can continue selecting images", Toast.LENGTH_LONG).show();
-                    }
-                    else if (Objects.equals(action, "combine ok")) {
+                    } else if (Objects.equals(action, "combine ok")) {
                         Toast.makeText(this, "Successfully combing images", Toast.LENGTH_LONG).show();
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
                 }
             });

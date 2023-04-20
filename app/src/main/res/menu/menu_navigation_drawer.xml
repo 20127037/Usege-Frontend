@@ -2,21 +2,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="HardcodedText">
-
+    <group android:checkableBehavior="single">
     <item
         android:id="@+id/nav_library"
-        android:title="My Library" />
+        android:title="My Library"
+        android:icon="@drawable/icon_my_library_inactive"
+        />
 
     <item
         android:id="@+id/nav_external_library"
-        android:title="Online library" />
+        android:title="Online library"
+        android:icon="@drawable/icon_online_library_inactive"
+        />
 
     <item
         android:id="@+id/nav_plan"
-        android:title="Use plan and Upgrade" />
+        android:title="Use plan and Upgrade"
+        android:icon="@drawable/icon_use_plan_inactive"
+        />
 
     <item
         android:id="@+id/nav_statistic"
-        android:title="Statistic" />
-
+        android:title="Statistic"
+        android:icon="@drawable/icon_statistic_inactive"
+        />
+    </group>
 </menu>
