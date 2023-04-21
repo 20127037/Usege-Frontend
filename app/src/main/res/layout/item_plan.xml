@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/primary_margin_small">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                style="@style/Usege.Text.LabelTextView"
+                android:text="Basic"
+                android:textStyle="bold"
+                android:id="@+id/txt_name"
+                android:layout_centerVertical="true" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/primary_margin_small"
+                app:contentPaddingRight="@dimen/primary_margin_medium"
+                app:contentPaddingLeft="@dimen/primary_margin_medium"
+                app:contentPaddingTop="@dimen/primary_margin_tiny"
+                app:contentPaddingBottom="@dimen/primary_margin_tiny"
+                app:cardBackgroundColor="?attr/colorErrorContainer"
+                android:layout_toEndOf="@id/txt_name"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/primary_margin_medium">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnErrorContainer"
+                    android:id="@+id/txt_price"
+                    android:text="Free"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Usege.Button.NormalTextButton"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="?attr/colorTertiary"
+                android:layout_alignParentEnd="true"
+                android:text="@string/label_view_details"
+                android:layout_centerVertical="true"
+                android:id="@+id/btn_view_details"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:id="@+id/txt_description"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button"
+            android:id="@+id/btn_purchase"
+            android:text="@string/label_purchase">
+
+        </Button>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

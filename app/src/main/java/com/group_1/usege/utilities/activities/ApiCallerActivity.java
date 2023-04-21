@@ -1,14 +1,27 @@
 package com.group_1.usege.utilities.activities;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
+import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.utilities.dto.ErrorResponse;
 import com.group_1.usege.utilities.parser.JsonParser;
 import com.group_1.usege.utilities.view.BusyHandingProgressManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -17,6 +30,10 @@ import io.reactivex.rxjava3.core.Single;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
+/**
+ * Mark an activity used for calling Api
+ * @param <S> type of the response body
+ */
 public abstract class ApiCallerActivity<S> extends AppCompatActivity {
 
     public ApiCallerActivity(@LayoutRes int contentLayoutId)
@@ -27,6 +44,7 @@ public abstract class ApiCallerActivity<S> extends AppCompatActivity {
     public BusyHandingProgressManager busyHandingProgressManager;
     @Inject
     public JsonParser jsonParser;
+
 
     /**
      * Inherit this method to show a custom message when failing to call an endpoint
@@ -40,7 +58,7 @@ public abstract class ApiCallerActivity<S> extends AppCompatActivity {
      * Call this method to mark starting calling an endpoint and show {@link com.group_1.usege.utilities.view.BusyHandlingProgressFragment}
      * @param provider provide the single response object from service class
      */
-    protected final void startCallApi(Single<Response<S>> provider)
+    protected void startCallApi(Single<Response<S>> provider)
     {
         busyHandingProgressManager.show(getSupportFragmentManager().beginTransaction());
         provider
@@ -52,7 +70,7 @@ public abstract class ApiCallerActivity<S> extends AppCompatActivity {
      * Call this method to mark starting calling an endpoint but not showing waiting load view {@link com.group_1.usege.utilities.view.BusyHandlingProgressFragment} and returning the response
      * @param provider provide the single response object from service class
      */
-    protected final void startCallApiSilent(Single<Response<S>> provider)
+    protected void startCallApiSilent(Single<Response<S>> provider)
     {
         provider
                 .observeOn(AndroidSchedulers.mainThread())
