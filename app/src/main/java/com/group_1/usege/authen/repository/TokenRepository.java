@@ -32,5 +32,9 @@ public class TokenRepository {
         else
             localStorage.putValue(TOKEN_KEY, wrappedToken);
     }
+    public CacheToken firstCheckToken()
+    {
+        return localStorage.getObject(TOKEN_KEY, CacheToken.class);
+    }
     private CacheToken wrappedToken;
 }

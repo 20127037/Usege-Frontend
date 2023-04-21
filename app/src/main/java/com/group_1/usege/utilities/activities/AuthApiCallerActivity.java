@@ -1,11 +1,26 @@
 package com.group_1.usege.utilities.activities;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.ImageView;
+
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
+import com.group_1.usege.R;
 import com.group_1.usege.authen.activities.LoginActivity;
 import com.group_1.usege.authen.model.CacheToken;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
+import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;
 import com.group_1.usege.utilities.dto.ErrorResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 

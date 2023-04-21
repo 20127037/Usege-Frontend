@@ -17,7 +17,11 @@
         <RelativeLayout
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
             android:padding="10dp">
 
             <ImageView
@@ -45,7 +49,7 @@
             android:layout_height="0dp"
             app:layout_constraintHeight_percent="0.05"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_bar"
             app:title="@string/label_statistic" />
 
         <LinearLayout
@@ -53,7 +57,7 @@
             android:layout_height="0dp"
             android:layout_marginHorizontal="@dimen/primary_margin_small"
             android:orientation="vertical"
-            app:layout_constraintHeight_percent="0.95"
+            app:layout_constraintHeight_percent="0.85"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
