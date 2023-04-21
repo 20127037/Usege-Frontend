@@ -1332,7 +1332,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     public RecyclerView getRecyclerViewOfImageLibrary() {
         LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
-        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(3);
+        RecyclerView libraryRecyclerView = null;
+        if (mode == imageMode) libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(3);
+        else if (mode == imageInAlbumMode) libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(2);
         return libraryRecyclerView;
     }
 
