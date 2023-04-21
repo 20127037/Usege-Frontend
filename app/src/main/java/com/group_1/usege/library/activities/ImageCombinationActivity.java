@@ -42,6 +42,8 @@ public class ImageCombinationActivity extends AppCompatActivity {
     LinearLayout resourceQueueLayout;
     FragmentTransaction ft;
     ImageResourceQueueCardFragment imageResourceQueueCardFragment;
+    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +61,30 @@ public class ImageCombinationActivity extends AppCompatActivity {
         ft.replace(R.id.resource_queue_linear_layout, imageResourceQueueCardFragment).commit();
 
         imageContainerGridLayout.setOnDragListener(myDragListener);
+
+        layoutParams.setMargins(30,30,30,30);
     }
 
+    public void createNewImageView(Uri dragData) {
+        ImageView newContainerImageView = new ImageView(context);
+        newContainerImageView.setLayoutParams(layoutParams);
+
+        Glide.with(context)
+                .load(dragData)
+                .apply(new RequestOptions() .override(400, 300).centerCrop())
+                .into(newContainerImageView);
+
+        imageContainerGridLayout.addView(newContainerImageView);
+
+        newContainerImageView.setOnLongClickListener(containerImageView -> {
+            imageContainerGridLayout.removeView(containerImageView);
+            return true;
+        });
+    }
     View.OnDragListener myDragListener = new View.OnDragListener() {
         @Override
         public boolean onDrag(View v, DragEvent e) {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(30,30,30,30);
+
             switch(e.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     if (e.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
@@ -80,20 +97,7 @@ public class ImageCombinationActivity extends AppCompatActivity {
                     Uri dragData = resourceItem.getUri();
                     v.invalidate();
 
-                    ImageView newContainerImageView = new ImageView(context);
-                    newContainerImageView.setLayoutParams(layoutParams);
-
-                    Glide.with(context)
-                            .load(dragData)
-                            .apply(new RequestOptions() .override(400, 300).centerCrop())
-                            .into(newContainerImageView);
-
-                    imageContainerGridLayout.addView(newContainerImageView);
-
-                    newContainerImageView.setOnLongClickListener(containerImageView -> {
-                        imageContainerGridLayout.removeView(containerImageView);
-                        return true;
-                    });
+                    createNewImageView(dragData);
 
                     return true;
 
@@ -159,5 +163,11 @@ public class ImageCombinationActivity extends AppCompatActivity {
         returnIntent.putExtra("action", "add more");
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+    }
+
+    public void includeAll(View v) {
+        selectedImages.forEach(image -> {
+            createNewImageView(image.getUri());
+        });
     }
 }

@@ -34,6 +34,7 @@ import com.group_1.usege.pagination.PaginationScrollListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AlbumImageListFragment extends Fragment {
     LibraryActivity libraryActivity;
@@ -73,7 +74,7 @@ public class AlbumImageListFragment extends Fragment {
 
         if (getArguments() != null) {
             album = (Album) getArguments().getParcelable("album");
-            if(album.getName() == "trash") {
+            if(Objects.equals(album.getName(), "trash")) {
                 albumMode = Album.album_mode_trash;
             }
             mode = (String) getArguments().getSerializable("album_mode");
