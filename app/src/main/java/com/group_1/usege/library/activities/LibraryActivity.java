@@ -34,7 +34,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -62,12 +61,11 @@ import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterServiceGenerator;
-import com.group_1.usege.utilities.activities.AuthApiCallerActivity;
-import com.group_1.usege.userInfo.activities.UserPlanActivity;
-import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 
@@ -86,7 +84,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 @AndroidEntryPoint
 public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
@@ -1335,7 +1332,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     public RecyclerView getRecyclerViewOfImageLibrary() {
         LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
-        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(0);
+        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(3);
         return libraryRecyclerView;
     }
 
