@@ -14,7 +14,11 @@ import com.group_1.usege.account.dto.CreateAccountRequestDto;
 import com.group_1.usege.authen.model.CacheToken;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
+import com.group_1.usege.userInfo.repository.UserInfoRepository;
+import com.group_1.usege.userInfo.services.MasterServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;
@@ -25,6 +29,7 @@ import com.group_1.usege.utilities.view.EditTextFragment;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 
 @AndroidEntryPoint
@@ -35,6 +40,10 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     public TokenRepository tokenRepository;
     @Inject
     public AuthServiceGenerator authServiceGenerator;
+    @Inject
+    public UserInfoRepository userInfoRepository;
+    @Inject
+    public MasterServiceGenerator masterServiceGenerator;
     private String currentEmail;
 
     public LoginActivity() {
@@ -45,6 +54,7 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assignLayoutView();
+        checkHasLoggedIn();
     }
 
     private void assignLayoutView()
@@ -87,7 +97,20 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     protected void handleCallSuccess(CacheToken result) {
         Log.i("Login", result.toString());
         tokenRepository.setToken(result);
+//        ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
         ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class);
+    }
+
+    /**
+     * If user has refresh token => try to get new access without inputting login account information
+     */
+    private void checkHasLoggedIn()
+    {
+        CacheToken cacheToken = tokenRepository.firstCheckToken();
+        if (cacheToken == null)
+            return;
+        startCallApi(authServiceGenerator.getService()
+                .refresh(cacheToken.getRefreshToken()));
     }
 
     protected void handleUserNotConfirmed() {
@@ -101,6 +124,8 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
 
     @Override
     protected void handleCallFail(ErrorResponse errorResponse) {
+        if (errorResponse.getStatus() == 401)
+            tokenRepository.setToken(null);
         switch (errorResponse.getMessage())
         {
             case ResponseMessages.USER_NOT_FOUND:

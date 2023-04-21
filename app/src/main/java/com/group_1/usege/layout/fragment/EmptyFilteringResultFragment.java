@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import androidx.fragment.app.Fragment;
 
 import com.group_1.usege.R;
-import com.group_1.usege.syncing.activities.LibraryActivity;
+import com.group_1.usege.library.activities.LibraryActivity;
 
 public class EmptyFilteringResultFragment extends Fragment {
     Context context = null;

@@ -20,6 +20,7 @@ public class JsonParser {
 
     private final Gson wrappedGson;
 
+    @Inject
     public JsonParser()
     {
         wrappedGson = new Gson();

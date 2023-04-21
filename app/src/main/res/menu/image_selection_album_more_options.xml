@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/rename_image_menu_item"
+        android:title="Rename" />
+
+    <item
+        android:id="@+id/make_a_presentation_menu_item"
+        android:title="Make a presentation" />
+
+    <item
+        android:id="@+id/unlock_image_menu_item"
+        android:title="Unlock" />
+
+    <item
+        android:id="@+id/compress_menu_item"
+        android:title="Compress" />
+
+    <item
+        android:id="@+id/delete_menu_item"
+        android:title="Delete" />
+
+</menu>

@@ -1,6 +1,7 @@
 package com.group_1.usege.authen.model;
 
 public class CacheToken {
+    private String userId;
     private String accessToken;
     private Integer expiresIn;
     private String refreshToken;
@@ -20,5 +21,13 @@ public class CacheToken {
 
     public String getIdToken() {
         return idToken;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
