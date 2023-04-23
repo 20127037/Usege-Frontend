@@ -43,6 +43,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
+import com.group_1.usege.api.apiservice.ApiUploadFile;
+import com.group_1.usege.authen.repository.TokenRepository;
+import com.group_1.usege.dto.ImageDto;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
 import com.group_1.usege.layout.fragment.AlbumImageListFragment;
@@ -56,6 +59,7 @@ import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.realPath.RealPathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,8 +73,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class LibraryActivity extends AppCompatActivity {
 
+    @Inject
+    public TokenRepository tokenRepository;
     Context context = this;
     FragmentTransaction ft;
     LinearLayout imageDisplayLayout;
@@ -920,25 +931,25 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
-    public String getImagePath(Uri imageURI) throws IOException {
-        String imagePath = "";
-
-        // lấy InputStream từ Uri của ảnh
-        InputStream inputStream = getContentResolver().openInputStream(imageURI);
-
-        // tạo tập tin tạm thời để lưu ảnh
-        File tempFile = null;
-        tempFile = File.createTempFile("temp", null, getCacheDir());
-        tempFile.deleteOnExit();
-
-        // copy dữ liệu từ InputStream vào tập tin tạm thời
-        copyInputStreamToFile(inputStream, tempFile);
-
-        // lấy đường dẫn tới tập tin tạm thời
-        imagePath = tempFile.getAbsolutePath();
-
-        return imagePath;
-    }
+//    public String getImagePath(Uri imageURI) throws IOException {
+//        String imagePath = "";
+//
+//        // lấy InputStream từ Uri của ảnh
+//        InputStream inputStream = getContentResolver().openInputStream(imageURI);
+//
+//        // tạo tập tin tạm thời để lưu ảnh
+//        File tempFile = null;
+//        tempFile = File.createTempFile("temp", null, getCacheDir());
+//        tempFile.deleteOnExit();
+//
+//        // copy dữ liệu từ InputStream vào tập tin tạm thời
+//        copyInputStreamToFile(inputStream, tempFile);
+//
+//        // lấy đường dẫn tới tập tin tạm thời
+//        imagePath = tempFile.getAbsolutePath();
+//
+//        return imagePath;
+//    }
 
     public List<String> getTagsOfImage(String imageURL) {
         // make API call to Eden AI
@@ -1147,12 +1158,8 @@ public class LibraryActivity extends AppCompatActivity {
         @Override
         public void run() {
             String imagePath = null;
-            try {
-                imagePath = getImagePath(uri);
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            //imagePath = getImagePath(uri);
+            imagePath = RealPathUtil.getRealPath(context, uri);
 
             // Tạo đối tượng ExifInterface để lấy thông tin ảnh
             ExifInterface exif = null;
@@ -1181,7 +1188,19 @@ public class LibraryActivity extends AppCompatActivity {
             // Lưu thông tin vào Image
             image.setDate(dateTime);
             image.setSize(sizeOfImage);
-            //image.setLocation(address);
+            image.setLocation(location);
+
+            ImageDto imageDto = new ImageDto(null,
+                                            image.getTags(),
+                                            image.getDescription(),
+                                            image.getDate(),
+                                            image.getSize(),
+                                            image.getLocation(),
+                                            image.getUri().toString());
+
+            // Call Api Upload File
+            ApiUploadFile apiUploadFile = new ApiUploadFile(context, tokenRepository.getToken().getUserId(), imageDto, imagePath);
+            apiUploadFile.callApiUploadFile();
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
         }
     }

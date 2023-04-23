@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Image implements Parcelable {
+    //private String id;
     private List<String> tags;
     private String description;
     private String date;
