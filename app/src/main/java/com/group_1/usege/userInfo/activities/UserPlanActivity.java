@@ -1,6 +1,7 @@
 package com.group_1.usege.userInfo.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.fragment.app.FragmentManager;
 
@@ -8,12 +9,11 @@ import com.group_1.usege.R;
 import com.group_1.usege.userInfo.fragments.StoragePlanDetailsFragment;
 import com.group_1.usege.userInfo.fragments.StoragePlanListFragment;
 import com.group_1.usege.userInfo.model.StoragePlan;
-import com.group_1.usege.userInfo.model.StoragePlanAbility;
 import com.group_1.usege.userInfo.model.UserPlan;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
-import com.group_1.usege.utilities.activities.AuthApiCallerActivity;
+import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 import com.group_1.usege.utilities.collection.CollectionUtilities;
 import com.group_1.usege.utilities.interfaces.BackSignalReceiver;
 import com.group_1.usege.utilities.interfaces.SubmitSignalReceiver;
@@ -24,8 +24,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> implements BackSignalReceiver, ViewDetailsSignalReceiver, SubmitSignalReceiver {
-
+public class UserPlanActivity extends NavigatedAuthApiCallerActivity<StoragePlan[]> implements BackSignalReceiver, ViewDetailsSignalReceiver, SubmitSignalReceiver {
     private StoragePlanListFragment fragPlanList;
     private StoragePlanDetailsFragment fragPlanDetails;
     @Inject
@@ -52,6 +51,11 @@ public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> imple
                 .hide(fragPlanDetails)
                 .commit();
     }
+    @Override
+    public int navigateId()
+    {
+        return R.id.nav_plan;
+    }
 
     protected void onResume()
     {
@@ -73,9 +77,15 @@ public class UserPlanActivity extends AuthApiCallerActivity<StoragePlan[]> imple
 //                        new StoragePlanAbility("C", true)
 //                })
 //        });
-        startCallApi(masterServiceGenerator
-                .getService(tokenRepository.getToken().getAccessToken())
-                .getUserPlan(tokenRepository.getToken().getUserId()));
+        try {
+            startCallApi(masterServiceGenerator
+                    .getService(tokenRepository.getToken().getAccessToken())
+                    .getUserPlan(tokenRepository.getToken().getUserId()));
+        }
+        catch (Exception exception)
+        {
+            Log.e("UserPlanActivity", exception.getMessage());
+        }
     }
 
     @Override
