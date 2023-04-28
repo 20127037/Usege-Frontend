@@ -41,7 +41,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".library.activities.OnlineLibraryActivity"
+            android:exported="true"
+        />
         <activity
             android:name=".userInfo.activities.UserPlanActivity"
             android:exported="true"/>
