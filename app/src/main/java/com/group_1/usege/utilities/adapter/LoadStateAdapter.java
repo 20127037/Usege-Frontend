@@ -1,4 +1,4 @@
-package com.group_1.usege.library.adapter;
+package com.group_1.usege.utilities.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,16 +8,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.paging.LoadState;
-import androidx.paging.LoadStateAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ImageLoadStateAdapter extends LoadStateAdapter<ImageLoadStateAdapter.LoadStateViewHolder> {
+public class LoadStateAdapter extends androidx.paging.LoadStateAdapter<LoadStateAdapter.LoadStateViewHolder> {
 
-    public ImageLoadStateAdapter() {
+    public LoadStateAdapter() {
         super();
     }
 

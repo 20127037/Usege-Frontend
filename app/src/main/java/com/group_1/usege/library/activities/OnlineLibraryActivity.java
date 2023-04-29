@@ -1,26 +1,38 @@
 package com.group_1.usege.library.activities;
 
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.view.GravityCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.navigation.NavigationView;
+import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
+import com.group_1.usege.library.adapter.SimpleImagesAdapter;
+import com.group_1.usege.library.utilities.ImageComparator;
+import com.group_1.usege.library.viewModel.PexelsLibraryImageViewModel;
+import com.group_1.usege.utilities.adapter.LoadStateAdapter;
+import com.group_1.usege.utilities.view.GridSpaceDecorator;
 
+import javax.inject.Inject;
+
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class OnlineLibraryActivity extends AppCompatActivity {
-
-    private SearchView searchView;
-    private RecyclerView recyclerView;
+    public static final int SPAN_COUNT = 3;
+    public static final int ROW_COUNT = 4;
+    @Inject
+    public RequestManager requestManager;
+    @Inject
+    public ImageComparator comparator;
+    @Inject
+    public LoadStateAdapter loadStateAdapter;
+    private SimpleImagesAdapter imageAdapter;
 
     public OnlineLibraryActivity()
     {
@@ -28,50 +40,51 @@ public class OnlineLibraryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        searchView = findViewById(R.id.view_search);
-        recyclerView = findViewById(R.id.lst_img);
-        recyclerView.setAdapter();
 
-        ViewModelProvider viewModel = new ViewModelProvider(this)
-                .get(ExampleViewModel.class);
+        SearchView searchView = findViewById(R.id.view_search);
+        RecyclerView recyclerView = findViewById(R.id.lst_img);
 
-        UserAdapter pagingAdapter = new UserAdapter(new UserComparator());
-        recyclerView.adapter = pagingAdapter
-        viewModel.flowable
-                // Using AutoDispose to handle subscription lifecycle.
-                // See: https://github.com/uber/AutoDispose
-                .to(autoDisposable(AndroidLifecycleScopeProvider.from(this)))
-                .subscribe(pagingData -> pagingAdapter.submitData(lifecycle, pagingData));
+        // Create new MoviesAdapter object and provide
+        imageAdapter = new SimpleImagesAdapter(comparator, requestManager, null);
+        PexelsLibraryImageViewModel mainViewModel = new ViewModelProvider(this).get(PexelsLibraryImageViewModel.class);
+
+        //set recyclerview and adapter
+        initRecyclerviewAndAdapter(recyclerView);
+
+        // Subscribe to to paging data
+        mainViewModel.getImagePagingDataFlowable()
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
+                .subscribe(moviePagingData -> {
+            // submit new data to recyclerview adapter
+            imageAdapter.submitData(getLifecycle(), moviePagingData);
+        });
     }
-//
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView();
-//
-//        NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
-//        rootNavigationView.setNavigationItemSelectedListener(
-//                new NavigationView.OnNavigationItemSelectedListener() {
-//                    @Override
-//                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                        return false;
-//                    }
-//                });
-//        ImageView rootMenuImageView = findViewById(R.id.root_menu_image_view);
-//        rootMenuImageView.setOnClickListener(v -> {
-//            DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
-//            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-//                drawerLayout.closeDrawer(GravityCompat.START);
-//            } else {
-//                drawerLayout.openDrawer(GravityCompat.START);
+
+    private void initRecyclerviewAndAdapter(RecyclerView recyclerView) {
+        // Create GridlayoutManger with span of count of 2
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        // Finally set LayoutManger to recyclerview
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        // Add ItemDecoration to add space between recyclerview items
+        recyclerView.addItemDecoration(new GridSpaceDecorator(SPAN_COUNT, 20, true));
+
+        // set adapter
+        recyclerView.setAdapter(
+                // This will show end user a progress bar while pages are being requested from server
+                imageAdapter.withLoadStateFooter(
+                        // When we will scroll down and next page request will be sent
+                        // while we get response form server Progress bar will show to end user
+                        loadStateAdapter));
+        // set Grid span to set progress at center
+//        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+//            @Override
+//            public int getSpanSize(int position) {
+//                // If progress will be shown then span size will be 1 otherwise it will be 2
+//                return moviesAdapter.getItemViewType(position) == MoviesAdapter.LOADING_ITEM ? 1 : 2;
 //            }
 //        });
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//    }
+    }
 }

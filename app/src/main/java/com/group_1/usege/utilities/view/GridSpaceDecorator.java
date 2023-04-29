@@ -1,4 +1,4 @@
-package com.group_1.usege.library.utilities;
+package com.group_1.usege.utilities.view;
 
 import android.graphics.Rect;
 import android.view.View;

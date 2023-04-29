@@ -13,9 +13,15 @@ import com.group_1.usege.model.Image;
 import io.reactivex.rxjava3.core.Flowable;
 import kotlinx.coroutines.CoroutineScope;
 
-public class ImageViewModel extends ViewModel {
-    public Flowable<PagingData<Image>> imagePagingDataFlowable;
-    public ImageViewModel(int itemPerPageCount, int maxItemCount, ImagePagingSource imagePagingSource) {
+
+public abstract class ImageViewModel extends ViewModel {
+    public Flowable<PagingData<Image>> getImagePagingDataFlowable() {
+        return imagePagingDataFlowable;
+    }
+    private Flowable<PagingData<Image>> imagePagingDataFlowable;
+
+    public void init(int itemPerPageCount, int maxItemCount, ImagePagingSource imagePagingSource)
+    {
         Pager<String, Image> pager = new Pager<>(
                 // Create new paging config
                 new PagingConfig(itemPerPageCount, //  Count of items in one page

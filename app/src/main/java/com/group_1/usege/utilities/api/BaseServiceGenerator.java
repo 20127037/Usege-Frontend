@@ -27,7 +27,12 @@ public abstract class BaseServiceGenerator<S> {
     protected final String baseUrl;
     public BaseServiceGenerator(Resources resources, @StringRes int versionRes, @StringRes int serviceNameRes)
     {
-        baseUrl = String.format("%s/%s/%s/", resources.getString(R.string.uri_base_server), resources.getString(versionRes), resources.getString(serviceNameRes));
+        this(resources, R.string.uri_base_server, versionRes, serviceNameRes);
+    }
+
+    public BaseServiceGenerator(Resources resources, @StringRes int domainRes, @StringRes int versionRes, @StringRes int serviceNameRes)
+    {
+        baseUrl = String.format("%s/%s/%s/", resources.getString(domainRes), resources.getString(versionRes), resources.getString(serviceNameRes));
     }
 
     private static final Retrofit.Builder builder

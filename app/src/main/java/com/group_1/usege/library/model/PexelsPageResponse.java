@@ -1,5 +1,7 @@
 package com.group_1.usege.library.model;
 
+import com.group_1.usege.utilities.mappers.Mapper;
+
 import java.util.ArrayList;
 
 public class PexelsPageResponse

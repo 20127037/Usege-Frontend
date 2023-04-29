@@ -96,7 +96,7 @@ public class ExternalImageListAdapter extends RecyclerView.Adapter<ExternalImage
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             imgView = itemView.findViewById(R.id.image_view_photo);
-            layoutItemCard = itemView.findViewById(R.id.layout_item_card);
+            layoutItemCard = itemView.findViewById(R.id.layout);
             photoText = itemView.findViewById(R.id.text_view_photo_text);
         }
     }

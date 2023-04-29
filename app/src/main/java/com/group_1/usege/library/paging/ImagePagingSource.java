@@ -6,6 +6,8 @@ import androidx.paging.PagingState;
 import androidx.paging.rxjava3.RxPagingSource;
 
 import com.group_1.usege.library.model.ImagePaging;
+import com.group_1.usege.library.model.PexelsPageResponse;
+import com.group_1.usege.library.model.PexelsPageResponseMapper;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.utilities.mappers.Mapper;
 
@@ -25,7 +27,7 @@ public class ImagePagingSource<TPageKey, TResponse> extends RxPagingSource<TPage
     private final PagingProvider<TPageKey, TResponse> provider;
     private final Mapper<TResponse, ImagePaging<TPageKey>> dtoMapper;
 
-    ImagePagingSource(@NonNull PagingProvider<TPageKey, TResponse> provider, Mapper<TResponse, ImagePaging<TPageKey>> mapper) {
+    public ImagePagingSource(@NonNull PagingProvider<TPageKey, TResponse> provider, Mapper<TResponse, ImagePaging<TPageKey>> mapper) {
         this.provider = provider;
         this.dtoMapper = mapper;
     }
