@@ -54,7 +54,7 @@ public class UserStatisticActivity extends NavigatedAuthApiCallerActivity<UserSt
 //        handleCallSuccess(new UserStatistic(10000000, MathUtilities.gbToKb(15), 100, 100));
         try {
             startCallApi(masterServiceGenerator
-                    .getService(tokenRepository.getToken().getAccessToken())
+                    .getService(tokenRepository.getToken().getBearerAccessToken())
                     .getUserStatistic(tokenRepository.getToken().getUserId()));
         }
         catch (Exception e)

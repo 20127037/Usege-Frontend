@@ -6,6 +6,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,15 +18,6 @@ public class Image implements Parcelable {
     private String date;
     private long size;
     private String location;
-    private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     private Uri uri;
 
