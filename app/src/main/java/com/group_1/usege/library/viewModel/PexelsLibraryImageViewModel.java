@@ -1,7 +1,7 @@
 package com.group_1.usege.library.viewModel;
 
+import com.group_1.usege.R;
 import com.group_1.usege.library.activities.OnlineLibraryActivity;
-import com.group_1.usege.library.model.PexelsPageResponse;
 import com.group_1.usege.library.model.PexelsPageResponseMapper;
 import com.group_1.usege.library.paging.ImagePagingSource;
 import com.group_1.usege.library.service.PexelsServiceGenerator;
@@ -18,7 +18,11 @@ public class PexelsLibraryImageViewModel extends ImageViewModel {
         int itemPerPageCount = OnlineLibraryActivity.SPAN_COUNT * OnlineLibraryActivity.ROW_COUNT;
         init(
                 itemPerPageCount,
-                50,
-                new ImagePagingSource<String, PexelsPageResponse>(pexelsServiceGenerator, new PexelsPageResponseMapper()));
+                itemPerPageCount * 3,
+                new ImagePagingSource<>(
+                        page -> pexelsServiceGenerator
+                                .getService(R.string.key_pexels_api)
+                                .getPage(page, itemPerPageCount),
+                        new PexelsPageResponseMapper()));
     }
 }

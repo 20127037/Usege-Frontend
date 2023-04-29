@@ -3,6 +3,7 @@ package com.group_1.usege.utilities.api;
 import android.content.Context;
 import android.content.res.Resources;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 
 import com.group_1.usege.R;
@@ -25,6 +26,7 @@ public abstract class BaseServiceGenerator<S> {
     private String currentToken;
     protected abstract Class<S> getServiceClass();
     protected final String baseUrl;
+    private final Resources resources;
     public BaseServiceGenerator(Resources resources, @StringRes int versionRes, @StringRes int serviceNameRes)
     {
         this(resources, R.string.uri_base_server, versionRes, serviceNameRes);
@@ -32,6 +34,7 @@ public abstract class BaseServiceGenerator<S> {
 
     public BaseServiceGenerator(Resources resources, @StringRes int domainRes, @StringRes int versionRes, @StringRes int serviceNameRes)
     {
+        this.resources = resources;
         baseUrl = String.format("%s/%s/%s/", resources.getString(domainRes), resources.getString(versionRes), resources.getString(serviceNameRes));
     }
 
@@ -86,5 +89,10 @@ public abstract class BaseServiceGenerator<S> {
             wrappedService = createService(token);
         //A new token is used -> build a new service
         return wrappedService;
+    }
+    public synchronized S getService(@StringRes final int tokenResId)
+    {
+        String token = resources.getString(tokenResId);
+        return getService(token);
     }
 }
