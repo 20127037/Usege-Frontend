@@ -27,6 +27,7 @@ public class Image implements Parcelable {
     private String location;
     private Uri uri;
     private String id;
+    private Uri smallUri;
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override

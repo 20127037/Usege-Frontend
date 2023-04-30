@@ -8,9 +8,10 @@ import com.group_1.usege.utilities.api.BaseServiceGenerator;
 import javax.inject.Inject;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.android.scopes.ActivityScoped;
 import dagger.hilt.android.scopes.ViewModelScoped;
 
-@ViewModelScoped
+@ActivityScoped
 public class PexelsServiceGenerator extends BaseServiceGenerator<PexelsService> {
     @Inject
     PexelsServiceGenerator(@ApplicationContext Context context) {

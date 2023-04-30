@@ -65,7 +65,7 @@ import com.group_1.usege.userInfo.activities.UserPlanActivity;
 import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
-import com.group_1.usege.userInfo.services.MasterServiceGenerator;
+import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 
@@ -98,7 +98,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     AlbumListFragment albumListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
     @Inject
-    public MasterServiceGenerator masterServiceGenerator;
+    public MasterUserServiceGenerator masterServiceGenerator;
     @Inject
     public UserInfoRepository userInfoRepository;
     EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();

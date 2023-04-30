@@ -15,10 +15,8 @@ import com.group_1.usege.authen.model.CacheToken;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
 import com.group_1.usege.library.activities.LibraryActivity;
-import com.group_1.usege.userInfo.activities.UserPlanActivity;
-import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
-import com.group_1.usege.userInfo.services.MasterServiceGenerator;
+import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.ApiCallerActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;
@@ -29,7 +27,6 @@ import com.group_1.usege.utilities.view.EditTextFragment;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 
 @AndroidEntryPoint
@@ -43,7 +40,7 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     @Inject
     public UserInfoRepository userInfoRepository;
     @Inject
-    public MasterServiceGenerator masterServiceGenerator;
+    public MasterUserServiceGenerator masterServiceGenerator;
     private String currentEmail;
 
     public LoginActivity() {

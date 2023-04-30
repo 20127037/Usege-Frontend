@@ -25,24 +25,13 @@ public class SingletonModule {
 
     @Provides
     @Singleton
-    public CircularProgressDrawable getCircularProgressDrawable(@ApplicationContext Context context)
-    {
-        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-        circularProgressDrawable.setStrokeWidth(10f);
-        circularProgressDrawable.setCenterRadius(40f);
-        circularProgressDrawable.start();
-        return circularProgressDrawable;
-    }
-
-    @Provides
-    @Singleton
-    public LoadStateAdapter getLoadStateAdapter(@ApplicationContext Context context){
+    public static LoadStateAdapter getLoadStateAdapter(@ApplicationContext Context context){
         return new LoadStateAdapter();
     }
 
     @Provides
     @Singleton
-    public ImageComparator getImageComparator(){
+    public static ImageComparator getImageComparator(){
         return new ImageComparator();
     }
 }

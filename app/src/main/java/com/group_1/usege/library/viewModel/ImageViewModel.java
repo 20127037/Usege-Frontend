@@ -10,7 +10,10 @@ import androidx.paging.rxjava3.PagingRx;
 import com.group_1.usege.library.paging.ImagePagingSource;
 import com.group_1.usege.model.Image;
 
+import java.util.function.Supplier;
+
 import io.reactivex.rxjava3.core.Flowable;
+import kotlin.jvm.functions.Function0;
 import kotlinx.coroutines.CoroutineScope;
 
 
@@ -20,7 +23,7 @@ public abstract class ImageViewModel<TKey, TResponse> extends ViewModel {
     }
     private Flowable<PagingData<Image>> imagePagingDataFlowable;
 
-    public void init(int itemPerPageCount, int maxCachePage, ImagePagingSource<TKey, TResponse> imagePagingSource)
+    public void init(int itemPerPageCount, int maxCachePage, Function0<ImagePagingSource<TKey, TResponse>> imagePagingSource)
     {
         Pager<TKey, Image> pager = new Pager<>(
                 // Create new paging config
@@ -29,7 +32,7 @@ public abstract class ImageViewModel<TKey, TResponse> extends ViewModel {
                         false, // Enable placeholders for data which is not yet loaded
                         itemPerPageCount, // initialLoadSize - Count of items to be loaded initially
                         maxCachePage),
-                () -> imagePagingSource); // set paging source
+                imagePagingSource); // set paging source
         // inti Flowable
         imagePagingDataFlowable = PagingRx.getFlowable(pager);
         CoroutineScope coroutineScope = ViewModelKt.getViewModelScope(this);

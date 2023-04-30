@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
 import com.group_1.usege.model.Image;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalReceiver;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByIdReceiver;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,10 +23,10 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
     // Define Movie ViewType
     public static final int IMAGE_ITEM = 1;
     private final RequestManager glide;
-    private final ViewDetailsSignalReceiver viewDetailsSignalReceiver;
+    private final ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver;
     public ImagesAdapter(@NotNull DiffUtil.ItemCallback<Image> diffCallback,
                          RequestManager glide,
-                         ViewDetailsSignalReceiver viewDetailsSignalReceiver) {
+                         ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver) {
         super(diffCallback);
         this.glide = glide;
         this.viewDetailsSignalReceiver = viewDetailsSignalReceiver;
@@ -61,13 +62,13 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
             // init binding
             imgView = view.findViewById(R.id.image_view_photo);
         }
-        public void bind(Image img, RequestManager glide, ViewDetailsSignalReceiver viewDetailsSignalReceiver)
+        public void bind(Image img, RequestManager glide, ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver)
         {
-            glide.load(img.getUri())
+            glide.load(img.getSmallUri())
                     .into(imgView);
             if (viewDetailsSignalReceiver == null)
                 return;
-            layoutContainer.setOnClickListener(v -> viewDetailsSignalReceiver.view(img.getUri().toString()));
+            layoutContainer.setOnClickListener(v -> viewDetailsSignalReceiver.view(img));
         }
     }
 }

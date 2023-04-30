@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
 import com.group_1.usege.model.Image;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalReceiver;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByIdReceiver;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 
 /**
  * Show the image but nothing
@@ -18,7 +19,7 @@ import com.group_1.usege.utilities.interfaces.ViewDetailsSignalReceiver;
 public class SimpleImagesAdapter extends ImagesAdapter<ImagesAdapter.ImageViewHolder> {
     public SimpleImagesAdapter(@NonNull DiffUtil.ItemCallback<Image> diffCallback,
                                RequestManager glide,
-                               ViewDetailsSignalReceiver viewDetailsSignalReceiver) {
+                               ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver) {
         super(diffCallback, glide, viewDetailsSignalReceiver);
     }
 

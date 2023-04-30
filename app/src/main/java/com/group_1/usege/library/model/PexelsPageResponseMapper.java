@@ -21,9 +21,11 @@ public class PexelsPageResponseMapper implements Mapper<PexelsPageResponse, Imag
                 .nextPage(nextPage)
                 .prevPage(prevPage)
                 .images(value.getImages().stream().map(i -> Image.builder()
-                        .id(String.valueOf(i.getId()))
-                        .uri(Uri.parse(i.getSrc().getOriginal()))
-                        .build())
+                                .id(String.valueOf(i.getId()))
+                                .description(i.getPhotographer())
+                                .uri(Uri.parse(i.getSrc().getOriginal()))
+                                .smallUri(Uri.parse(i.getSrc().getTiny()))
+                                .build())
                         .collect(Collectors.toList()))
                 .build();
     }

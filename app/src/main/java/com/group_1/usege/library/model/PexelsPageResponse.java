@@ -49,6 +49,6 @@ public class PexelsPageResponse
 //        private String small;
 //        private String portrait;
 //        private String landscape;
-//        private String tiny;
+        private String tiny;
     }
 }

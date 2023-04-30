@@ -11,24 +11,24 @@ import com.group_1.usege.userInfo.fragments.StoragePlanListFragment;
 import com.group_1.usege.userInfo.model.StoragePlan;
 import com.group_1.usege.userInfo.model.UserPlan;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
-import com.group_1.usege.userInfo.services.MasterServiceGenerator;
+import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 import com.group_1.usege.utilities.collection.CollectionUtilities;
 import com.group_1.usege.utilities.interfaces.BackSignalReceiver;
 import com.group_1.usege.utilities.interfaces.SubmitSignalReceiver;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalReceiver;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByIdReceiver;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class UserPlanActivity extends NavigatedAuthApiCallerActivity<StoragePlan[]> implements BackSignalReceiver, ViewDetailsSignalReceiver, SubmitSignalReceiver {
+public class UserPlanActivity extends NavigatedAuthApiCallerActivity<StoragePlan[]> implements BackSignalReceiver, ViewDetailsSignalByIdReceiver, SubmitSignalReceiver {
     private StoragePlanListFragment fragPlanList;
     private StoragePlanDetailsFragment fragPlanDetails;
     @Inject
-    public MasterServiceGenerator masterServiceGenerator;
+    public MasterUserServiceGenerator masterServiceGenerator;
     @Inject
     public UserInfoRepository userInfoRepository;
     private FragmentManager fm;

@@ -13,6 +13,10 @@ import com.group_1.usege.library.service.PexelsServiceGenerator;
 import com.group_1.usege.utilities.validator.PasswordValidator;
 import com.group_1.usege.utilities.view.BusyHandingProgressManager;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -28,8 +32,16 @@ import dagger.hilt.android.scopes.ActivityScoped;
 @InstallIn(ActivityComponent.class)
 public class ActivityModule {
     @Provides
+    @SmallPlaceHolder
     @ActivityScoped
-    public RequestManager getGlide(CircularProgressDrawable circularProgressDrawable, @ActivityContext Context context){
+    public static RequestManager getSmallGlide(@ActivityContext Context context){
+        return getGlide(context, 10f, 50f);
+    }
+    public static RequestManager getGlide(Context context, float with, float rad){
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(with);
+        circularProgressDrawable.setCenterRadius(rad);
+        circularProgressDrawable.start();
         return Glide.with(context).applyDefaultRequestOptions(
                 new RequestOptions()
                         .error(R.drawable.ic_error)
@@ -37,5 +49,20 @@ public class ActivityModule {
                         .placeholder(circularProgressDrawable)
         );
     }
+
+    @Provides
+    @BigPlaceHolder
+    @ActivityScoped
+    public static RequestManager getBigGlide(@ActivityContext Context context){
+        return getGlide(context, 20f, 100);
+    }
+
+    @Qualifier
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface SmallPlaceHolder {}
+
+    @Qualifier
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface BigPlaceHolder {}
 }
 
