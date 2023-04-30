@@ -2,6 +2,8 @@ package com.group_1.usege.utilities.modules;
 
 import android.content.Context;
 
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
@@ -20,14 +22,16 @@ import dagger.hilt.components.SingletonComponent;
 @Module
 @InstallIn(SingletonComponent.class)
 public class SingletonModule {
+
     @Provides
     @Singleton
-    public RequestManager getGlide(@ApplicationContext Context context){
-        return Glide.with(context).applyDefaultRequestOptions(
-                new RequestOptions()
-                        .error(R.drawable.ic_error)
-                        .placeholder(R.drawable.ic_cloud_download)
-        );
+    public CircularProgressDrawable getCircularProgressDrawable(@ApplicationContext Context context)
+    {
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+        circularProgressDrawable.setStrokeWidth(10f);
+        circularProgressDrawable.setCenterRadius(40f);
+        circularProgressDrawable.start();
+        return circularProgressDrawable;
     }
 
     @Provides

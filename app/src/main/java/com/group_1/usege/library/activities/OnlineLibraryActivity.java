@@ -1,9 +1,11 @@
 package com.group_1.usege.library.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class OnlineLibraryActivity extends AppCompatActivity {
     public static final int SPAN_COUNT = 3;
-    public static final int ROW_COUNT = 4;
+
     @Inject
     public RequestManager requestManager;
     @Inject
@@ -44,7 +46,10 @@ public class OnlineLibraryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SearchView searchView = findViewById(R.id.view_search);
+        searchView.setOnSearchClickListener(v -> Log.i("Click", "Search view"));
         RecyclerView recyclerView = findViewById(R.id.lst_img);
+
+        Lifecycle lifecycle = getLifecycle();
 
         // Create new MoviesAdapter object and provide
         imageAdapter = new SimpleImagesAdapter(comparator, requestManager, null);
@@ -55,36 +60,17 @@ public class OnlineLibraryActivity extends AppCompatActivity {
 
         // Subscribe to to paging data
         mainViewModel.getImagePagingDataFlowable()
-                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
-                .subscribe(moviePagingData -> {
-            // submit new data to recyclerview adapter
-            imageAdapter.submitData(getLifecycle(), moviePagingData);
-        });
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(lifecycle)))
+                .subscribe(imagePagingData -> imageAdapter.submitData(lifecycle, imagePagingData));
     }
 
     private void initRecyclerviewAndAdapter(RecyclerView recyclerView) {
         // Create GridlayoutManger with span of count of 2
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, SPAN_COUNT);
         // Finally set LayoutManger to recyclerview
         recyclerView.setLayoutManager(gridLayoutManager);
-
         // Add ItemDecoration to add space between recyclerview items
-        recyclerView.addItemDecoration(new GridSpaceDecorator(SPAN_COUNT, 20, true));
-
-        // set adapter
-        recyclerView.setAdapter(
-                // This will show end user a progress bar while pages are being requested from server
-                imageAdapter.withLoadStateFooter(
-                        // When we will scroll down and next page request will be sent
-                        // while we get response form server Progress bar will show to end user
-                        loadStateAdapter));
-        // set Grid span to set progress at center
-//        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-//            @Override
-//            public int getSpanSize(int position) {
-//                // If progress will be shown then span size will be 1 otherwise it will be 2
-//                return moviesAdapter.getItemViewType(position) == MoviesAdapter.LOADING_ITEM ? 1 : 2;
-//            }
-//        });
+        //recyclerView.addItemDecoration(new GridSpaceDecorator(SPAN_COUNT, 20, true));
+        recyclerView.setAdapter(imageAdapter.withLoadStateFooter(loadStateAdapter));
     }
 }

@@ -8,11 +8,11 @@ import com.group_1.usege.model.Image;
 public class ImageComparator extends DiffUtil.ItemCallback<Image> {
     @Override
     public boolean areItemsTheSame(@NonNull Image oldItem, @NonNull Image newItem) {
-        return oldItem.getUri().equals(newItem.getUri());
+        return oldItem.getId().equals(newItem.getId());
     }
 
     @Override
     public boolean areContentsTheSame(@NonNull Image oldItem, @NonNull Image newItem) {
-        return areItemsTheSame(oldItem, newItem);
+        return oldItem.getUri().equals(newItem.getUri());
     }
 }

@@ -6,21 +6,27 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Image implements Parcelable {
     private List<String> tags;
     private String description;
     private String date;
     private long size;
     private String location;
-
     private Uri uri;
-
+    private String id;
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override
@@ -34,51 +40,6 @@ public class Image implements Parcelable {
         }
     };
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Uri getUri() {
-        return uri;
-    }
-
-    public void setUri(Uri uri) {
-        this.uri = uri;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public List<String> getTags() { return tags; }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Image() {
-        // Nothing
-    }
 
     public Image(Uri uri, List<String> tags, String description, String date, long size, String location) {
         this.uri = uri;
@@ -102,6 +63,7 @@ public class Image implements Parcelable {
 
     public Image(Image img) {
         this.uri = img.getUri();
+        this.id = img.getId();
         this.date = img.getDate();
         this.description = img.getDescription();
         this.size = img.getSize();

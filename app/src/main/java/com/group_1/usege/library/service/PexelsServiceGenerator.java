@@ -14,7 +14,7 @@ import dagger.hilt.android.scopes.ViewModelScoped;
 public class PexelsServiceGenerator extends BaseServiceGenerator<PexelsService> {
     @Inject
     PexelsServiceGenerator(@ApplicationContext Context context) {
-        super(context.getResources(), R.string.domain_pexels_api, R.string.api_version, R.string.service_master);
+        super(context.getResources(), R.string.domain_pexels_api);
     }
 
     @Override

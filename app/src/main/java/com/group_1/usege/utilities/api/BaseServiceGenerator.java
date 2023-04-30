@@ -31,6 +31,11 @@ public abstract class BaseServiceGenerator<S> {
     {
         this(resources, R.string.uri_base_server, versionRes, serviceNameRes);
     }
+    public BaseServiceGenerator(Resources resources, @StringRes int baseUrlResId)
+    {
+        this.resources = resources;
+        this.baseUrl = resources.getString(baseUrlResId);
+    }
 
     public BaseServiceGenerator(Resources resources, @StringRes int domainRes, @StringRes int versionRes, @StringRes int serviceNameRes)
     {
@@ -66,7 +71,7 @@ public abstract class BaseServiceGenerator<S> {
         tokenHttpClient.addInterceptor(chain -> {
             Request original = chain.request();
             Request.Builder builder1 = original.newBuilder()
-                    .header("Authorization", "Bearer " + token);
+                    .header("Authorization", token);
             Request request = builder1.build();
             return chain.proceed(request);
         });

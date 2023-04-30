@@ -14,21 +14,21 @@ import io.reactivex.rxjava3.core.Flowable;
 import kotlinx.coroutines.CoroutineScope;
 
 
-public abstract class ImageViewModel extends ViewModel {
+public abstract class ImageViewModel<TKey, TResponse> extends ViewModel {
     public Flowable<PagingData<Image>> getImagePagingDataFlowable() {
         return imagePagingDataFlowable;
     }
     private Flowable<PagingData<Image>> imagePagingDataFlowable;
 
-    public void init(int itemPerPageCount, int maxItemCount, ImagePagingSource imagePagingSource)
+    public void init(int itemPerPageCount, int maxCachePage, ImagePagingSource<TKey, TResponse> imagePagingSource)
     {
-        Pager<String, Image> pager = new Pager<>(
+        Pager<TKey, Image> pager = new Pager<>(
                 // Create new paging config
                 new PagingConfig(itemPerPageCount, //  Count of items in one page
                         itemPerPageCount, //  Number of items to prefetch
                         false, // Enable placeholders for data which is not yet loaded
                         itemPerPageCount, // initialLoadSize - Count of items to be loaded initially
-                        maxItemCount),
+                        maxCachePage),
                 () -> imagePagingSource); // set paging source
         // inti Flowable
         imagePagingDataFlowable = PagingRx.getFlowable(pager);

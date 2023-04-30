@@ -14,9 +14,8 @@
         android:id="@+id/txt_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TextAppearance.Material3.BodyMedium"
-        android:text="@string/label_search_hint"
+        android:textAppearance="?attr/errorTextAppearance"
         android:textAlignment="center"
-        android:textColor="?attr/errorTextColor"
+        android:visibility="gone"
         android:layout_centerInParent="true"/>
 </RelativeLayout>

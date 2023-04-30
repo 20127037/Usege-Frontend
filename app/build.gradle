@@ -50,7 +50,7 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
-
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.15.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.0'
@@ -77,6 +77,7 @@ dependencies {
     // For instrumentation tests
     androidTestImplementation  'com.google.dagger:hilt-android-testing:2.45'
     androidTestAnnotationProcessor 'com.google.dagger:hilt-compiler:2.45'
+
 
     // For local unit tests
     testImplementation 'com.google.dagger:hilt-android-testing:2.45'

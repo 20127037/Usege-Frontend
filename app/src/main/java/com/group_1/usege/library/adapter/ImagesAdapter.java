@@ -21,7 +21,7 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
     public static final int LOADING_ITEM = 0;
     // Define Movie ViewType
     public static final int IMAGE_ITEM = 1;
-    RequestManager glide;
+    private final RequestManager glide;
     private final ViewDetailsSignalReceiver viewDetailsSignalReceiver;
     public ImagesAdapter(@NotNull DiffUtil.ItemCallback<Image> diffCallback,
                          RequestManager glide,

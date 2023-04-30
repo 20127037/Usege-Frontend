@@ -24,7 +24,7 @@ public class LoadStateAdapter extends androidx.paging.LoadStateAdapter<LoadState
     @Override
     public LoadStateViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
                                                   @NotNull LoadState loadState) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_trash_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
         return new LoadStateViewHolder(view);
     }
 

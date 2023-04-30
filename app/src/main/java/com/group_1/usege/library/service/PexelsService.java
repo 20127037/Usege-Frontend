@@ -8,5 +8,7 @@ import retrofit2.http.Query;
 
 public interface PexelsService {
     @GET("curated")
-    Single<PexelsPageResponse> getPage(@Query("page") int page, @Query("per_page") int perPage);
+    Single<PexelsPageResponse> searchPage(@Query("page") Integer page, @Query("per_page") Integer perPage);
+    @GET("search")
+    Single<PexelsPageResponse> searchPage(@Query("query") String query, @Query("page") Integer page, @Query("per_page") Integer perPage);
 }

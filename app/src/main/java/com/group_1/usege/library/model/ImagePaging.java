@@ -1,38 +1,25 @@
 package com.group_1.usege.library.model;
 
+
 import com.group_1.usege.model.Image;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ImagePaging<S> {
-    private ArrayList<Image> images;
-    private Integer page;
+    private List<Image> images;
+    private S page;
     private Integer perPage;
     private Integer totalResults;
     private S nextPage;
     private S prevPage;
-
-    public ArrayList<Image> getImages() {
-        return images;
-    }
-
-    public Integer getPage() {
-        return page;
-    }
-
-    public Integer getPerPage() {
-        return perPage;
-    }
-
-    public Integer getTotalResults() {
-        return totalResults;
-    }
-
-    public S getNextPage() {
-        return nextPage;
-    }
-
-    public S getPrevPage() {
-        return prevPage;
-    }
 }
