@@ -51,7 +51,7 @@ public class ApiUploadFile {
         File file = new File(pathFile);
         String imageDtoJson = gson.toJson(imageDto);
         // Tạo request body cho object Image Dto
-
+        Log.e("User Id", userId);
         Log.e("ImageDto", imageDtoJson);
         Log.e("File", "" + file);
         Log.e("ReadPath", pathFile);

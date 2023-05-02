@@ -54,7 +54,7 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assignLayoutView();
-        checkHasLoggedIn();
+        //checkHasLoggedIn();
     }
 
     private void assignLayoutView()
