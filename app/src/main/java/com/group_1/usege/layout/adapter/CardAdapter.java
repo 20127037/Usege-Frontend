@@ -25,6 +25,7 @@ import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -76,15 +77,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        if(albumMode == Album.album_mode_trash) {
-            view = inflater.inflate(R.layout.item_photo_trash_item, parent, false);
-        } else {
-            view = inflater.inflate(R.layout.item_photo, parent, false);
-        }
-
         if (viewType == TYPE_ITEM) {
-            view = inflater.inflate(R.layout.item_photo, parent, false);
-            return new CardAdapter.ImageViewHolder(view);
+            if (Objects.equals(albumMode, Album.album_mode_trash)) {
+                view = inflater.inflate(R.layout.item_photo_trash_item, parent, false);
+                return new CardAdapter.ImageViewHolder(view);
+            } else {
+                view = inflater.inflate(R.layout.item_photo, parent, false);
+                return new CardAdapter.ImageViewHolder(view);
+            }
         } else {
             view = inflater.inflate(R.layout.item_loading, parent, false);
             return new CardAdapter.LoadingViewHolder(view);
@@ -129,7 +129,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     Activity activity = (Activity) context;
                     if (activity instanceof LibraryActivity) {
                         LibraryActivity libActivity = (LibraryActivity) activity;
-                        ImageView imageView = (ImageView)v;
+                        ImageView imageView = (ImageView) v;
                         if (imageView.getColorFilter() == null) {
                             // FOR UI
                             imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
@@ -184,6 +184,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class LoadingViewHolder extends RecyclerView.ViewHolder {
 
         private ProgressBar progressBar;
+
         public LoadingViewHolder(@NonNull View itemView) {
             super(itemView);
 

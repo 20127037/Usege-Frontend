@@ -146,7 +146,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,12 +156,11 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         // handle toggle Menu
         DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
         NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
-        rootNavigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        // Do something when a menu item is clicked
-                        switch (item.getItemId()) {
+        rootNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                // Do something when a menu item is clicked
+                switch (item.getItemId()) {
 //                            case R.id.nav_library:
 //                                // Handle menu item 1 click
 //                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
@@ -172,19 +170,19 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 ////                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
 ////                                startActivity(intentSettings);
 //                                break;
-                            case R.id.nav_plan:
-                                // Handle menu item 2 click
-                                ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
-                                break;
-                            case R.id.nav_statistic:
-                                // Handle menu item 2 click
-                                ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
-                                break;
-                            // Add more cases for other menu items as needed
-                        }
-                        return false;
-                    }
-                });
+                    case R.id.nav_plan:
+                        // Handle menu item 2 click
+                        ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
+                        break;
+                    case R.id.nav_statistic:
+                        // Handle menu item 2 click
+                        ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
+                        break;
+                    // Add more cases for other menu items as needed
+                }
+                return false;
+            }
+        });
         ImageView rootMenuImageView = findViewById(R.id.root_menu_image_view);
         rootMenuImageView.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -276,9 +274,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             }
         });
     }
+
     @Override
-    public int navigateId()
-    {
+    public int navigateId() {
         return R.id.nav_library;
     }
 
@@ -422,49 +420,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         }
     }
 
-    public void clickOpenAlbumCreateBottomSheetAndAddImage(int position) {
-        Button btnConfirm;
-        ImageView imageViewBackward;
-        EditText titleEditText, passwordEditText;
-
-        View viewDialog = getLayoutInflater().inflate(R.layout.layout_create_album, null);
-
-
-        final BottomSheetDialog createAlbumBottomSheetDialog = new BottomSheetDialog(this);
-        createAlbumBottomSheetDialog.setContentView(viewDialog);
-        createAlbumBottomSheetDialog.show();
-
-        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
-        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
-        titleEditText = viewDialog.findViewById(R.id.edit_text_title);
-        passwordEditText = viewDialog.findViewById(R.id.edit_text_password);
-        imageViewBackward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createAlbumBottomSheetDialog.dismiss();
-            }
-        });
-
-        final String returnValue = "";
-
-        btnConfirm.setOnClickListener(v -> {
-            String title = String.valueOf(titleEditText.getText());
-            String password = String.valueOf(passwordEditText.getText());
-            // check log
-            System.out.println("title: " + title);
-            System.out.println("password: " + password);
-
-            albumList.add(new Album(title, new ArrayList<Image>() {{
-                add(imgList.get(position));
-            }}));
-
-            Toast.makeText(this, "Created album success!", Toast.LENGTH_SHORT).show();
-
-            // Đóng bottommsheet
-            createAlbumBottomSheetDialog.dismiss();
-        });
-    }
-
     public void clickOpenAlbumCreateBottomSheet() {
         Button btnConfirm;
         ImageView imageViewBackward;
@@ -517,6 +472,13 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
         btnConfirm.setOnClickListener(v -> {
             String title = String.valueOf(titleEditText.getText());
+            // check existed album name
+            Album result = albumList.stream().filter(s -> (s.getName().equals(title))).findFirst().orElse(null);
+            if (result != null) {
+                Toast.makeText(this, "This album album is existed!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String password = String.valueOf(passwordEditText.getText());
 
             albumList.add(new Album(title, new ArrayList<Image>(selectedImages)));
@@ -645,6 +607,37 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         });
 
         backIcon.setOnClickListener(v -> createAlbumBottomSheetDialog.dismiss());
+    }
+
+    public void addToFavorite() {
+        // check existed not add image favorite
+//        Image result = albumList.get(0).getAlbumImages().stream().filter(s -> (s.getId().equals(title))).findFirst().orElse(null);
+        Image result = null;
+        List<Image> favoriteAlbumImages = albumList.get(0).getAlbumImages();
+
+        ArrayList<Image> notExistedInFavoriteImages = new ArrayList<Image>();
+        for (int i = 0; i < selectedImages.size(); i++) {
+            boolean existed = false;
+            for (int j = 0; j < favoriteAlbumImages.size(); j++) {
+                if (selectedImages.get(i).getUri() == favoriteAlbumImages.get(j).getUri()) {
+                    existed = true;
+                    break;
+                }
+            }
+            if(!existed) {
+                notExistedInFavoriteImages.add(new Image(selectedImages.get(i)));
+            }
+        }
+        if(notExistedInFavoriteImages.size() == 0) {
+            Toast.makeText(this, "Images are in favorite before!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        albumList.get(0).getAlbumImages().addAll(new ArrayList<Image>(notExistedInFavoriteImages));
+        bottomMenu.setVisibility(View.GONE);
+        selectedImages.clear();
+        updateImageViewDisplay();
+        Toast.makeText(context, "Add to favorite success", Toast.LENGTH_SHORT).show();
     }
 
     // ======== End album handler
@@ -908,73 +901,69 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         }
     }
 
-    private final ActivityResultLauncher<Intent> launcherPickImage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                Intent data = result.getData();
+    private final ActivityResultLauncher<Intent> launcherPickImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        Intent data = result.getData();
 
-                if (result.getResultCode() == RESULT_OK && data != null) {
+        if (result.getResultCode() == RESULT_OK && data != null) {
 
-                    // Lấy nhiều ảnh
-                    if (data.getClipData() != null) {
-                        int countOfImages = data.getClipData().getItemCount();
+            // Lấy nhiều ảnh
+            if (data.getClipData() != null) {
+                int countOfImages = data.getClipData().getItemCount();
 
-                        for (int i = 0; i < countOfImages; i++) {
-                            // Thêm dữ liệu
-                            Uri imageURI = data.getClipData().getItemAt(i).getUri();
-                            //Image image = getInformationOfImage(imageURI);
-                            Image image = new Image();
-                            image.setUri(imageURI);
-                            image.setLocation("");
-                            image.setDescription("A favorite image");
-                            GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
-                            getInformationThread.start();
-                            // Đây là dữ liệu mẫu
+                for (int i = 0; i < countOfImages; i++) {
+                    // Thêm dữ liệu
+                    Uri imageURI = data.getClipData().getItemAt(i).getUri();
+                    //Image image = getInformationOfImage(imageURI);
+                    Image image = new Image();
+                    image.setUri(imageURI);
+                    image.setLocation("");
+                    image.setDescription("A favorite image");
+                    GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+                    getInformationThread.start();
+                    // Đây là dữ liệu mẫu
 
-                            //Image image = new Image("", 0F, "A favorite image", "", imageURI);
-                            Log.e("NOTE", "URI1 " + image.getUri());
+                    //Image image = new Image("", 0F, "A favorite image", "", imageURI);
+                    Log.e("NOTE", "URI1 " + image.getUri());
 
-                            imgList.add(0, image);
-                        }
+                    imgList.add(0, image);
+                }
 
-                        // Lấy 1 ảnh
-                    } else {
-                        Uri imageURI = data.getData();
-                        // Thêm dữ liệu
-                        //Image image = getInformationOfImage(imageURI);
-                        // Đây là dữ liệu mẫu
-                        //Image image = new Image("", 0F, "The beautiful place", "", imageURI);
-                        Image image = new Image();
-                        image.setUri(imageURI);
-                        image.setLocation("");
-                        image.setDescription("A favorite image");
-                        GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
-                        getInformationThread.start();
+                // Lấy 1 ảnh
+            } else {
+                Uri imageURI = data.getData();
+                // Thêm dữ liệu
+                //Image image = getInformationOfImage(imageURI);
+                // Đây là dữ liệu mẫu
+                //Image image = new Image("", 0F, "The beautiful place", "", imageURI);
+                Image image = new Image();
+                image.setUri(imageURI);
+                image.setLocation("");
+                image.setDescription("A favorite image");
+                GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+                getInformationThread.start();
 
-                        imgList.add(0, image);
+                imgList.add(0, image);
 //                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
 //                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
 
-                    }
+            }
 
-                    setStatusOfWidgets();
-                } else {
-                    Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
-                }
-                // Thread
+            setStatusOfWidgets();
+        } else {
+            Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+        }
+        // Thread
 
-                // Update Fragment View
-                updateImageViewDisplay();
-            });
+        // Update Fragment View
+        updateImageViewDisplay();
+    });
 
     //Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
     private Boolean requestPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
         }
         return false;
     }
@@ -1122,46 +1111,44 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         launcherSendAndReceiveImageInAlbum.launch(intent);
     }
 
-    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImageInAlbum = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    Intent data = result.getData();
-                    Bundle bundle = data.getExtras();
-                    if (bundle == null) {
-                        return;
-                    }
-                    // Nhận giá trị mới khi ảnh đã được cập nhật
-                    Image selectedImage = (Image) bundle.getParcelable("return_image");
-                    int position = bundle.getInt("position");
-                    int task = bundle.getInt("task");
-                    Album album = (Album) bundle.getParcelable("return_album");
+    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImageInAlbum = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            Intent data = result.getData();
+            Bundle bundle = data.getExtras();
+            if (bundle == null) {
+                return;
+            }
+            // Nhận giá trị mới khi ảnh đã được cập nhật
+            Image selectedImage = (Image) bundle.getParcelable("return_image");
+            int position = bundle.getInt("position");
+            int task = bundle.getInt("task");
+            Album album = (Album) bundle.getParcelable("return_album");
 
-                    // Lấy vị trí album đang mở
-                    int index = albumList.indexOf(selectedAlbum);
-                    Album openedAlbum = albumList.get(index);
+            // Lấy vị trí album đang mở
+            int index = albumList.indexOf(selectedAlbum);
+            Album openedAlbum = albumList.get(index);
 
-                    switch (task) {
-                        case UPDATE_IMAGE: {
-                            // update description
-                            openedAlbum.setName(album.getName());
-                            openedAlbum.setAlbumImages(album.getAlbumImages());
+            switch (task) {
+                case UPDATE_IMAGE: {
+                    // update description
+                    openedAlbum.setName(album.getName());
+                    openedAlbum.setAlbumImages(album.getAlbumImages());
 
-                            break;
-                        }
-
-                        case DELETE_IMAGE: {
-                            // delete image in album
-                            openedAlbum.getAlbumImages().remove(position);
-
-                            break;
-                        }
-                    }
-                    updateImageInAlbumViewDisplay();
-                } else {
-                    //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+                    break;
                 }
-            });
+
+                case DELETE_IMAGE: {
+                    // delete image in album
+                    openedAlbum.getAlbumImages().remove(position);
+
+                    break;
+                }
+            }
+            updateImageInAlbumViewDisplay();
+        } else {
+            //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+        }
+    });
 
     public void sendAndReceiveImage(Image image, int position) {
         Intent intent = new Intent(context, ImageActivity.class);
@@ -1173,56 +1160,49 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         launcherSendAndReceiveImage.launch(intent);
     }
 
-    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    Intent data = result.getData();
-                    Bundle bundle = data.getExtras();
-                    if (bundle == null) {
-                        return;
-                    }
-                    // Nhận giá trị mới khi ảnh đã được cập nhật
-                    int position = bundle.getInt("position");
-                    Image selectedImage = (Image) bundle.getParcelable("return_image");
-                    int task = bundle.getInt("task");
+    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            Intent data = result.getData();
+            Bundle bundle = data.getExtras();
+            if (bundle == null) {
+                return;
+            }
+            // Nhận giá trị mới khi ảnh đã được cập nhật
+            int position = bundle.getInt("position");
+            Image selectedImage = (Image) bundle.getParcelable("return_image");
+            int task = bundle.getInt("task");
 
-                    switch (task) {
-                        case UPDATE_IMAGE: {
-                            // update description
-                            imgList.get(position).setDescription(selectedImage.getDescription());
-                            break;
-                        }
-
-                        case DELETE_IMAGE: {
-                            // delete image
-                            imgList.remove(position);
-
-                            //List<Image> lstdeletedImage = new ArrayList<>();
-                            //lstdeletedImage.add(selectedImage);
-                            trashBin.getAlbumImages().add(selectedImage);
-
-                            updateImageViewDisplay();
-
-                            break;
-                        }
-                    }
-                } else {
-                    //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+            switch (task) {
+                case UPDATE_IMAGE: {
+                    // update description
+                    imgList.get(position).setDescription(selectedImage.getDescription());
+                    break;
                 }
-            });
+
+                case DELETE_IMAGE: {
+                    // delete image
+                    imgList.remove(position);
+
+                    //List<Image> lstdeletedImage = new ArrayList<>();
+                    //lstdeletedImage.add(selectedImage);
+                    trashBin.getAlbumImages().add(selectedImage);
+
+                    updateImageViewDisplay();
+
+                    break;
+                }
+            }
+        } else {
+            //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+        }
+    });
 
 
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         try {
-            startCallApi(masterServiceGenerator
-                    .getService(tokenRepository.getToken().getAccessToken())
-                    .getUserInfo(tokenRepository.getToken().getUserId()));
-        }
-        catch (Exception e)
-        {
+            startCallApi(masterServiceGenerator.getService(tokenRepository.getToken().getAccessToken()).getUserInfo(tokenRepository.getToken().getUserId()));
+        } catch (Exception e) {
             Log.e("Library", e.getMessage());
         }
     }
@@ -1332,7 +1312,11 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     public RecyclerView getRecyclerViewOfImageLibrary() {
         LinearLayout libraryLinearLayout = (LinearLayout) imageDisplayLayout.getChildAt(0);
-        RecyclerView libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(3);
+        RecyclerView libraryRecyclerView = null;
+        if (mode == imageMode)
+            libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(3);
+        else if (mode == imageInAlbumMode)
+            libraryRecyclerView = (RecyclerView) libraryLinearLayout.getChildAt(2);
         return libraryRecyclerView;
     }
 
@@ -1371,11 +1355,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             switch (item.getItemId()) {
                 case R.id.favorite_image_menu_item:
                     // Do something when the "Favorite" item is clicked
-                    albumList.get(0).getAlbumImages().addAll(new ArrayList<Image>(selectedImages));
-                    bottomMenu.setVisibility(View.GONE);
-                    selectedImages.clear();
-                    updateImageViewDisplay();
-                    Toast.makeText(context, "Add to favorite success", Toast.LENGTH_SHORT).show();
+                    addToFavorite();
                     return true;
                 case R.id.combine_image_menu_item:
                     combineImages();
@@ -1394,25 +1374,23 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         popupMenu.show();
     }
 
-    private final ActivityResultLauncher<Intent> imageCombinationLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                Intent intent = result.getData();
+    private final ActivityResultLauncher<Intent> imageCombinationLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        Intent intent = result.getData();
 
-                if (result.getResultCode() == RESULT_OK && intent != null) {
-                    String action = intent.getStringExtra("action");
+        if (result.getResultCode() == RESULT_OK && intent != null) {
+            String action = intent.getStringExtra("action");
 
-                    if (Objects.equals(action, "back")) {
-                        removeBottomMenuAndAllImages(null);
-                    } else if (Objects.equals(action, "add more")) {
-                        Toast.makeText(this, "Now you can continue selecting images", Toast.LENGTH_LONG).show();
-                    } else if (Objects.equals(action, "combine ok")) {
-                        Toast.makeText(this, "Successfully combing images", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
-                }
-            });
+            if (Objects.equals(action, "back")) {
+                removeBottomMenuAndAllImages(null);
+            } else if (Objects.equals(action, "add more")) {
+                Toast.makeText(this, "Now you can continue selecting images", Toast.LENGTH_LONG).show();
+            } else if (Objects.equals(action, "combine ok")) {
+                Toast.makeText(this, "Successfully combing images", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
+        }
+    });
 
     public void combineImages() {
         int selectedImagesSize = selectedImages.size();
