@@ -20,14 +20,32 @@
             android:onClick="backToPreviousActivity"
             android:src="@drawable/icon_backward_arrow" />
 
-        <Button
-            android:id="@+id/combine_button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:onClick="combineImagesFromContainer"
-            android:padding="10dp"
-            android:text="Combine" />
+            android:orientation="horizontal"
+            android:gravity="right">
+
+            <Button
+                android:id="@+id/change_layout_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginRight="10dp"
+                android:text="Change layout"
+                android:onClick="changeContainerLayout" />
+
+            <Button
+                android:id="@+id/combine_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Combine"
+                android:onClick="combineImagesFromContainer" />
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 
@@ -35,16 +53,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <GridLayout
-            android:id="@+id/image_container_grid_layout"
+        <LinearLayout
+            android:id="@+id/image_container_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="210dp"
             android:background="@drawable/bottom_menu"
-            android:columnCount="3"
-            android:rowCount="3">
-        </GridLayout>
+            android:orientation="horizontal"
+            android:gravity="center">
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/resource_queue_linear_layout"

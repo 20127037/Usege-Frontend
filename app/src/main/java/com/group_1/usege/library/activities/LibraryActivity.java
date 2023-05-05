@@ -700,6 +700,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         Button openDatePickerButton, applyFiltersButton;
         TextView selectedLocationTextView;
         Spinner locationSpinner;
+
         String[] imageTags = {"coffee", "tree", "chair", "people", "shirt"};
         String[] locations = {"", "Ho Chi Minh", "Ha Noi", "Can Tho", "Vinh Long", "Thua Thien Hue"};
 
@@ -1386,6 +1387,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                 Toast.makeText(this, "Now you can continue selecting images", Toast.LENGTH_LONG).show();
             } else if (Objects.equals(action, "combine ok")) {
                 Toast.makeText(this, "Successfully combing images", Toast.LENGTH_LONG).show();
+                removeBottomMenuAndAllImages(null);
             }
         } else {
             Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
