@@ -61,7 +61,8 @@
             android:layout_marginBottom="210dp"
             android:background="@drawable/bottom_menu"
             android:orientation="horizontal"
-            android:gravity="center_horizontal">
+            android:gravity="center">
+
         </LinearLayout>
 
         <LinearLayout
