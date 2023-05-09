@@ -1271,7 +1271,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                                             image.getUri().toString());
 
             // Call Api Upload File
-            ApiUploadFile apiUploadFile = new ApiUploadFile(context, tokenRepository.getToken().getUserId(), imageDto, imagePath);
+            ApiUploadFile apiUploadFile = new ApiUploadFile(context, tokenRepository.getToken().getAccessToken(), tokenRepository.getToken().getUserId(), imageDto, imagePath);
             apiUploadFile.callApiUploadFile();
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
         }
