@@ -3,7 +3,6 @@ package com.group_1.usege.api.apiservice;
 import android.content.Context;
 
 import com.group_1.usege.R;
-import com.group_1.usege.userInfo.services.MasterService;
 import com.group_1.usege.utilities.api.BaseServiceGenerator;
 
 import javax.inject.Inject;
