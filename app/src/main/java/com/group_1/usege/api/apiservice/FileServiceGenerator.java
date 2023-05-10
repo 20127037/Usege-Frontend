@@ -11,10 +11,10 @@ import javax.inject.Singleton;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 
 @Singleton
-public class ApiServiceGenerator extends BaseServiceGenerator<ApiService> {
+public class FileServiceGenerator extends BaseServiceGenerator<ApiService> {
     @Inject
-    ApiServiceGenerator(@ApplicationContext Context context) {
-        super(context.getResources(), R.string.api_version, R.string.service_file,"http://10.0.2.2:8083/api");
+    FileServiceGenerator(@ApplicationContext Context context) {
+        super(context.getResources(), R.string.api_version, R.string.service_file, "http://10.0.2.2:8083/api");
     }
 
     @Override

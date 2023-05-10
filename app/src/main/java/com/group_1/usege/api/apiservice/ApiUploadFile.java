@@ -5,25 +5,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.group_1.usege.api.googlemaps.GeocodeResponse;
 import com.group_1.usege.dto.ImageDto;
-import com.group_1.usege.dto.UserFile;
-import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.model.UserFile;
 
 import java.io.File;
-import java.lang.reflect.Field;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Multipart;
 
 public class ApiUploadFile {
 
@@ -34,7 +26,7 @@ public class ApiUploadFile {
 
     private String accessToken;
 
-    private ApiServiceGenerator apiServiceGenerator;
+    private FileServiceGenerator fileServiceGenerator;
     public ApiUploadFile(Context context, String accessToken, String userId, ImageDto imageDto, String pathFile) {
         this.context = context;
         this.userId = userId;
@@ -62,7 +54,7 @@ public class ApiUploadFile {
 //                .build()
 //                .create(ApiService.class);
 
-        apiServiceGenerator = new ApiServiceGenerator(context);
+        fileServiceGenerator = new FileServiceGenerator(context);
         Gson gson = new Gson();
         File file = new File(pathFile);
         String imageDtoJson = gson.toJson(imageDto);
@@ -77,7 +69,7 @@ public class ApiUploadFile {
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestBodyFile);
         Log.i("File", "" + file.getName());
 
-        Call<UserFile> call = apiServiceGenerator.getService(accessToken).uploadFile(userId, requestBodyObject, multipartBody);
+        Call<UserFile> call = fileServiceGenerator.getService(accessToken).uploadFile(userId, requestBodyObject, multipartBody);
         //Call<ResponseBody> call = apiService.uploadFile(userId, requestBodyObject, multipartBody);
         call.enqueue(new Callback<UserFile>() {
             @Override

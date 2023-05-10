@@ -16,6 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.group_1.usege.R;
+import com.group_1.usege.api.apiservice.ApiGetFiles;
+import com.group_1.usege.authen.repository.TokenRepository;
+import com.group_1.usege.dto.LoadFileRequestDto;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
@@ -25,8 +28,14 @@ import com.group_1.usege.pagination.PaginationScrollListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 public class ImageListFragment extends Fragment {
+
+    @Inject
+    public TokenRepository tokenRepository;
     LibraryActivity libraryActivity;
     public int position;
 
@@ -40,16 +49,22 @@ public class ImageListFragment extends Fragment {
     private Boolean isLastPage = false;
     private int totalPage;
     private int currentPage = 1;
+    private LoadFileRequestDto loadFileRequestDto = new LoadFileRequestDto(6, null, null);
+    String[] attributes = null;
+    Map<String, String> lastKey = null;
+    Map<String, String> currentKey = null;
+    int limit = 6;
 
-    private static final int countItemInPage = 5;
+    private static final int countItemInPage = 6;
     public ImageListFragment() {
         // Required empty public constructor
     }
 
-    public static ImageListFragment newInstance(List<Image> images) {
+    public static ImageListFragment newInstance(List<Image> images, Map<String, String> lastKey) {
         ImageListFragment fragment = new ImageListFragment();
         Bundle args = new Bundle();
         args.putSerializable("List_images", (Serializable) images);
+        args.putSerializable("Last_key", (Serializable) lastKey);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,6 +75,7 @@ public class ImageListFragment extends Fragment {
 
         if (getArguments() != null) {
             lstImage = (List<Image>) getArguments().getSerializable("List_images");
+            lastKey = (Map<String, String>) getArguments().getSerializable("Last_key");
             totalPage = lstImage.size() / countItemInPage + 1;
         }
 
@@ -171,5 +187,15 @@ public class ImageListFragment extends Fragment {
         }
 
         return images;
+    }
+
+    public void getFilesFromServer() {
+
+        ApiGetFiles apiGetFiles = new ApiGetFiles(context,
+                            tokenRepository.getToken().getUserId(),
+                            tokenRepository.getToken().getAccessToken(),
+                            loadFileRequestDto,
+                            lstImage);
+        apiGetFiles.callApiGetFiles();
     }
 }

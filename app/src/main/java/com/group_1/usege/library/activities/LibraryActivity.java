@@ -48,9 +48,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
+import com.group_1.usege.api.apiservice.ApiGetFiles;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.dto.ImageDto;
+import com.group_1.usege.dto.LoadFileRequestDto;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
 import com.group_1.usege.layout.fragment.AlbumImageListFragment;
@@ -64,6 +66,7 @@ import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.model.UserFile;
 import com.group_1.usege.realPath.RealPathUtil;
 import com.group_1.usege.userInfo.activities.UserPlanActivity;
 import com.group_1.usege.userInfo.activities.UserStatisticActivity;
@@ -82,7 +85,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -135,8 +140,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     // mode image or album
     private Boolean firstAccess = true;
     private Boolean filtered = false;
-
     private Album selectedAlbum;
+    private LoadFileRequestDto loadFileRequestDto;
     public static List<Image> selectedImages = new ArrayList<>();
 
     private static final int Read_Permission = 101;
@@ -279,6 +284,39 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                     break;
             }
         });
+
+        // Lấy ảnh từ Server
+        getFilesFromServer();
+    }
+
+    public void getFilesFromServer() {
+        imgList = new ArrayList<>();
+//        String[] attributes = null;
+//        Map<String, String> lastKey = null;
+//        int limit = 6;
+        loadFileRequestDto = new LoadFileRequestDto(6, null, null);
+        ApiGetFiles apiGetFiles = new ApiGetFiles(context, tokenRepository.getToken().getUserId(), tokenRepository.getToken().getAccessToken(), loadFileRequestDto, imgList);
+        apiGetFiles.callApiGetFiles();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                updateImageViewDisplay();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setStatusOfWidgets();
+                    }
+                });
+            }
+        });
+
+        thread.start();
     }
 
     @Override
@@ -537,7 +575,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance(imgList);
+            imageListFragment = ImageListFragment.newInstance(imgList, loadFileRequestDto.getLastKey());
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
         }
     }
@@ -864,7 +902,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             imgViewCard.setAlpha(0.5F);
 
             ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance(clonedImgList);
+            imageListFragment = ImageListFragment.newInstance(clonedImgList, loadFileRequestDto.getLastKey());
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
 
         }
@@ -1182,6 +1220,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                 case UPDATE_IMAGE: {
                     // update description
                     imgList.get(position).setDescription(selectedImage.getDescription());
+
+                    UserFile userFile = new UserFile();
+                    userFile.setDescription(selectedImage.getDescription());
+
                     break;
                 }
 
@@ -1206,6 +1248,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     protected void onResume() {
         super.onResume();
+
+
 //        try {
 //            startCallApi(masterServiceGenerator.getService(tokenRepository.getToken().getAccessToken()).getUserInfo(tokenRepository.getToken().getUserId()));
 //        } catch (Exception e) {
