@@ -37,14 +37,14 @@ public class ImagePresentationActivity extends AppCompatActivity {
         currentImageView = findViewById(R.id.current_image);
     }
 
-    private class Presentation extends AsyncTask<Void, Integer, String> {
-        private void renderImage(Uri imageUri) {
-            Glide.with(context)
-                    .load(imageUri)
-                    .apply(new RequestOptions().centerCrop())
-                    .into(currentImageView);
-        }
+    private void renderImage(Uri imageUri) {
+        Glide.with(context)
+                .load(imageUri)
+                .apply(new RequestOptions().centerCrop())
+                .into(currentImageView);
+    }
 
+    private class Presentation extends AsyncTask<Void, Integer, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -62,7 +62,10 @@ public class ImagePresentationActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
-                currentImageIndex += 1;
+                if (action == null) currentImageIndex += 1;
+                else if (action == "GO_PREVIOUS" || action == "GO_NEXT") {
+                    action = null;
+                }
             }
             return null;
         }
@@ -70,7 +73,7 @@ public class ImagePresentationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Toast.makeText(context, "The presentation ended.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "The presentation has ended.", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -88,10 +91,27 @@ public class ImagePresentationActivity extends AppCompatActivity {
     }
 
     public void viewPreviousImage(View v) {
+        if (currentImageIndex == 0) {
+            Toast.makeText(context, "You are viewing the first image", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        action = "GO_PREVIOUS";
+        currentImageIndex -= 1;
+        Uri imageUri = selectedImages.get(currentImageIndex).getUri();
+        renderImage(imageUri);
     }
 
     public void viewNextImage(View v) {
+        if (currentImageIndex == selectedImages.size() - 1) {
+            Toast.makeText(context, "You are viewing the last image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        action = "GO_NEXT";
+        currentImageIndex += 1;
+        Uri imageUri = selectedImages.get(currentImageIndex).getUri();
+        renderImage(imageUri);
     }
 
     public void starPresentationOver(View v) {
