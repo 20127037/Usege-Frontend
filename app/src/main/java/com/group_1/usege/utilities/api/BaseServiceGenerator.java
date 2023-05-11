@@ -43,6 +43,11 @@ public abstract class BaseServiceGenerator<S> {
         baseUrl = String.format("%s/%s/%s/", resources.getString(domainRes), resources.getString(versionRes), resources.getString(serviceNameRes));
     }
 
+    public BaseServiceGenerator(Resources resources, @StringRes int versionRes, @StringRes int serviceNameRes, String baseUrl)
+    {
+        this.baseUrl = String.format("%s/%s/%s/", baseUrl, resources.getString(versionRes), resources.getString(serviceNameRes));
+    }
+
     private static final Retrofit.Builder builder
             = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())

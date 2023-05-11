@@ -41,7 +41,6 @@ public class Image implements Parcelable {
         }
     };
 
-
     public Image(Uri uri, List<String> tags, String description, String date, long size, String location) {
         this.uri = uri;
         this.tags = tags;
@@ -73,6 +72,7 @@ public class Image implements Parcelable {
     }
 
     protected Image(Parcel in) {
+        id = in.readString();
         date = in.readString();
         size = in.readLong();
         description = in.readString();
@@ -89,6 +89,7 @@ public class Image implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(date);
         dest.writeLong(size);
         dest.writeString(description);

@@ -130,7 +130,7 @@ public class ImageCardFragment  extends Fragment {
             rcvFavoritePhoto.setLayoutManager(gridLayoutManager);
             rcvFavoritePhoto.setAdapter(favoriteCardAdapter);
         }
-        
+
          cardAdapter = new CardAdapter(context, new IClickItemImageListener() {
             @Override
             public void onClickItemImage(Image image, int position) {

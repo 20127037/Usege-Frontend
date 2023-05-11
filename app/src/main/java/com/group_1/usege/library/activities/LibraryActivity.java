@@ -48,6 +48,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
+import com.group_1.usege.api.apiservice.ApiGetFiles;
+import com.group_1.usege.api.apiservice.ApiUploadFile;
+import com.group_1.usege.authen.repository.TokenRepository;
+import com.group_1.usege.dto.ImageDto;
+import com.group_1.usege.dto.LoadFileRequestDto;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.AlbumCardFragment;
 import com.group_1.usege.layout.fragment.AlbumImageListFragment;
@@ -61,11 +66,13 @@ import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.model.UserFile;
+import com.group_1.usege.realPath.RealPathUtil;
 import com.group_1.usege.userInfo.activities.UserPlanActivity;
 import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
-import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
+import com.group_1.usege.userInfo.services.MasterServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 
@@ -78,7 +85,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -88,6 +97,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
+    @Inject
+    public TokenRepository tokenRepository;
     Context context = this;
     DrawerLayout rootDrawerLayout;
     FragmentTransaction ft;
@@ -98,7 +109,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     AlbumListFragment albumListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
     @Inject
-    public MasterUserServiceGenerator masterServiceGenerator;
+    public MasterServiceGenerator masterServiceGenerator;
     @Inject
     public UserInfoRepository userInfoRepository;
     EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
@@ -129,8 +140,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     // mode image or album
     private Boolean firstAccess = true;
     private Boolean filtered = false;
-
     private Album selectedAlbum;
+    private LoadFileRequestDto loadFileRequestDto;
     public static List<Image> selectedImages = new ArrayList<>();
 
     private static final int Read_Permission = 101;
@@ -273,6 +284,39 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                     break;
             }
         });
+
+        // Lấy ảnh từ Server
+        getFilesFromServer();
+    }
+
+    public void getFilesFromServer() {
+        imgList = new ArrayList<>();
+//        String[] attributes = null;
+//        Map<String, String> lastKey = null;
+//        int limit = 6;
+        loadFileRequestDto = new LoadFileRequestDto(6, null, null);
+        ApiGetFiles apiGetFiles = new ApiGetFiles(context, tokenRepository.getToken().getUserId(), tokenRepository.getToken().getAccessToken(), loadFileRequestDto, imgList);
+        apiGetFiles.callApiGetFiles();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                updateImageViewDisplay();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setStatusOfWidgets();
+                    }
+                });
+            }
+        });
+
+        thread.start();
     }
 
     @Override
@@ -531,7 +575,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance(imgList);
+            imageListFragment = ImageListFragment.newInstance(imgList, loadFileRequestDto.getLastKey());
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
         }
     }
@@ -858,7 +902,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             imgViewCard.setAlpha(0.5F);
 
             ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance(clonedImgList);
+            imageListFragment = ImageListFragment.newInstance(clonedImgList, loadFileRequestDto.getLastKey());
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
 
         }
@@ -986,25 +1030,25 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         }
     }
 
-    public String getImagePath(Uri imageURI) throws IOException {
-        String imagePath = "";
-
-        // lấy InputStream từ Uri của ảnh
-        InputStream inputStream = getContentResolver().openInputStream(imageURI);
-
-        // tạo tập tin tạm thời để lưu ảnh
-        File tempFile = null;
-        tempFile = File.createTempFile("temp", null, getCacheDir());
-        tempFile.deleteOnExit();
-
-        // copy dữ liệu từ InputStream vào tập tin tạm thời
-        copyInputStreamToFile(inputStream, tempFile);
-
-        // lấy đường dẫn tới tập tin tạm thời
-        imagePath = tempFile.getAbsolutePath();
-
-        return imagePath;
-    }
+//    public String getImagePath(Uri imageURI) throws IOException {
+//        String imagePath = "";
+//
+//        // lấy InputStream từ Uri của ảnh
+//        InputStream inputStream = getContentResolver().openInputStream(imageURI);
+//
+//        // tạo tập tin tạm thời để lưu ảnh
+//        File tempFile = null;
+//        tempFile = File.createTempFile("temp", null, getCacheDir());
+//        tempFile.deleteOnExit();
+//
+//        // copy dữ liệu từ InputStream vào tập tin tạm thời
+//        copyInputStreamToFile(inputStream, tempFile);
+//
+//        // lấy đường dẫn tới tập tin tạm thời
+//        imagePath = tempFile.getAbsolutePath();
+//
+//        return imagePath;
+//    }
 
     public List<String> getTagsOfImage(String imageURL) {
         // make API call to Eden AI
@@ -1176,6 +1220,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                 case UPDATE_IMAGE: {
                     // update description
                     imgList.get(position).setDescription(selectedImage.getDescription());
+
+                    UserFile userFile = new UserFile();
+                    userFile.setDescription(selectedImage.getDescription());
+
                     break;
                 }
 
@@ -1200,11 +1248,13 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     protected void onResume() {
         super.onResume();
-        try {
-            startCallApi(masterServiceGenerator.getService(tokenRepository.getToken().getBearerAccessToken()).getUserInfo(tokenRepository.getToken().getUserId()));
-        } catch (Exception e) {
-            Log.e("Library", e.getMessage());
-        }
+
+
+//        try {
+//            startCallApi(masterServiceGenerator.getService(tokenRepository.getToken().getAccessToken()).getUserInfo(tokenRepository.getToken().getUserId()));
+//        } catch (Exception e) {
+//            Log.e("Library", e.getMessage());
+//        }
     }
 
     @Override
@@ -1224,12 +1274,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         @Override
         public void run() {
             String imagePath = null;
-            try {
-                imagePath = getImagePath(uri);
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            //imagePath = getImagePath(uri);
+            imagePath = RealPathUtil.getRealPath(context, uri);
 
             // Tạo đối tượng ExifInterface để lấy thông tin ảnh
             ExifInterface exif = null;
@@ -1258,7 +1304,19 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             // Lưu thông tin vào Image
             image.setDate(dateTime);
             image.setSize(sizeOfImage);
-            //image.setLocation(address);
+            image.setLocation(location);
+
+            ImageDto imageDto = new ImageDto(null,
+                                            image.getTags(),
+                                            image.getDescription(),
+                                            image.getDate(),
+                                            image.getSize(),
+                                            image.getLocation(),
+                                            image.getUri().toString());
+
+            // Call Api Upload File
+            ApiUploadFile apiUploadFile = new ApiUploadFile(context, tokenRepository.getToken().getAccessToken(), tokenRepository.getToken().getUserId(), imageDto, imagePath);
+            apiUploadFile.callApiUploadFile();
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
         }
     }
