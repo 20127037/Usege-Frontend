@@ -20,6 +20,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".library.activities.ImagePresentationActivity"
+            android:exported="true" />
+        <activity
             android:name=".library.activities.ImageCombinationActivity"
             android:exported="true" />
 
@@ -29,7 +32,7 @@
 
         <activity
             android:name=".manipulation.activities.ImageActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".library.activities.LibraryActivity"
             android:exported="true">
@@ -39,17 +42,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".userInfo.activities.UserPlanActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".userInfo.activities.UserStatisticActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".userInfo.activities.PaymentActivity"
             android:exported="true"
-            android:label="@string/label_payment"/>
+            android:label="@string/label_payment" />
         <activity
             android:name=".account.activities.ConfirmResetPassword"
             android:exported="true"
@@ -69,6 +71,7 @@
         <activity
             android:name=".authen.activities.LoginActivity"
             android:exported="true"
-            android:label="@string/login"/>
+            android:label="@string/login" />
     </application>
+
 </manifest>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".library.activities.ImagePresentationActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/backward_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:onClick="backToPreviousActivity"
+        android:src="@drawable/icon_backward_arrow" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        android:gravity="right">
+
+        <Button
+            android:id="@+id/change_layout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="@drawable/button_border_cancel"
+            android:layout_marginRight="10dp"
+            android:text="Adjust"
+            android:onClick="adjustPresentationProperties" />
+
+        <Button
+            android:id="@+id/combine_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_border_confirm"
+            android:textColor="@color/white"
+            android:padding="10dp"
+            android:text="Export video"
+            android:onClick="exportVideo"
+            android:alpha="0.5"/>
+
+    </LinearLayout>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="100dp">
+
+            <ImageView
+                android:id="@+id/current_image"
+                android:src="@drawable/background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:drawableTop="@drawable/icon_presentation_previous"
+                android:onClick="viewPreviousImage"
+                android:text="Go previous"
+                android:layout_marginHorizontal="15dp"/>
+
+            <TextView
+                android:id="@+id/playing_state"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:drawableTop="@drawable/icon_presentation_pause"
+                android:text="Pause"
+                android:gravity="center"
+                android:layout_marginHorizontal="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:drawableTop="@drawable/icon_presentation_next"
+                android:onClick="viewNextImage"
+                android:text="Go next"
+                android:layout_marginHorizontal="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:drawableTop="@drawable/icon_presentation_start_over"
+                android:onClick="starPresentationOver"
+                android:text="Start over"
+                android:layout_marginHorizontal="15dp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
