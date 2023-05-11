@@ -1365,7 +1365,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                     // Do something when the "Compress" item is clicked
                     return true;
                 case R.id.make_a_presentation_menu_item:
-                    // Do something when the "Make a presentation" item is clicked
+                    presentImages();
                     return true;
                 default:
                     return super.onMenuItemSelected(0, item);
@@ -1394,7 +1394,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         }
     });
 
-    public void combineImages() {
+    private void combineImages() {
         int selectedImagesSize = selectedImages.size();
 
         if (selectedImagesSize > 9) {
@@ -1407,6 +1407,14 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
         intent.putExtras(bundle);
         imageCombinationLauncher.launch(intent);
+    }
+
+    private void presentImages() {
+        Intent intent = new Intent(this, ImagePresentationActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     public void deleteImages(View v) {
