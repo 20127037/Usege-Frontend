@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
             android:text="Thumbnail"
-            android:gravity="center"
+            android:gravity="left"
             android:textSize="18sp"
             android:textStyle="bold"
             />
@@ -83,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.65"
             android:text="Description"
+            android:gravity="left"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginLeft="4dp"/>
