@@ -2,71 +2,74 @@ package com.group_1.usege.layout.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
-import com.group_1.usege.api.apiservice.ApiGetFiles;
 import com.group_1.usege.authen.repository.TokenRepository;
-import com.group_1.usege.dto.LoadFileRequestDto;
+import com.group_1.usege.library.adapter.SimpleImagesAdapter;
+import com.group_1.usege.library.paging.PagingProvider;
+import com.group_1.usege.library.service.MasterFileService;
+import com.group_1.usege.library.service.MasterFileServiceGenerator;
+import com.group_1.usege.library.utilities.comparators.ImageComparator;
+import com.group_1.usege.library.viewModel.UsegeImageViewModel;
 import com.group_1.usege.model.Image;
-import com.group_1.usege.layout.adapter.ListAdapter;
-import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.library.activities.LibraryActivity;
-import com.group_1.usege.pagination.PaginationScrollListener;
+import com.group_1.usege.model.UserFile;
+import com.group_1.usege.utilities.adapter.LoadStateAdapter;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
+import com.group_1.usege.utilities.modules.ActivityModule;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.core.Single;
+
+@AndroidEntryPoint
 public class ImageListFragment extends Fragment {
 
     @Inject
     public TokenRepository tokenRepository;
-    LibraryActivity libraryActivity;
-    public int position;
-
-    public RecyclerView rcvPhoto;
-
-    public ListAdapter listAdapter;
-    private List<Image> lstImage;
-    private List<Image> lstVisibleImage;
-    private Context context = null;
-    private Boolean isLoading = false;
-    private Boolean isLastPage = false;
-    private int totalPage;
-    private int currentPage = 1;
-    private LoadFileRequestDto loadFileRequestDto = new LoadFileRequestDto(6, null, null);
-    String[] attributes = null;
-    Map<String, String> lastKey = null;
-    Map<String, String> currentKey = null;
-    int limit = 6;
-
-    private static final int countItemInPage = 6;
+    @Inject
+    @ActivityModule.SmallPlaceHolder
+    public RequestManager requestManager;
+    @Inject
+    public ImageComparator comparator;
+    @Inject
+    public LoadStateAdapter loadStateAdapter;
+    @Inject
+    public MasterFileServiceGenerator masterFileServiceGenerator;
+    private static final int SPAN_COUNT = 3;
+    private static final int LIMIT = 6;
+    private final PagingProvider<Map<String,String>, MasterFileService.QueryResponse<UserFile>> defaultProvider = this::paging;
+    private SimpleImagesAdapter imageAdapter;
+    private UsegeImageViewModel mainViewModel;
+    private ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver;
+    private RecyclerView rcvPhoto;
     public ImageListFragment() {
         // Required empty public constructor
     }
 
-    public static ImageListFragment newInstance(List<Image> images, Map<String, String> lastKey) {
-        ImageListFragment fragment = new ImageListFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("List_images", (Serializable) images);
-        args.putSerializable("Last_key", (Serializable) lastKey);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        viewDetailsSignalReceiver = (ViewDetailsSignalByItemReceiver<Image>)context;
+    }
+
+    public static ImageListFragment newInstance() {
+        return new ImageListFragment();
     }
 
     @Override
@@ -74,128 +77,39 @@ public class ImageListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            lstImage = (List<Image>) getArguments().getSerializable("List_images");
-            lastKey = (Map<String, String>) getArguments().getSerializable("Last_key");
-            totalPage = lstImage.size() / countItemInPage + 1;
-        }
-
-        try {
-            context = getActivity();
-            libraryActivity = (LibraryActivity) getActivity();
-        }
-        catch (IllegalStateException e) {
-            throw new IllegalStateException("MainActivity must implement callbacks");
+            imageAdapter = new SimpleImagesAdapter(comparator, requestManager, viewDetailsSignalReceiver);
+            mainViewModel = new ViewModelProvider(this).get(UsegeImageViewModel.class);
+            mainViewModel.init(defaultProvider);
         }
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         LinearLayout layoutImageList = (LinearLayout) inflater.inflate(R.layout.fragment_image_list, null);
-
         rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
-
-        listAdapter = new ListAdapter(context, new IClickItemImageListener() {
-            @Override
-            public void onClickItemImage(Image image, int position) {
-                onClickGoToDetails(image, position);
-            }
-        });
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        rcvPhoto.setLayoutManager(linearLayoutManager);
-        rcvPhoto.setAdapter(listAdapter);
-
-        setFirstData();
-        rcvPhoto.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
-            @Override
-            public void loadMoreItems() {
-                isLoading = true;
-
-                currentPage += 1;
-                loadNextPage();
-            }
-
-            @Override
-            public Boolean isLoading() {
-                return isLoading;
-            }
-
-            @Override
-            public Boolean isLastPage() {
-                return isLastPage;
-            }
-        });
-
+        //set recyclerview and adapter
+        // Subscribe to to paging data
+        initRecyclerviewAndAdapter(rcvPhoto);
+        mainViewModel.getImagePagingDataFlowable()
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
+                .subscribe(imagePagingData -> imageAdapter.submitData(getLifecycle(), imagePagingData));
         return layoutImageList;
     }
 
 
-    private void onClickGoToDetails(Image image, int position) {
-        libraryActivity.sendAndReceiveImage(image, position);
+    public void initRecyclerviewAndAdapter(RecyclerView recyclerView) {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), SPAN_COUNT);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setAdapter(imageAdapter.withLoadStateFooter(loadStateAdapter));
     }
 
-    /**
-     * Load data page 1
-     */
-    private void setFirstData() {
-        position = 0;
-        lstVisibleImage = getListImage();
-        listAdapter.setData(lstVisibleImage);
-
-        if (currentPage < totalPage) {
-            listAdapter.addFooterLoading();
-            isLastPage = false;
-        } else {
-            isLastPage = true;
-        }
-    }
-
-    private void loadNextPage() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                List<Image> images = getListImage();
-
-                listAdapter.removeFooterLoading();
-                lstVisibleImage.addAll(images);
-                listAdapter.notifyDataSetChanged();
-
-                isLoading = false;
-                Log.e("Page", "Current " + currentPage);
-                if (currentPage < totalPage) {
-                    listAdapter.addFooterLoading();
-                    isLastPage = false;
-                } else {
-                    isLastPage = true;
-                }
-            }
-        }, 750);
-
-    }
-
-    private List<Image> getListImage() {
-        Toast.makeText(context, "Load data page " + currentPage, Toast.LENGTH_LONG).show();
-
-        List<Image> images = new ArrayList<>();
-
-        for (int i = 0; i < countItemInPage; i++) {
-            if (position <= lstImage.size() - 1) {
-                images.add(lstImage.get(position));
-                position += 1;
-            }
-        }
-
-        return images;
-    }
-
-    public void getFilesFromServer() {
-
-        ApiGetFiles apiGetFiles = new ApiGetFiles(context,
-                            tokenRepository.getToken().getUserId(),
-                            tokenRepository.getToken().getAccessToken(),
-                            loadFileRequestDto,
-                            lstImage);
-        apiGetFiles.callApiGetFiles();
+    private Single<MasterFileService.QueryResponse<UserFile>> paging(Map<String, String> page) {
+        return masterFileServiceGenerator
+                .getService()
+                .getFiles(tokenRepository.getToken().getUserId(), false, LIMIT, null, page);
     }
 }

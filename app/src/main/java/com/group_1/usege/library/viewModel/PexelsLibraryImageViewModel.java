@@ -1,7 +1,7 @@
 package com.group_1.usege.library.viewModel;
 
 import com.group_1.usege.library.model.PexelsPageResponse;
-import com.group_1.usege.library.model.PexelsPageResponseMapper;
+import com.group_1.usege.library.utilities.mappers.PexelsPageResponseMapper;
 import com.group_1.usege.library.paging.ImagePagingSource;
 import com.group_1.usege.library.paging.PagingProvider;
 

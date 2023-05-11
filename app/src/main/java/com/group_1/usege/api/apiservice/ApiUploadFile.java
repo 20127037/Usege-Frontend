@@ -20,19 +20,20 @@ import retrofit2.Response;
 public class ApiUploadFile {
 
     private Context context;
-    private String userId;
-    private ImageDto imageDto;
-    private String pathFile;
+    private final String userId;
+    private final ImageDto imageDto;
+    private final String pathFile;
 
     private String accessToken;
 
-    private FileServiceGenerator fileServiceGenerator;
-    public ApiUploadFile(Context context, String accessToken, String userId, ImageDto imageDto, String pathFile) {
+    private final FileServiceGenerator fileServiceGenerator;
+    public ApiUploadFile(FileServiceGenerator fileServiceGenerator, String userId, ImageDto imageDto, String pathFile) {
         this.context = context;
         this.userId = userId;
         this.imageDto = imageDto;
         this.pathFile = pathFile;
         this.accessToken = accessToken;
+        this.fileServiceGenerator = fileServiceGenerator;
     }
 
     public void callApiUploadFile() {
@@ -54,7 +55,6 @@ public class ApiUploadFile {
 //                .build()
 //                .create(ApiService.class);
 
-        fileServiceGenerator = new FileServiceGenerator(context);
         Gson gson = new Gson();
         File file = new File(pathFile);
         String imageDtoJson = gson.toJson(imageDto);
@@ -69,7 +69,7 @@ public class ApiUploadFile {
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestBodyFile);
         Log.i("File", "" + file.getName());
 
-        Call<UserFile> call = fileServiceGenerator.getService(accessToken).uploadFile(userId, requestBodyObject, multipartBody);
+        Call<UserFile> call = fileServiceGenerator.getService().uploadFile(userId, requestBodyObject, multipartBody);
         //Call<ResponseBody> call = apiService.uploadFile(userId, requestBodyObject, multipartBody);
         call.enqueue(new Callback<UserFile>() {
             @Override

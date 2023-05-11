@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
 import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.library.activities.OnlineLibraryActivity;
 import com.group_1.usege.userInfo.activities.UserPlanActivity;
 import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 
@@ -28,6 +29,7 @@ public abstract class NavigatedAuthApiCallerActivity<S> extends AuthApiCallerAct
             put(R.id.nav_library, LibraryActivity.class);
             put(R.id.nav_plan, UserPlanActivity.class);
             put(R.id.nav_statistic, UserStatisticActivity.class);
+            put(R.id.nav_external_library, OnlineLibraryActivity.class);
         }
     };
 

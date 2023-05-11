@@ -79,7 +79,7 @@ public class UserPlanActivity extends NavigatedAuthApiCallerActivity<StoragePlan
 //        });
         try {
             startCallApi(masterServiceGenerator
-                    .getService(tokenRepository.getToken().getBearerAccessToken())
+                    .getService()
                     .getUserPlan(tokenRepository.getToken().getUserId()));
         }
         catch (Exception exception)

@@ -20,13 +20,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Image implements Parcelable {
+    private String id;
+
     private List<String> tags;
     private String description;
     private String date;
     private long size;
     private String location;
     private Uri uri;
-    private String id;
     private Uri smallUri;
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {

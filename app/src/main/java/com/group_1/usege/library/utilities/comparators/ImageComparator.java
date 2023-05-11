@@ -1,4 +1,4 @@
-package com.group_1.usege.library.utilities;
+package com.group_1.usege.library.utilities.comparators;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;

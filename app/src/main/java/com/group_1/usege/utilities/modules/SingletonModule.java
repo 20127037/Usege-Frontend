@@ -2,13 +2,7 @@ package com.group_1.usege.utilities.modules;
 
 import android.content.Context;
 
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.RequestOptions;
-import com.group_1.usege.R;
-import com.group_1.usege.library.utilities.ImageComparator;
+import com.group_1.usege.library.utilities.comparators.ImageComparator;
 import com.group_1.usege.utilities.adapter.LoadStateAdapter;
 
 import javax.inject.Singleton;

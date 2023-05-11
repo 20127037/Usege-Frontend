@@ -18,13 +18,14 @@ import com.group_1.usege.library.adapter.SimpleImagesAdapter;
 import com.group_1.usege.library.model.PexelsPageResponse;
 import com.group_1.usege.library.paging.PagingProvider;
 import com.group_1.usege.library.service.PexelsServiceGenerator;
-import com.group_1.usege.library.utilities.ImageComparator;
+import com.group_1.usege.library.utilities.comparators.ImageComparator;
 import com.group_1.usege.library.viewModel.PexelsLibraryImageViewModel;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
+import com.group_1.usege.utilities.activities.AuthApiCallerActivity;
+import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 import com.group_1.usege.utilities.adapter.LoadStateAdapter;
 import com.group_1.usege.utilities.modules.ActivityModule;
-import com.group_1.usege.utilities.view.GridSpaceDecorator;
 
 import javax.inject.Inject;
 
@@ -33,7 +34,7 @@ import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class OnlineLibraryActivity extends AppCompatActivity {
+public class OnlineLibraryActivity extends NavigatedAuthApiCallerActivity<Void> {
     public static final int SPAN_COUNT = 3;
     @Inject
     public PexelsServiceGenerator pexelsServiceGenerator;
@@ -60,6 +61,11 @@ public class OnlineLibraryActivity extends AppCompatActivity {
     public OnlineLibraryActivity()
     {
         super(R.layout.activity_online_library);
+    }
+
+    @Override
+    public int navigateId() {
+        return R.id.nav_external_library;
     }
 
     @Override
@@ -131,5 +137,10 @@ public class OnlineLibraryActivity extends AppCompatActivity {
         // Add ItemDecoration to add space between recyclerview items
         //recyclerView.addItemDecoration(new GridSpaceDecorator(SPAN_COUNT, 20, true));
         recyclerView.setAdapter(imageAdapter.withLoadStateFooter(loadStateAdapter));
+    }
+
+    @Override
+    protected void handleCallSuccess(Void body) {
+
     }
 }

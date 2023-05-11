@@ -1,8 +1,10 @@
-package com.group_1.usege.library.model;
+package com.group_1.usege.library.utilities.mappers;
 
 import android.net.Uri;
 import android.util.Log;
 
+import com.group_1.usege.library.model.ImagePaging;
+import com.group_1.usege.library.model.PexelsPageResponse;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.utilities.mappers.Mapper;
 
@@ -11,7 +13,6 @@ import java.util.stream.Collectors;
 public class PexelsPageResponseMapper implements Mapper<PexelsPageResponse, ImagePaging<Integer>> {
     @Override
     public ImagePaging<Integer> map(PexelsPageResponse value) {
-        Log.i("Mapper", "Pexels map");
         Integer nextPage = value.getNextPage() != null ? value.getPage() + 1 : null;
         Integer prevPage = value.getPrevPage() != null ? value.getPage() - 1 : null;
         return ImagePaging.<Integer>builder()

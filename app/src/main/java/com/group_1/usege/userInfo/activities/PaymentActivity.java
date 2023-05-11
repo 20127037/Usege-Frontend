@@ -92,7 +92,7 @@ public class PaymentActivity extends AuthApiCallerActivity<Void> {
 
     private void payment(String cardNumber, String cvv, String expiredDate)
     {
-        startCallApi(paymentServiceGenerator.getService(tokenRepository.getToken().getBearerAccessToken())
+        startCallApi(paymentServiceGenerator.getService()
                 .payment(tokenRepository.getToken().getUserId(),
                         new PaymentRequestDto(currentPlanName, cardNumber, cvv, expiredDate)));
     }
