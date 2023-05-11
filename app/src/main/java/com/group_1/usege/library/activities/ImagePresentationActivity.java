@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +23,13 @@ public class ImagePresentationActivity extends AppCompatActivity {
     Context context;
     List<Image> selectedImages = new ArrayList<>();
     ImageView currentImageView;
+    TextView playingState;
+    boolean paused = false;
     int currentImageIndex = 0;
     int waitingTime = 3000;
     String action = null;
+
+    Presentation presentation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +40,30 @@ public class ImagePresentationActivity extends AppCompatActivity {
         selectedImages = bundle.getParcelableArrayList("data");
 
         currentImageView = findViewById(R.id.current_image);
+        playingState = findViewById(R.id.playing_state);
+
+        playingState.setOnClickListener(v -> {
+            if (!paused) {
+                presentation.cancel(true);
+                paused = true;
+                playingState.setText("Resume");
+                playingState.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.icon_presentation_resume), null, null);
+
+            }
+            else {
+                presentation = new Presentation();
+                presentation.execute();
+                paused = false;
+                playingState.setText("Pause");
+                playingState.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.icon_presentation_pause), null, null);
+            }
+        });
     }
+
+    private void pausePresentation() {
+
+    }
+
 
     private void renderImage(Uri imageUri) {
         Glide.with(context)
@@ -87,7 +115,8 @@ public class ImagePresentationActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        new Presentation().execute();
+        presentation = new Presentation();
+        presentation.execute();
     }
 
     public void viewPreviousImage(View v) {
@@ -116,10 +145,9 @@ public class ImagePresentationActivity extends AppCompatActivity {
 
     public void starPresentationOver(View v) {
         currentImageIndex = 0;
-    }
-
-    public void pausePresentation(View v) {
-
+        presentation = new Presentation();
+        presentation.execute();
+        Toast.makeText(context, "The presentation has been started over", Toast.LENGTH_SHORT).show();
     }
 
     public void adjustPresentationProperties(View v) {
