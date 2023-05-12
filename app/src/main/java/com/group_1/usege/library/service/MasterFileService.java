@@ -27,10 +27,10 @@ public interface MasterFileService {
                                              @Nullable @Query(value = "attributes", encoded = true) String[] attributes,
                                              @Nullable @Query(value = "lastKey", encoded = true) Map<String, String> lastKey);
 
-    @GET("{id}/check")
-    Single<Response<UserFile>> checkFile(@Path("id") String id,
-                                         @Query("fileName") String fileName,
-                                         @Query("uri") String uri);
+    @GET("{id}/{fileName}")
+    Single<Response<UserFile>> getFile(@Path("id") String id,
+                                         @Path("fileName") String fileName,
+                                         @Query("trash-include") Boolean trash);
 
     @Builder
     @Data

@@ -7,6 +7,8 @@ import com.bumptech.glide.RequestManager;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.group_1.usege.R;
+import com.group_1.usege.api.apiservice.ApiService;
+import com.group_1.usege.api.apiservice.FileServiceGenerator;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.library.service.MasterFileServiceGenerator;
 import com.group_1.usege.model.Image;
@@ -23,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class OnlineImageActivity extends AuthApiCallerActivity<UserFile> {
 
+    private static String IMG_PREFIX_NAME = "PEXELS";
     public static  final String IMG_KEY = "IMG_KEY";
     private MaterialToolbar barTop;
     private FloatingActionButton btnDownload;
@@ -34,8 +37,13 @@ public class OnlineImageActivity extends AuthApiCallerActivity<UserFile> {
     @Inject
     public MasterFileServiceGenerator masterFileServiceGenerator;
     @Inject
+    public FileServiceGenerator fileServiceGenerator;
+    @Inject
     public TokenRepository tokenRepository;
 
+    private static String getPexelsName(String id){
+        return String.format("%s-%s", IMG_PREFIX_NAME, id);
+    }
 
     public OnlineImageActivity()
     {
@@ -68,15 +76,19 @@ public class OnlineImageActivity extends AuthApiCallerActivity<UserFile> {
     {
         barTop.setTitle(receivedImg.getDescription());
         glide.load(receivedImg.getUri()).into(viewImg);
+        startCallApi(masterFileServiceGenerator
+                .getService()
+                .getFile(tokenRepository.getToken().getUserId(), getPexelsName(receivedImg.getId()), true));
+        btnDownload.setOnClickListener(l -> fileServiceGenerator
+                .getService()
+                .uploadRefFile(tokenRepository.getToken().getUserId(),
+                        ApiService.UserFileRefUploadDto.builder()
+                                .fileName(getPexelsName(receivedImg.getId()))
+                                .description(receivedImg.getDescription())
+                                .tinyUri(receivedImg.getSmallUri().toString())
+                                .uri(receivedImg.getUri().toString())
+                                .build()));
     }
-
-//    protected void onResume()
-//    {
-//        super.onResume();
-////        startCallApi(masterFileServiceGenerator
-////                .getService(tokenRepository.getToken().getAccessToken())
-////                .checkFile(tokenRepository.getToken().getUserId(), null, receivedImg.getUri().toString()));
-//    }
 
     @Override
     protected void handleCallFail(ErrorResponse errorResponse)
