@@ -1,15 +1,15 @@
-package com.group_1.usege.layout.fragment;
+package com.group_1.usege.album.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
@@ -19,23 +19,22 @@ import com.group_1.usege.model.Album;
 import java.io.Serializable;
 import java.util.List;
 
-public class AlbumCardFragment extends Fragment {
-    FragmentTransaction ft;
+public class AlbumListFragment extends Fragment {
     TextView totalImage;
 
     public RecyclerView rcvPhoto;
 
     public AlbumAdapter albumAdapter;
-    private List<Album> lstImage;
+    private List<Album> lstAlbum;
     private Context context = null;
-    public AlbumCardFragment() {
+    public AlbumListFragment() {
         // Required empty public constructor
     }
 
-    public static AlbumCardFragment newInstance(List<Album> images) {
-        AlbumCardFragment fragment = new AlbumCardFragment();
+    public static AlbumListFragment newInstance(List<Album> albums) {
+        AlbumListFragment fragment = new AlbumListFragment();
         Bundle args = new Bundle();
-        args.putSerializable("List_album_images", (Serializable) images);
+        args.putSerializable("List_albums", (Serializable) albums);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +44,7 @@ public class AlbumCardFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            lstImage = (List<Album>) getArguments().getSerializable("List_album_images");
+            lstAlbum = (List<Album>) getArguments().getSerializable("List_albums");
         }
 
         try {
@@ -60,15 +59,15 @@ public class AlbumCardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View layoutImageCard = inflater.inflate(R.layout.fragment_image_card, null);
+        LinearLayout layoutImageList = (LinearLayout) inflater.inflate(R.layout.fragment_album_list, null);
 
-        rcvPhoto = layoutImageCard.findViewById(R.id.rcv_photo);
+        rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
 
-        albumAdapter = new AlbumAdapter(lstImage, context, "card");
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
-        rcvPhoto.setLayoutManager(gridLayoutManager);
+        albumAdapter = new AlbumAdapter(lstAlbum, context, "list");
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        rcvPhoto.setLayoutManager(linearLayoutManager);
         rcvPhoto.setAdapter(albumAdapter);
 
-        return layoutImageCard;
+        return layoutImageList;
     }
 }

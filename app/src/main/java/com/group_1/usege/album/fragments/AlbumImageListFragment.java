@@ -1,4 +1,4 @@
-package com.group_1.usege.layout.fragment;
+package com.group_1.usege.album.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,7 +27,6 @@ import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.CardAdapter;
 import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
-import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.pagination.PaginationScrollListener;
 
 import java.io.Serializable;
