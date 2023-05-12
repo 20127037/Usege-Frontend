@@ -84,18 +84,21 @@
                 <ImageView
                     android:id="@+id/image_view_image"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="450dp"
+                    android:scaleType="centerCrop"
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:src="@drawable/background" />
 
 <!--                Edit here-->
                 <SeekBar
-                    android:id="@+id/seekBarBrightness"
+                    android:id="@+id/seek_bar_brightness"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="100"
-                    android:progress="50" />
+                    android:progress="50"
+                    android:visibility="gone"/>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -107,35 +110,24 @@
         android:layout_alignParentBottom="true"
         android:background="#E1F4E0"
         android:orientation="horizontal"
-        android:padding="4dp">
+        android:padding="8dp">
 
         <TextView
-            android:id="@+id/text_view_describe"
+            android:id="@+id/text_view_crop_image"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/crop_icon"
+            android:drawableTop="@drawable/icon_crop"
             android:text="Crop"
             android:textSize="18sp"
             android:gravity="center"
             android:layout_weight="0.25"/>
 
         <TextView
-            android:id="@+id/text_view_delete_in_file"
+            android:id="@+id/text_view_adjust_image"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/adjust_icon"
+            android:drawableTop="@drawable/icon_adjust"
             android:text="Adjust"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:layout_weight="0.25"/>
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/text_view_delete_in_album"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/icon_cut_image"
-            android:text="Delete"
             android:textSize="18sp"
             android:gravity="center"
             android:layout_weight="0.25"/>
