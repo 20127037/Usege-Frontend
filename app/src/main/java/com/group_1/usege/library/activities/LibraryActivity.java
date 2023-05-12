@@ -47,8 +47,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
-import com.group_1.usege.api.apiservice.ApiGetFiles;
-import com.group_1.usege.api.apiservice.ApiUpdateFile;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
 import com.group_1.usege.api.apiservice.FileServiceGenerator;
 import com.group_1.usege.authen.repository.TokenRepository;
@@ -74,6 +72,7 @@ import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
+import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 
 import java.io.File;
@@ -1220,15 +1219,15 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                     // update description
                     imgList.get(position).setDescription(selectedImage.getDescription());
 
-                    UserFile userFile = new UserFile();
-                    userFile.setDescription(selectedImage.getDescription());
-
-                    ApiUpdateFile apiUpdateFile = new ApiUpdateFile(context,
-                            tokenRepository.getToken().getAccessToken(),
-                            tokenRepository.getToken().getUserId(),
-                            userFile);
-
-                    apiUpdateFile.callApiUpdateFile();
+//                    UserFile userFile = new UserFile();
+//                    userFile.setDescription(selectedImage.getDescription());
+//
+//                    ApiUpdateFile apiUpdateFile = new ApiUpdateFile(context,
+//                            tokenRepository.getToken().getAccessToken(),
+//                            tokenRepository.getToken().getUserId(),
+//                            userFile);
+//
+//                    apiUpdateFile.callApiUpdateFile();
 
                     break;
                 }
@@ -1256,11 +1255,11 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         super.onResume();
 
 
-//        try {
-//            startCallApi(masterServiceGenerator.getService(tokenRepository.getToken().getAccessToken()).getUserInfo(tokenRepository.getToken().getUserId()));
-//        } catch (Exception e) {
-//            Log.e("Library", e.getMessage());
-//        }
+        try {
+            startCallApi(masterServiceGenerator.getService().getUserInfo(tokenRepository.getToken().getUserId()));
+        } catch (Exception e) {
+            Log.e("Library", e.getMessage());
+        }
     }
 
     @Override
