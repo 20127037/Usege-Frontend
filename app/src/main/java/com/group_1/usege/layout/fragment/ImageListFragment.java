@@ -52,7 +52,6 @@ public class ImageListFragment extends Fragment {
     @Inject
     public MasterFileServiceGenerator masterFileServiceGenerator;
     private static final int SPAN_COUNT = 3;
-    private static final int LIMIT = 6;
     private final PagingProvider<Map<String,String>, MasterFileService.QueryResponse<UserFile>> defaultProvider = this::paging;
     private SimpleImagesAdapter imageAdapter;
     private UsegeImageViewModel mainViewModel;
@@ -110,6 +109,6 @@ public class ImageListFragment extends Fragment {
     private Single<MasterFileService.QueryResponse<UserFile>> paging(Map<String, String> page) {
         return masterFileServiceGenerator
                 .getService()
-                .getFiles(tokenRepository.getToken().getUserId(), false, LIMIT, null, page);
+                .getFiles(tokenRepository.getToken().getUserId(), false, UsegeImageViewModel.PAGE_SIZE, null, page);
     }
 }
