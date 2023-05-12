@@ -17,7 +17,6 @@ import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,7 +32,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -156,11 +154,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         // handle toggle Menu
         DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
         NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
-        rootNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Do something when a menu item is clicked
-                switch (item.getItemId()) {
+        rootNavigationView.setNavigationItemSelectedListener(item -> {
+            // Do something when a menu item is clicked
+            switch (item.getItemId()) {
 //                            case R.id.nav_library:
 //                                // Handle menu item 1 click
 //                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
@@ -170,18 +166,17 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 ////                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
 ////                                startActivity(intentSettings);
 //                                break;
-                    case R.id.nav_plan:
-                        // Handle menu item 2 click
-                        ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
-                        break;
-                    case R.id.nav_statistic:
-                        // Handle menu item 2 click
-                        ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
-                        break;
-                    // Add more cases for other menu items as needed
-                }
-                return false;
+                case R.id.nav_plan:
+                    // Handle menu item 2 click
+                    ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
+                    break;
+                case R.id.nav_statistic:
+                    // Handle menu item 2 click
+                    ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
+                    break;
+                // Add more cases for other menu items as needed
             }
+            return false;
         });
         ImageView rootMenuImageView = findViewById(R.id.root_menu_image_view);
         rootMenuImageView.setOnClickListener(v -> {
@@ -1177,6 +1172,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                 case UPDATE_IMAGE: {
                     // update description
                     imgList.get(position).setDescription(selectedImage.getDescription());
+                    imgList.add(position, selectedImage);
+                    updateImageViewDisplay();
                     break;
                 }
 

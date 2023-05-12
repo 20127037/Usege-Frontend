@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -25,7 +26,6 @@ import com.group_1.usege.model.Image;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class ImageActivity extends AppCompatActivity {
@@ -173,7 +173,6 @@ public class ImageActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         //super.onBackPressed();
         returnDataImageToLibraryActivity(UPDATE_IMAGE);
     }
@@ -259,11 +258,15 @@ public class ImageActivity extends AppCompatActivity {
             if (bundle == null) {
                 return;
             }
-            // Nhận giá trị mới khi ảnh đã được cập nhật
-            Image selectedImage = (Image) bundle.getParcelable("return_image");
+
+            Image returnedImage = bundle.getParcelable("returnedImage");
+            image = returnedImage;
+            Glide.with(this)
+                    .load(image.getUri())
+                    .into(ivImage);
 
         } else {
-            //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Something wrong happened.", Toast.LENGTH_LONG).show();
         }
     });
 
