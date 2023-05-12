@@ -17,7 +17,7 @@ import com.group_1.usege.R;
 import com.group_1.usege.userInfo.model.StoragePlan;
 import com.group_1.usege.userInfo.model.UserPlan;
 import com.group_1.usege.utilities.interfaces.SubmitSignalReceiver;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalReceiver;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByIdReceiver;
 
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ public class StoragePlanListFragment extends Fragment {
     private static final int GET_DESCRIPTION_LINE = 2;
     private TextView txtCurrentPlanName;
     private StoragePlanListAdapter adapter;
-    private ViewDetailsSignalReceiver viewDetailsSignalReceiver;
+    private ViewDetailsSignalByIdReceiver viewDetailsSignalReceiver;
     private SubmitSignalReceiver submitSignalReceiver;
 
     public StoragePlanListFragment()
@@ -37,8 +37,8 @@ public class StoragePlanListFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof ViewDetailsSignalReceiver)
-            this.viewDetailsSignalReceiver = (ViewDetailsSignalReceiver)context;
+        if (context instanceof ViewDetailsSignalByIdReceiver)
+            this.viewDetailsSignalReceiver = (ViewDetailsSignalByIdReceiver)context;
         if (context instanceof SubmitSignalReceiver)
             this.submitSignalReceiver = (SubmitSignalReceiver)context;
     }

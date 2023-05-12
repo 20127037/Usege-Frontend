@@ -1,0 +1,90 @@
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<androidx.constraintlayout.widget.ConstraintLayout-->
+
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    >-->
+
+<!--  <RelativeLayout-->
+<!--      android:layout_width="match_parent"-->
+<!--      android:layout_height="wrap_content"-->
+<!--      app:layout_constraintStart_toStartOf="parent"-->
+<!--      app:layout_constraintTop_toTopOf="parent"-->
+<!--      android:layout_margin="@dimen/primary_margin_small"-->
+<!--      android:id="@+id/section_back">-->
+<!--    <ImageButton-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@drawable/icon_backward_arrow"-->
+<!--        style="@style/Widget.AppCompat.ImageButton" />-->
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        style="@style/Usege.Text.LabelTextView"-->
+<!--        android:textAppearance="bold"-->
+<!--        android:text="Peter Olexa"-->
+<!--        android:layout_centerInParent="true"-->
+<!--        />-->
+<!--  </RelativeLayout>-->
+
+<!--  <ImageView-->
+<!--      android:layout_width="match_parent"-->
+<!--      android:layout_height="match_parent">-->
+<!--  </ImageView>-->
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".library.activities.OnlineImageActivity">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:liftOnScroll="false">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/bar_top"
+            style="@style/Widget.MaterialComponents.Toolbar.Surface"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:navigationIcon="@drawable/icon_backward_arrow"
+            app:title="@string/label_online_library"
+            app:titleCentered="true" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="center"
+        app:layout_anchor="@id/bottomAppBar"
+        android:id="@+id/btn_download"
+        app:maxImageSize="40dp"
+        app:srcCompat="@drawable/ic_file_download" />
+
+
+    <!-- Note: A RecyclerView can also be used -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/primary_margin_large"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:id="@+id/view_img"
+        android:scaleType="fitCenter"
+        android:clickable="false"
+        android:src="@drawable/ic_cloud_download"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

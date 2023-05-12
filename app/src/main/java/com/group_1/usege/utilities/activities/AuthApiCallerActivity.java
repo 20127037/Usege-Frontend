@@ -1,30 +1,16 @@
 package com.group_1.usege.utilities.activities;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.ImageView;
-
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import com.google.android.material.navigation.NavigationView;
-import com.group_1.usege.R;
 import com.group_1.usege.authen.activities.LoginActivity;
 import com.group_1.usege.authen.model.CacheToken;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.authen.services.AuthServiceGenerator;
-import com.group_1.usege.library.activities.LibraryActivity;
-import com.group_1.usege.userInfo.activities.UserPlanActivity;
-import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;
 import com.group_1.usege.utilities.dto.ErrorResponse;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 
-import dagger.hilt.android.AndroidEntryPoint;
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import retrofit2.Response;
@@ -49,6 +35,7 @@ public abstract class AuthApiCallerActivity<S> extends ApiCallerActivity<S> {
                 .getService()
                 .refresh(currentToken.getRefreshToken())
                 .observeOn(AndroidSchedulers.mainThread())
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
                 .subscribe(this::handleAfterRefresh);
     }
 

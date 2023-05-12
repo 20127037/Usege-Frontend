@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import okhttp3.ResponseBody;
@@ -63,6 +65,7 @@ public abstract class ApiCallerActivity<S> extends AppCompatActivity {
         busyHandingProgressManager.show(getSupportFragmentManager().beginTransaction());
         provider
                 .observeOn(AndroidSchedulers.mainThread())
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
                 .subscribe(this::handleAfterCall);
     }
 
@@ -74,6 +77,7 @@ public abstract class ApiCallerActivity<S> extends AppCompatActivity {
     {
         provider
                 .observeOn(AndroidSchedulers.mainThread())
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
                 .subscribe(this::handleAfterCallSilent);
     }
 

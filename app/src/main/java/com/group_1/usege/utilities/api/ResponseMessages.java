@@ -12,4 +12,6 @@ public interface ResponseMessages {
 
     String TOKEN_EXPIRED = "TOKEN_EXPIRED";
     String UNAUTHORIZED = "UNAUTHORIZED";
+    String INVALID_CARD = "INVALID_CARD";
+    String INVALID_PLAN = "INVALID_PLAN";
 }

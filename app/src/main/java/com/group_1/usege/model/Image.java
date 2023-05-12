@@ -16,15 +16,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Image implements Parcelable {
     private String id;
+
     private List<String> tags;
     private String description;
     private String date;
     private long size;
     private String location;
     private Uri uri;
+    private Uri smallUri;
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override
@@ -37,10 +41,6 @@ public class Image implements Parcelable {
             return new Image[size];
         }
     };
-
-    public Image() {
-        
-    }
 
     public Image(Uri uri, List<String> tags, String description, String date, long size, String location) {
         this.uri = uri;
@@ -64,6 +64,7 @@ public class Image implements Parcelable {
 
     public Image(Image img) {
         this.uri = img.getUri();
+        this.id = img.getId();
         this.date = img.getDate();
         this.description = img.getDescription();
         this.size = img.getSize();

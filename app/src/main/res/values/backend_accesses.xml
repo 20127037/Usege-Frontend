@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="cognito_client_id">5bblk1i1g2h1t40qbl9s0std9d</string>
+    <string name="key_pexels_api">hRCbwOVo29Lv31tPDEQ7wBGYG2VM2HM8pk5Mw70hKaSfsTiCScAp9FSd</string>
     <string name="uri_base_server">"http://10.0.2.2:8090/api"</string>
+    <string name="domain_pexels_api">https://api.pexels.com/v1/</string>
     <string name="api_version">"v1"</string>
     <string name="service_account">account</string>
     <string name="service_auth">auth</string>
-    <string name="service_master">master</string>
+    <string name="service_master_user">master/user</string>
+    <string name="service_master_file">master/file</string>
     <string name="service_payment">payment</string>
     <string name="service_file">file</string>
-    <string name="service_master_file">master/file</string>
 </resources>

@@ -1,7 +1,5 @@
 package com.group_1.usege.library.activities;
 
-import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -52,6 +50,7 @@ import com.group_1.usege.R;
 import com.group_1.usege.api.apiservice.ApiGetFiles;
 import com.group_1.usege.api.apiservice.ApiUpdateFile;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
+import com.group_1.usege.api.apiservice.FileServiceGenerator;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.dto.ImageDto;
 import com.group_1.usege.dto.LoadFileRequestDto;
@@ -74,22 +73,18 @@ import com.group_1.usege.userInfo.activities.UserPlanActivity;
 import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
-import com.group_1.usege.userInfo.services.MasterServiceGenerator;
-import com.group_1.usege.utilities.activities.ActivityUtilities;
+import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -111,9 +106,11 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     AlbumListFragment albumListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
     @Inject
-    public MasterServiceGenerator masterServiceGenerator;
+    public MasterUserServiceGenerator masterServiceGenerator;
     @Inject
     public UserInfoRepository userInfoRepository;
+    @Inject
+    public FileServiceGenerator fileServiceGenerator;
     EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
     EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
@@ -288,26 +285,38 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         });
 
         // Lấy ảnh từ Server
-        getFilesFromServer();
+        //getFilesFromServer();
     }
 
-    public void getFilesFromServer() {
-        imgList = new ArrayList<>();
-//        String[] attributes = null;
-//        Map<String, String> lastKey = null;
-//        int limit = 6;
-        loadFileRequestDto = new LoadFileRequestDto(6, null, null);
-        ApiGetFiles apiGetFiles = new ApiGetFiles(context, tokenRepository.getToken().getUserId(), tokenRepository.getToken().getAccessToken(), loadFileRequestDto, imgList);
-        apiGetFiles.callApiGetFiles();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateImageViewDisplay();
-                setStatusOfWidgets();
-            }
-        }, 1500);
-    }
+//    public void getFilesFromServer() {
+//        imgList = new ArrayList<>();
+////        String[] attributes = null;
+////        Map<String, String> lastKey = null;
+////        int limit = 6;
+//        loadFileRequestDto = new LoadFileRequestDto(6, null, null);
+//        ApiGetFiles apiGetFiles = new ApiGetFiles(context, tokenRepository.getToken().getUserId(), tokenRepository.getToken().getAccessToken(), loadFileRequestDto, imgList);
+//        apiGetFiles.callApiGetFiles();
+//
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Thread.sleep(1500);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                updateImageViewDisplay();
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setStatusOfWidgets();
+//                    }
+//                });
+//            }
+//        });
+//
+//        thread.start();
+//    }
 
     @Override
     public int navigateId() {
@@ -565,7 +574,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance(imgList, loadFileRequestDto.getLastKey());
+            imageListFragment = ImageListFragment.newInstance();
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
         }
     }
@@ -892,7 +901,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             imgViewCard.setAlpha(0.5F);
 
             ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance(clonedImgList, loadFileRequestDto.getLastKey());
+            imageListFragment = ImageListFragment.newInstance();
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
 
         }
@@ -1312,7 +1321,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                                             image.getUri().toString());
 
             // Call Api Upload File
-            ApiUploadFile apiUploadFile = new ApiUploadFile(context, tokenRepository.getToken().getAccessToken(), tokenRepository.getToken().getUserId(), imageDto, imagePath);
+            ApiUploadFile apiUploadFile = new ApiUploadFile(fileServiceGenerator, tokenRepository.getToken().getUserId(), imageDto, imagePath);
             apiUploadFile.callApiUploadFile();
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
         }
@@ -1322,9 +1331,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (imageCardFragment.cardAdapter != null || imageListFragment.listAdapter != null) {
+        if (imageCardFragment.cardAdapter != null) {
             imageCardFragment.cardAdapter.release();
-            imageListFragment.listAdapter.release();
+            //imageListFragment.listAdapter.release();
         }
     }
 
