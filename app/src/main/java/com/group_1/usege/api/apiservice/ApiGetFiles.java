@@ -73,7 +73,7 @@ public class ApiGetFiles {
                         lstImage.add(image);
                     }
 
-                    Map<String, String> nextEvaluatedKey = new HashMap<>(userFileQueryResponse.getNextEvaluatedKey());
+                    Map<String, String> nextEvaluatedKey = userFileQueryResponse.getNextEvaluatedKey();
                     loadFileRequestDto.setLastKey(nextEvaluatedKey);
                 } else {
                     // Xử lý lỗi ở đây

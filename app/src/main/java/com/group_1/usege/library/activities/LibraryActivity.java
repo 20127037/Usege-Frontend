@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -49,6 +50,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
 import com.group_1.usege.api.apiservice.ApiGetFiles;
+import com.group_1.usege.api.apiservice.ApiUpdateFile;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.dto.ImageDto;
@@ -298,25 +300,13 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         ApiGetFiles apiGetFiles = new ApiGetFiles(context, tokenRepository.getToken().getUserId(), tokenRepository.getToken().getAccessToken(), loadFileRequestDto, imgList);
         apiGetFiles.callApiGetFiles();
 
-        Thread thread = new Thread(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
                 updateImageViewDisplay();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setStatusOfWidgets();
-                    }
-                });
+                setStatusOfWidgets();
             }
-        });
-
-        thread.start();
+        }, 1500);
     }
 
     @Override
@@ -1223,6 +1213,13 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
                     UserFile userFile = new UserFile();
                     userFile.setDescription(selectedImage.getDescription());
+
+                    ApiUpdateFile apiUpdateFile = new ApiUpdateFile(context,
+                            tokenRepository.getToken().getAccessToken(),
+                            tokenRepository.getToken().getUserId(),
+                            userFile);
+
+                    apiUpdateFile.callApiUpdateFile();
 
                     break;
                 }
