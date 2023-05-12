@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -34,9 +37,10 @@ import jp.wasabeef.glide.transformations.gpu.BrightnessFilterTransformation;
 
 public class ImagePhotoshopActivity extends AppCompatActivity {
     Context context = this;
-    String action = "CROP";
+    String action = "ADJUST";
     LinearLayout layoutBottom;
     ImageView ivImage, ivBack;
+    ActivityResultLauncher<String> cropImage;
     Button btnReset, btnConfirm;
     TextView tvCrop, tvAdjust;
     Drawable icon_crop, icon_adjust;
@@ -64,10 +68,29 @@ public class ImagePhotoshopActivity extends AppCompatActivity {
         //Log.d("Date", "D: " + image.getDate());
         // Ánh xạ các widgets
         init();
-        renderOriginalImage();
+        tvAdjust.performClick();
     }
 
-    public void init() {
+    private final ActivityResultLauncher<Intent> imageCroppingLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        Intent intent = result.getData();
+
+        if (result.getResultCode() == 101 && intent != null) {
+            String croppedImageUri = intent.getStringExtra("croppedImage");
+            ivImage.setImageURI(Uri.parse(croppedImageUri));
+        } else {
+            Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
+        }
+    });
+
+    private void startCroppingImage() {
+        Intent intent = new Intent(this, UcropperActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("sentImage", image);
+        intent.putExtras(bundle);
+        imageCroppingLauncher.launch(intent);
+    }
+
+    private void init() {
         layoutBottom = findViewById(R.id.layout_bottom);
         ivImage = findViewById(R.id.image_view_image);
         ivBack = findViewById(R.id.image_view_backward);
@@ -80,6 +103,7 @@ public class ImagePhotoshopActivity extends AppCompatActivity {
 
         icon_crop = getResources().getDrawable(R.drawable.icon_crop);
         icon_adjust = getResources().getDrawable(R.drawable.icon_adjust);
+
 
         ivBack.setOnClickListener(v -> onBackPressed());
 
@@ -109,7 +133,7 @@ public class ImagePhotoshopActivity extends AppCompatActivity {
         tvCrop.setOnClickListener(v -> {
             action = "CROP";
             brightnessSeekBar.setVisibility(View.GONE);
-            renderOriginalImage();
+            startCroppingImage();
 
             icon_crop.setAlpha(255);
             tvCrop.setTypeface(null, Typeface.BOLD);
