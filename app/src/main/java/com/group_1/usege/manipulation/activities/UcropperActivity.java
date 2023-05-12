@@ -32,9 +32,10 @@ public class UcropperActivity extends AppCompatActivity {
 
         destinationUri = new StringBuilder(UUID.randomUUID().toString()).append(".jpg").toString();
         UCrop.Options options = new UCrop.Options();
+        options.setToolbarColor(getResources().getColor(R.color.main));
+        options.setActiveControlsWidgetColor(getResources().getColor(R.color.confirmation));
         UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationUri)))
                 .withOptions(options)
-                .withAspectRatio(16,9)
                 .withMaxResultSize(2000,2000)
                 .start(UcropperActivity.this);
     }
