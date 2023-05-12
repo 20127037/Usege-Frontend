@@ -16,6 +16,7 @@ import java.util.UUID;
 public class UcropperActivity extends AppCompatActivity {
     String sourceUri, destinationUri;
     Uri uri;
+    Image image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class UcropperActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
-            Image image = bundle.getParcelable("sentImage");
+            image = bundle.getParcelable("sentImage");
             sourceUri = image.getUri().toString();
             uri = Uri.parse(sourceUri);
         }
@@ -46,8 +47,11 @@ public class UcropperActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
+            image.setUri(resultUri);
             Intent intent = new Intent();
-            intent.putExtra("croppedImage", resultUri + "");
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("croppedImage", image);
+            intent.putExtras(bundle);
             setResult(101, intent);
             finish();
         }

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -72,11 +71,19 @@ public class ImagePhotoshopActivity extends AppCompatActivity {
     }
 
     private final ActivityResultLauncher<Intent> imageCroppingLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        Intent intent = result.getData();
+        Intent intentBackFromUCropper = result.getData();
 
-        if (result.getResultCode() == 101 && intent != null) {
-            String croppedImageUri = intent.getStringExtra("croppedImage");
-            ivImage.setImageURI(Uri.parse(croppedImageUri));
+        if (result.getResultCode() == 101 && intentBackFromUCropper != null) {
+            Bundle bundleFromUCropper = intentBackFromUCropper.getExtras();
+            Image croppedImage = bundleFromUCropper.getParcelable("croppedImage");
+
+            Intent intentToImageViewer = new Intent();
+            Bundle bundleToImageViewer = new Bundle();
+            bundleToImageViewer.putParcelable("returnedImage", croppedImage);
+            intentToImageViewer.putExtras(bundleToImageViewer);
+            setResult(RESULT_OK, intentToImageViewer);
+            finish();
+
         } else {
             Toast.makeText(this, "Something wrong", Toast.LENGTH_LONG).show();
         }
