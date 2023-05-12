@@ -32,6 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:background="@drawable/button_border_cancel"
                 android:layout_marginRight="10dp"
                 android:text="Change layout"
                 android:onClick="changeContainerLayout" />
@@ -40,6 +41,8 @@
                 android:id="@+id/combine_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/button_border_confirm"
+                android:textColor="@color/white"
                 android:padding="10dp"
                 android:text="Combine"
                 android:onClick="combineImagesFromContainer" />
