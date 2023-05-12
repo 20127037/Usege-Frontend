@@ -49,11 +49,24 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".library.activities.LibraryActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
+        <activity
+            android:name=".library.activities.OnlineLibraryActivity"
+            android:exported="true" />
+        <activity
+            android:name=".library.activities.OnlineImageActivity"
+            android:exported="true" />
         <activity
             android:name=".library.activities.OnlineLibraryActivity"
             android:exported="true" />

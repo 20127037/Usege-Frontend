@@ -3,6 +3,7 @@ package com.group_1.usege.utilities.api;
 import android.content.Context;
 import android.content.res.Resources;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 
 import com.group_1.usege.R;
@@ -25,9 +26,21 @@ public abstract class BaseServiceGenerator<S> {
     private String currentToken;
     protected abstract Class<S> getServiceClass();
     protected final String baseUrl;
+    private final Resources resources;
     public BaseServiceGenerator(Resources resources, @StringRes int versionRes, @StringRes int serviceNameRes)
     {
-        baseUrl = String.format("%s/%s/%s/", resources.getString(R.string.uri_base_server), resources.getString(versionRes), resources.getString(serviceNameRes));
+        this(resources, R.string.uri_base_server, versionRes, serviceNameRes);
+    }
+    public BaseServiceGenerator(Resources resources, @StringRes int baseUrlResId)
+    {
+        this.resources = resources;
+        this.baseUrl = resources.getString(baseUrlResId);
+    }
+
+    public BaseServiceGenerator(Resources resources, @StringRes int domainRes, @StringRes int versionRes, @StringRes int serviceNameRes)
+    {
+        this.resources = resources;
+        baseUrl = String.format("%s/%s/%s/", resources.getString(domainRes), resources.getString(versionRes), resources.getString(serviceNameRes));
     }
 
     private static final Retrofit.Builder builder
@@ -58,7 +71,7 @@ public abstract class BaseServiceGenerator<S> {
         tokenHttpClient.addInterceptor(chain -> {
             Request original = chain.request();
             Request.Builder builder1 = original.newBuilder()
-                    .header("Authorization", "Bearer " + token);
+                    .header("Authorization", token);
             Request request = builder1.build();
             return chain.proceed(request);
         });
@@ -81,5 +94,10 @@ public abstract class BaseServiceGenerator<S> {
             wrappedService = createService(token);
         //A new token is used -> build a new service
         return wrappedService;
+    }
+    public synchronized S getService(@StringRes final int tokenResId)
+    {
+        String token = resources.getString(tokenResId);
+        return getService(token);
     }
 }

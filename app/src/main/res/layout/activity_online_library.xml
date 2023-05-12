@@ -7,54 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".library.activities.LibraryActivity">
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:liftOnScroll="false">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/top_app_bar_online_library"
+                app:title="@string/label_online_library" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/view_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:queryHint="@string/label_search_hint"
+                android:saveEnabled="true"/>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/lst_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="?attr/colorPrimary"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/root_navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/menu_navigation_drawer" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/layout_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:id="@+id/title_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp">
-
-                <ImageView
-                    android:id="@+id/root_menu_image_view"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:onClick="openNavigationDrawer"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/icon" />
-
-                <ImageView
-                    android:id="@+id/avatar_image_view"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentRight="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/profile" />
-
-            </RelativeLayout>
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Online library"
-            android:textSize="20sp"
-            android:layout_below="@+id/layout_title"
-            />
-    </RelativeLayout>
-
 </androidx.drawerlayout.widget.DrawerLayout>

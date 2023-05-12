@@ -11,6 +11,11 @@ public class CacheToken {
         return accessToken;
     }
 
+    public String getBearerAccessToken()
+    {
+        return "Bearer " + accessToken;
+    }
+
     public Integer getExpiresIn() {
         return expiresIn;
     }

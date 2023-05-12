@@ -1,5 +1,6 @@
 package com.group_1.usege.userInfo.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -18,6 +19,7 @@ import com.group_1.usege.userInfo.services.PaymentServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.AuthApiCallerActivity;
 import com.group_1.usege.utilities.api.ResponseMessages;
+import com.group_1.usege.utilities.dto.ErrorResponse;
 import com.group_1.usege.utilities.view.DialogueUtilities;
 import com.group_1.usege.utilities.view.EditTextFragment;
 
@@ -90,9 +92,23 @@ public class PaymentActivity extends AuthApiCallerActivity<Void> {
 
     private void payment(String cardNumber, String cvv, String expiredDate)
     {
-        startCallApi(paymentServiceGenerator.getService(tokenRepository.getToken().getAccessToken())
+        startCallApi(paymentServiceGenerator.getService(tokenRepository.getToken().getBearerAccessToken())
                 .payment(tokenRepository.getToken().getUserId(),
                         new PaymentRequestDto(currentPlanName, cardNumber, cvv, expiredDate)));
+    }
+    @Override
+    protected void handleCallFail(ErrorResponse errorResponse)
+    {
+        switch (errorResponse.getMessage())
+        {
+            case ResponseMessages.INVALID_CARD:
+                DialogueUtilities.showNormalDialogue(this, R.string.invalid_card, null);
+                return;
+            case ResponseMessages.INVALID_PLAN:
+                DialogueUtilities.showNormalDialogue(this, R.string.invalid_plan, (d, w) -> ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class));
+                return;
+        }
+        super.handleCallFail(errorResponse);
     }
 
     @Override

@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.group_1.usege.R;
 import com.group_1.usege.userInfo.model.UserStatistic;
-import com.group_1.usege.userInfo.services.MasterServiceGenerator;
+import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 import com.group_1.usege.utilities.math.MathUtilities;
 
@@ -26,7 +26,7 @@ public class UserStatisticActivity extends NavigatedAuthApiCallerActivity<UserSt
     private TextView txtCountImg;
     private TextView txtCountAlbums;
     @Inject
-    public MasterServiceGenerator masterServiceGenerator;
+    public MasterUserServiceGenerator masterServiceGenerator;
 
     public UserStatisticActivity()
     {
@@ -54,7 +54,7 @@ public class UserStatisticActivity extends NavigatedAuthApiCallerActivity<UserSt
 //        handleCallSuccess(new UserStatistic(10000000, MathUtilities.gbToKb(15), 100, 100));
         try {
             startCallApi(masterServiceGenerator
-                    .getService(tokenRepository.getToken().getAccessToken())
+                    .getService(tokenRepository.getToken().getBearerAccessToken())
                     .getUserStatistic(tokenRepository.getToken().getUserId()));
         }
         catch (Exception e)
