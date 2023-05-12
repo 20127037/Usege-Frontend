@@ -41,8 +41,9 @@ public class ImageActivity extends AppCompatActivity {
     private int position;
     private Image image;
     private Album album = null;
-
+    private int myTask = 0;
     private static final int UPDATE_IMAGE = 1;
+    private static final int CLONE_IMAGE = 3;
     private static final int DELETE_IMAGE = 2;
 
     @Override
@@ -118,13 +119,15 @@ public class ImageActivity extends AppCompatActivity {
         tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnDataImageToLibraryActivity(DELETE_IMAGE);
+                myTask = DELETE_IMAGE;
+                returnDataImageToLibraryActivity(myTask);
             }
         });
         tvCut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnDataImageToLibraryActivity(DELETE_IMAGE);
+                myTask = DELETE_IMAGE;
+                returnDataImageToLibraryActivity(myTask);
             }
         });
 
@@ -159,12 +162,14 @@ public class ImageActivity extends AppCompatActivity {
                 Log.d("Text", image.getDescription());
                 // Thiết lập text view describe
                 setAlphaForDrawableInTextView(tvDescribe, 153, 1);
+                myTask = UPDATE_IMAGE;
             }
         });
 
         tvPhotoshop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                myTask = CLONE_IMAGE;
                 sendAndReceiveImage(image);
             }
         });
@@ -174,7 +179,7 @@ public class ImageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        returnDataImageToLibraryActivity(UPDATE_IMAGE);
+        returnDataImageToLibraryActivity(myTask);
     }
 
     public void returnDataImageToLibraryActivity(int task) {

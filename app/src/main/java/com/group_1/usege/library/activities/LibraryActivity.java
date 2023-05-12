@@ -137,6 +137,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
 
     private static final int UPDATE_IMAGE = 1;
+    private static final int CLONE_IMAGE = 3;
     private static final int DELETE_IMAGE = 2;
 
     public LibraryActivity() {
@@ -1170,9 +1171,12 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
             switch (task) {
                 case UPDATE_IMAGE: {
-                    // update description
                     imgList.get(position).setDescription(selectedImage.getDescription());
-                    imgList.add(position, selectedImage);
+                    break;
+                }
+
+                case CLONE_IMAGE: {
+                    if (selectedImage.getUri() != imgList.get(position).getUri()) imgList.add(position, selectedImage);
                     updateImageViewDisplay();
                     break;
                 }
