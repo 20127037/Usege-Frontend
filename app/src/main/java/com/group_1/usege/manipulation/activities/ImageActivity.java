@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -159,6 +161,14 @@ public class ImageActivity extends AppCompatActivity {
                 setAlphaForDrawableInTextView(tvDescribe, 153, 1);
             }
         });
+
+        tvPhotoshop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendAndReceiveImage(image);
+            }
+        });
+
     }
 
     @Override
@@ -232,4 +242,29 @@ public class ImageActivity extends AppCompatActivity {
         // Thiết lập lại drawables cho TextView
         textView.setCompoundDrawables(drawables[0], drawable, drawables[2], drawables[3]);
     }
+
+    public void sendAndReceiveImage(Image image) {
+        Intent intent = new Intent(context, ImagePhotoshopActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("object_image", image);
+        //bundle.putSerializable("object_album", (Serializable) albumList);
+        intent.putExtras(bundle);
+        launcherSendAndReceiveImage.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            Intent data = result.getData();
+            Bundle bundle = data.getExtras();
+            if (bundle == null) {
+                return;
+            }
+            // Nhận giá trị mới khi ảnh đã được cập nhật
+            Image selectedImage = (Image) bundle.getParcelable("return_image");
+
+        } else {
+            //Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
+        }
+    });
+
 }
