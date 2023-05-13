@@ -159,9 +159,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ft = getSupportFragmentManager().beginTransaction();
-        emptyFragment = EmptyFragment.newInstance(mode, false);
-        ft.replace(R.id.layout_display_images, emptyFragment).commit();
+//        ft = getSupportFragmentManager().beginTransaction();
+//        emptyFragment = EmptyFragment.newInstance(mode, false);
+//        ft.replace(R.id.layout_display_images, emptyFragment).commit();
         // handle toggle Menu
         DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
         NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
@@ -959,7 +959,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                     Image image = new Image();
                     image.setUri(imageURI);
                     image.setLocation("");
-                    image.setDescription("A favorite image");
+                    image.setDescription("");
                     GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                     getInformationThread.start();
                     // Đây là dữ liệu mẫu
@@ -967,7 +967,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                     //Image image = new Image("", 0F, "A favorite image", "", imageURI);
                     Log.e("NOTE", "URI1 " + image.getUri());
 
-                    imgList.add(0, image);
+                    //imgList.add(0, image);
                 }
 
                 // Lấy 1 ảnh
@@ -980,11 +980,11 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                 Image image = new Image();
                 image.setUri(imageURI);
                 image.setLocation("");
-                image.setDescription("A favorite image");
+                image.setDescription("");
                 GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                 getInformationThread.start();
 
-                imgList.add(0, image);
+                //imgList.add(0, image);
 //                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
 //                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
 
@@ -997,7 +997,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         // Thread
 
         // Update Fragment View
-        updateImageViewDisplay();
+        //updateImageViewDisplay();
     });
 
     //Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
@@ -1264,6 +1264,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     @Override
     protected void handleCallSuccess(UserInfo body) {
+
         userInfoRepository.setInfo(body);
     }
 
