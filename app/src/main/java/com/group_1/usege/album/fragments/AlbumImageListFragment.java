@@ -56,7 +56,7 @@ public class AlbumImageListFragment extends Fragment {
     private int totalPage;
     private int currentPage = 1;
 
-    private String albumName;
+    private String albumName = "fake name";
 
     private static final int countItemInPage = 5;
 
@@ -81,25 +81,25 @@ public class AlbumImageListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            album = (UserAlbum) getArguments().getParcelable("album");
-            Image[] files = (Image[]) getArguments().getParcelableArray("files");
-
-            lstVisibleImage.addAll(Arrays.asList(files));
-            if (Objects.equals(album.getName(), "trash")) {
-                albumMode = Album.album_mode_trash;
-            }
-            mode = (String) getArguments().getSerializable("album_mode");
-            System.out.println("Album mode: "+mode);
-            totalPage = lstVisibleImage.size() / countItemInPage + 1;
-        }
-
         try {
             context = getActivity();
             libraryActivity = (LibraryActivity) getActivity();
         } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
+        }
+
+        if (getArguments() != null) {
+            album = (UserAlbum) getArguments().getParcelable("album");
+            albumName = album.getName();
+            Image[] files = (Image[]) getArguments().getParcelableArray("files");
+            mode = (String) getArguments().getSerializable("album_mode");
+
+            lstVisibleImage.addAll(Arrays.asList(files));
+            if (Objects.equals(album.getName(), "trash")) {
+                albumMode = Album.album_mode_trash;
+            }
+            System.out.println("Album mode: "+mode);
+            totalPage = lstVisibleImage.size() / countItemInPage + 1;
         }
     }
 
