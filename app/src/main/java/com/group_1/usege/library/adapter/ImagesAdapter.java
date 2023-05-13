@@ -1,6 +1,5 @@
 package com.group_1.usege.library.adapter;
 
-import android.location.GnssAntennaInfo;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,27 +11,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
-import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.model.Image;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByIdReceiver;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
+import com.group_1.usege.utilities.interfaces.ClickItemReceiver;
+import com.group_1.usege.utilities.interfaces.LongClickItemReceiver;
 
 import org.jetbrains.annotations.NotNull;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> extends PagingDataAdapter<Image, S> {
     // Define Loading ViewType
     public static final int LOADING_ITEM = 0;
     // Define Movie ViewType
     public static final int IMAGE_ITEM = 1;
-    private OnClickListener mListener;
     private final RequestManager glide;
-    private final ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver;
+    private final ClickItemReceiver<Image, ImageViewHolder> clickItemReceiver;
+    private final LongClickItemReceiver<Image, ImageViewHolder> longClickItemReceiver;
     public ImagesAdapter(@NotNull DiffUtil.ItemCallback<Image> diffCallback,
                          RequestManager glide,
-                         ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver) {
+                         ClickItemReceiver<Image, ImageViewHolder> clickItemReceiver,
+                         LongClickItemReceiver<Image, ImageViewHolder> longClickItemReceiver) {
         super(diffCallback);
         this.glide = glide;
-        this.viewDetailsSignalReceiver = viewDetailsSignalReceiver;
+        this.clickItemReceiver = clickItemReceiver;
+        this.longClickItemReceiver = longClickItemReceiver;
     }
 
     @NonNull
@@ -40,16 +43,11 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
     public abstract S onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
 
     @Override
-    public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull S holder, int position) {
         Image currentImg = getItem(position);
         // Check for null
         if (currentImg != null) {
-            holder.bind(currentImg, glide, viewDetailsSignalReceiver);
-
-            holder.itemView.setOnClickListener(v -> {
-                mListener.onItemClick(currentImg, position);
-
-            });
+            holder.bind(currentImg, glide, clickItemReceiver, longClickItemReceiver, position);
         }
     }
 
@@ -64,27 +62,33 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
         protected final ImageView imgView;
         protected  ViewGroup layoutContainer;
 
+
         public ImageViewHolder(@NonNull View view) {
             super(view);
             layoutContainer = view.findViewById(R.id.layout);
             // init binding
             imgView = view.findViewById(R.id.image_view_photo);
         }
-        public void bind(Image img, RequestManager glide, ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver)
+        public void bind(Image img, RequestManager glide, ClickItemReceiver<Image, ImageViewHolder> clickItemReceiver,
+                         LongClickItemReceiver<Image, ImageViewHolder> longClickItemReceiver, int position)
         {
             glide.load(img.getSmallUri())
                     .into(imgView);
-            if (viewDetailsSignalReceiver == null)
-                return;
-            layoutContainer.setOnClickListener(v -> viewDetailsSignalReceiver.view(img));
+            if (clickItemReceiver != null)
+                layoutContainer.setOnClickListener(v -> clickItemReceiver.view(img, this, position));
+            if (longClickItemReceiver != null)
+                layoutContainer.setOnLongClickListener(v -> {
+                    longClickItemReceiver.longView(img, this, position);
+                    return true;
+                });
         }
-    }
 
-    public interface OnClickListener {
-        void onItemClick(Image image, int position);
-    }
+        public ImageView getImgView() {
+            return imgView;
+        }
 
-    public void setOnClickListener(OnClickListener listener) {
-        mListener = listener;
+        public ViewGroup getLayoutContainer() {
+            return layoutContainer;
+        }
     }
 }

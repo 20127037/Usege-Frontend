@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
+import com.group_1.usege.library.adapter.ImagesAdapter;
 import com.group_1.usege.library.adapter.SimpleImagesAdapter;
 import com.group_1.usege.library.model.PexelsPageResponse;
 import com.group_1.usege.library.paging.PagingProvider;
@@ -93,7 +94,7 @@ public class OnlineLibraryActivity extends NavigatedAuthApiCallerActivity<Void> 
         Lifecycle lifecycle = getLifecycle();
 
         // Create new MoviesAdapter object and provide
-        imageAdapter = new SimpleImagesAdapter(comparator, requestManager, this::viewImg);
+        imageAdapter = new SimpleImagesAdapter(comparator, requestManager, this::viewImg, null);
         mainViewModel = new ViewModelProvider(this).get(PexelsLibraryImageViewModel.class);
         mainViewModel.setCurrentProvider(defaultProvider);
         mainViewModel.init();
@@ -122,7 +123,7 @@ public class OnlineLibraryActivity extends NavigatedAuthApiCallerActivity<Void> 
         imageAdapter.refresh();
     }
 
-    private void viewImg(Image img)
+    private void viewImg(Image img, ImagesAdapter.ImageViewHolder viewHolder, int pos)
     {
         Bundle transBundle = new Bundle();
         transBundle.putParcelable(OnlineImageActivity.IMG_KEY, img);
