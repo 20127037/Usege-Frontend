@@ -1295,31 +1295,26 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
     @Override
     public void view(Image item, ImagesAdapter.ImageViewHolder viewHolder, int pos) {
-        viewHolder.getImgView().setOnClickListener(v -> {
-            ImageView imageView = (ImageView) v;
-            if (imageView.getColorFilter() != null) {
-                // FOR UI
-                imageView.clearColorFilter();
-                // FOR LOGIC
-                removeSingleImageAndRemoveBottomMenuIfNoImageLeft(item);
-            } else {
-                sendAndReceiveImage(item, pos);
-            }
-        });
+        ImageView imageView = viewHolder.getImgView();
+        if (imageView.getColorFilter() != null) {
+            // FOR UI
+            imageView.clearColorFilter();
+            // FOR LOGIC
+            removeSingleImageAndRemoveBottomMenuIfNoImageLeft(item);
+        } else {
+            sendAndReceiveImage(item, pos);
+        }
     }
 
     @Override
     public void longView(Image item, ImagesAdapter.ImageViewHolder viewHolder, int pos) {
-        viewHolder.getImgView().setOnLongClickListener(v -> {
-            ImageView imageView = (ImageView) v;
-            if (imageView.getColorFilter() == null) {
-                // FOR UI
-                imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
-                // FOR LOGIC
-                selectSingleImageAndOpenBottomMenuIfNotYet(item);
-            }
-            return true;
-        });
+        ImageView imageView = viewHolder.getImgView();
+        if (imageView.getColorFilter() == null) {
+            // FOR UI
+            imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+            // FOR LOGIC
+            selectSingleImageAndOpenBottomMenuIfNotYet(item);
+        }
     }
 
 
