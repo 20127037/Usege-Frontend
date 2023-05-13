@@ -80,7 +80,8 @@ public class ApiUploadFile {
 
             @Override
             public void onFailure(Call<UserFile> call, Throwable t) {
-                Toast.makeText(context, "Call API Fail", Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Call API Fail", Toast.LENGTH_LONG).show();
+                System.out.println("Call API Failure");
             }
         });
 

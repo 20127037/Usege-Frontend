@@ -40,6 +40,7 @@ public class ImageActivity extends AppCompatActivity {
     private Image image;
     private Album album = null;
 
+    private int myTask = 0;
     private static final int UPDATE_IMAGE = 1;
     private static final int DELETE_IMAGE = 2;
 
@@ -116,13 +117,15 @@ public class ImageActivity extends AppCompatActivity {
         tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnDataImageToLibraryActivity(DELETE_IMAGE);
+                myTask = DELETE_IMAGE;
+                returnDataImageToLibraryActivity(myTask);
             }
         });
         tvCut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnDataImageToLibraryActivity(DELETE_IMAGE);
+                myTask = DELETE_IMAGE;
+                returnDataImageToLibraryActivity(myTask);
             }
         });
 
@@ -157,6 +160,8 @@ public class ImageActivity extends AppCompatActivity {
                 Log.d("Text", image.getDescription());
                 // Thiết lập text view describe
                 setAlphaForDrawableInTextView(tvDescribe, 153, 1);
+
+                myTask = UPDATE_IMAGE;
             }
         });
     }
@@ -165,7 +170,7 @@ public class ImageActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         //super.onBackPressed();
-        returnDataImageToLibraryActivity(UPDATE_IMAGE);
+        returnDataImageToLibraryActivity(myTask);
     }
 
     public void returnDataImageToLibraryActivity(int task) {
@@ -207,7 +212,7 @@ public class ImageActivity extends AppCompatActivity {
         if (datetime != null && datetime.length() > 0) {
             Date date = new Date();
             // Chuyển String thành Date
-            SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
             try {
                 date = format.parse(datetime);
             } catch (ParseException e) {

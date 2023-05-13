@@ -2,6 +2,7 @@ package com.group_1.usege.library.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +11,12 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -41,6 +45,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
 import com.group_1.usege.account.dto.CreateAccountRequestDto;
 import com.group_1.usege.album.services.AlbumServiceGenerator;
@@ -66,10 +71,14 @@ import com.group_1.usege.model.Image;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
 import com.group_1.usege.realPath.RealPathUtil;
+import com.group_1.usege.userInfo.activities.UserPlanActivity;
+import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
+import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,7 +100,7 @@ import io.reactivex.rxjava3.core.Single;
 import retrofit2.Response;
 
 @AndroidEntryPoint
-public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
+public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> implements ViewDetailsSignalByItemReceiver<Image> {
     Context context = this;
     DrawerLayout rootDrawerLayout;
     FragmentTransaction ft;
@@ -130,7 +139,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     };
 
     Album trashBin = albumList.get(1);
-    private String displayView = "card";
+    private String displayView = "list";
     private String mode = imageMode;
     // mode image or album
     private Boolean firstAccess = true;
@@ -156,9 +165,48 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ft = getSupportFragmentManager().beginTransaction();
-        emptyFragment = EmptyFragment.newInstance(mode, false);
-        ft.replace(R.id.layout_display_images, emptyFragment).commit();
+//        ft = getSupportFragmentManager().beginTransaction();
+//        emptyFragment = EmptyFragment.newInstance(mode, false);
+//        ft.replace(R.id.layout_display_images, emptyFragment).commit();
+        // handle toggle Menu
+        DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
+        NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
+        rootNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                // Do something when a menu item is clicked
+                switch (item.getItemId()) {
+//                            case R.id.nav_library:
+//                                // Handle menu item 1 click
+//                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
+//                                break;
+//                            case R.id.nav_external_library:
+//                                // Handle menu item 2 click
+////                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
+////                                startActivity(intentSettings);
+//                                break;
+                    case R.id.nav_plan:
+                        // Handle menu item 2 click
+                        ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
+                        break;
+                    case R.id.nav_statistic:
+                        // Handle menu item 2 click
+                        ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
+                        break;
+                    // Add more cases for other menu items as needed
+                }
+                return false;
+            }
+        });
+        ImageView rootMenuImageView = findViewById(R.id.root_menu_image_view);
+        rootMenuImageView.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
 
         imageDisplayLayout = findViewById(R.id.layout_display_images);
         imgViewCard = findViewById(R.id.icon_card);
@@ -530,22 +578,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     public void clickOpenImageList() {
         // check empty list
         mode = imageMode;
-        if (imgList.size() == 0) {
-            ft = getSupportFragmentManager().beginTransaction();
-            emptyFragment = EmptyFragment.newInstance(mode, true);
-            ft.replace(R.id.layout_display_images, emptyFragment).commit();
-            return;
-        }
-        if (Objects.equals(displayView, "card")) {
-            ft = getSupportFragmentManager().beginTransaction();
-            List<Image> favoriteImgList = albumList.get(0).getAlbumImages();
-            imageCardFragment = ImageCardFragment.newInstance(imgList, favoriteImgList);
-            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-        } else {
-            ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance();
-            ft.replace(R.id.layout_display_images, imageListFragment).commit();
-        }
+
+        updateImageViewDisplay();
     }
 
     public void triggerAlbumButton() {
@@ -848,32 +882,57 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             clonedImgList = new ArrayList<>(imgList);
         }
 
-        if (imgList.size() == 0) {
-            setStatusOfWidgets();
+//        if (imgList.size() == 0) {
+//            setStatusOfWidgets();
+//            ft = getSupportFragmentManager().beginTransaction();
+//            emptyFragment = EmptyFragment.newInstance(imageMode, true);
+//            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+//            return;
+//        }
+
+        if (userInfoRepository.getInfo().getImgCount() == 0){
             ft = getSupportFragmentManager().beginTransaction();
             emptyFragment = EmptyFragment.newInstance(imageMode, true);
             ft.replace(R.id.layout_display_images, emptyFragment).commit();
-            return;
         }
+        else {
+            if (displayView.equals("card")) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
 
+                ft = getSupportFragmentManager().beginTransaction();
+                imageCardFragment = ImageCardFragment.newInstance();
+                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+            }
+            else if (displayView.equals("list")) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
 
-        if (displayView.equals("card")) {
-            imgViewList.setAlpha(0.5F);
-            imgViewCard.setAlpha(1F);
-
-            ft = getSupportFragmentManager().beginTransaction();
-            imageCardFragment = ImageCardFragment.newInstance(clonedImgList, new ArrayList<Image>(albumList.get(0).getAlbumImages()));
-            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-
-        } else if (displayView.equals("list")) {
-            imgViewList.setAlpha(1F);
-            imgViewCard.setAlpha(0.5F);
-
-            ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance();
-            ft.replace(R.id.layout_display_images, imageListFragment).commit();
+                ft = getSupportFragmentManager().beginTransaction();
+                imageListFragment = ImageListFragment.newInstance();
+                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+            }
 
         }
+        setStatusOfWidgets();
+
+//        if (displayView.equals("card")) {
+//            imgViewList.setAlpha(0.5F);
+//            imgViewCard.setAlpha(1F);
+//
+//            ft = getSupportFragmentManager().beginTransaction();
+//            imageCardFragment = ImageCardFragment.newInstance(clonedImgList, new ArrayList<Image>(albumList.get(0).getAlbumImages()));
+//            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+//
+//        } else if (displayView.equals("list")) {
+//            imgViewList.setAlpha(1F);
+//            imgViewCard.setAlpha(0.5F);
+//
+//            ft = getSupportFragmentManager().beginTransaction();
+//            imageListFragment = ImageListFragment.newInstance();
+//            ft.replace(R.id.layout_display_images, imageListFragment).commit();
+//
+//        }
     }
 
     public void updateAlbumViewDisplay() {
@@ -925,46 +984,33 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                 for (int i = 0; i < countOfImages; i++) {
                     // Thêm dữ liệu
                     Uri imageURI = data.getClipData().getItemAt(i).getUri();
-                    //Image image = getInformationOfImage(imageURI);
+
                     Image image = new Image();
                     image.setUri(imageURI);
                     image.setLocation("");
-                    image.setDescription("A favorite image");
+                    image.setDescription("");
                     GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                     getInformationThread.start();
-                    // Đây là dữ liệu mẫu
 
-                    //Image image = new Image("", 0F, "A favorite image", "", imageURI);
                     Log.e("NOTE", "URI1 " + image.getUri());
 
-                    imgList.add(0, image);
+                    //imgList.add(0, image);
                 }
 
                 // Lấy 1 ảnh
             } else {
                 Uri imageURI = data.getData();
                 // Thêm dữ liệu
-                //Image image = getInformationOfImage(imageURI);
-                // Đây là dữ liệu mẫu
-                //Image image = new Image("", 0F, "The beautiful place", "", imageURI);
                 Image image = new Image();
                 image.setUri(imageURI);
                 image.setLocation("");
-                image.setDescription("A favorite image");
+                image.setDescription("");
                 GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                 getInformationThread.start();
-
-                imgList.add(0, image);
-//                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
-//                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
-
             }
-
-            setStatusOfWidgets();
         } else {
             Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
         }
-        // Thread
 
         // Update Fragment View
         updateImageViewDisplay();
@@ -982,7 +1028,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
 
     public void setStatusOfWidgets() {
-        if (imgList.size() > 0) {
+        if (userInfoRepository.getInfo().getImgCount() > 0) {
             //imgViewCard.setAlpha(1F);
             //imgViewList.setAlpha(1F);
             imgViewCard.setEnabled(true);
@@ -1189,8 +1235,15 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
                     // update description
                     imgList.get(position).setDescription(selectedImage.getDescription());
 
-                    UserFile userFile = new UserFile();
-                    userFile.setDescription(selectedImage.getDescription());
+//                    UserFile userFile = new UserFile();
+//                    userFile.setDescription(selectedImage.getDescription());
+//
+//                    ApiUpdateFile apiUpdateFile = new ApiUpdateFile(context,
+//                            tokenRepository.getToken().getAccessToken(),
+//                            tokenRepository.getToken().getUserId(),
+//                            userFile);
+//
+//                    apiUpdateFile.callApiUpdateFile();
 
                     break;
                 }
@@ -1226,7 +1279,15 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
     @Override
     protected void handleCallSuccess(UserInfo body) {
+
         userInfoRepository.setInfo(body);
+
+        updateImageViewDisplay();
+    }
+
+    @Override
+    public void view(Image item) {
+
     }
 
     public class GetInformationThread extends Thread {
@@ -1284,6 +1345,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             // Call Api Upload File
             ApiUploadFile apiUploadFile = new ApiUploadFile(fileServiceGenerator, tokenRepository.getToken().getUserId(), imageDto, imagePath);
             apiUploadFile.callApiUploadFile();
+
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
         }
     }
@@ -1292,10 +1354,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (imageCardFragment.cardAdapter != null) {
-            imageCardFragment.cardAdapter.release();
-            //imageListFragment.listAdapter.release();
-        }
+//        if (imageCardFragment.cardAdapter != null) {
+//            imageCardFragment.cardAdapter.release();
+//            //imageListFragment.listAdapter.release();
+//        }
     }
 
     public void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {

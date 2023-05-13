@@ -72,7 +72,7 @@
         <activity
             android:name=".authen.activities.LoginActivity"
             android:exported="true"
-            android:label="@string/login" >
+            android:label="@string/login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
