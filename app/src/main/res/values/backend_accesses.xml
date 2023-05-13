@@ -8,6 +8,8 @@
     <string name="service_auth">auth</string>
     <string name="service_master_user">master/user</string>
     <string name="service_master_file">master/file</string>
+    <string name="service_master_album">master/album</string>
     <string name="service_payment">payment</string>
     <string name="service_file">file</string>
+    <string name="service_album">album</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.group_1.usege.layout.fragment;
+package com.group_1.usege.album.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,12 +13,22 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.layout.adapter.AlbumAdapter;
+import com.group_1.usege.library.service.MasterAlbumService;
+import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
 import com.group_1.usege.model.Album;
+import com.group_1.usege.model.UserAlbum;
 
 import java.io.Serializable;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.core.Single;
+
+@AndroidEntryPoint
 public class AlbumCardFragment extends Fragment {
     FragmentTransaction ft;
     TextView totalImage;
@@ -31,6 +41,10 @@ public class AlbumCardFragment extends Fragment {
     public AlbumCardFragment() {
         // Required empty public constructor
     }
+    @Inject
+    public MasterAlbumServiceGenerator masterAlbumServiceGenerator;
+    @Inject
+    public TokenRepository tokenRepository;
 
     public static AlbumCardFragment newInstance(List<Album> images) {
         AlbumCardFragment fragment = new AlbumCardFragment();
@@ -54,6 +68,9 @@ public class AlbumCardFragment extends Fragment {
         catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
+
+        Single<MasterAlbumService.QueryResponse<UserAlbum>> results = paging();
+        System.out.println(results);
     }
 
     @Override
@@ -70,5 +87,11 @@ public class AlbumCardFragment extends Fragment {
         rcvPhoto.setAdapter(albumAdapter);
 
         return layoutImageCard;
+    }
+
+    private Single<MasterAlbumService.QueryResponse<UserAlbum>> paging() {
+        return masterAlbumServiceGenerator
+                .getService()
+                .getAlbums(tokenRepository.getToken().getUserId());
     }
 }
