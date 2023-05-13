@@ -149,6 +149,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     private LoadFileRequestDto loadFileRequestDto;
     public static List<Image> selectedImages = new ArrayList<>();
 
+    public static List<UserFile> currentImagesInAlbum = new ArrayList<>();
+
+    public static UserAlbum currentSelectAlbum;
+
     private static final int Read_Permission = 101;
 
     RelativeLayout layoutLibFunctions;
@@ -361,9 +365,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                 .getAlbums(tokenRepository.getToken().getUserId(), 999);
     }
 
-
-
-
     public void moveToAlbum(Album fromAlbum) { // call in XML file
 //        bottomMenu.setVisibility(View.GONE);
 //        //  -------------------------
@@ -534,6 +535,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         }
         if (files.size() > 0) {
             ft = getSupportFragmentManager().beginTransaction();
+            currentImagesInAlbum = files;
+            currentSelectAlbum = selectedAlbum;
             AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(files, selectedAlbum, "card");
             ft.replace(R.id.layout_display_images, albumImagesList).commit();
         } else {
@@ -975,16 +978,16 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
     public void updateImageInAlbumViewDisplay() {
         layoutLibFunctions.setVisibility(View.GONE);
-        if (isOpeningAlbum.getAlbumImages().size() > 0) {
+        if (currentImagesInAlbum.size() > 0) {
 
             if (Objects.equals(displayView, "card")) {
-//                ft = getSupportFragmentManager().beginTransaction();
-//                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "card");
-//                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+                ft = getSupportFragmentManager().beginTransaction();
+                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(currentImagesInAlbum, currentSelectAlbum, "card");
+                ft.replace(R.id.layout_display_images, albumImagesList).commit();
             } else {
-//                ft = getSupportFragmentManager().beginTransaction();
-//                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "list");
-//                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+                ft = getSupportFragmentManager().beginTransaction();
+                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(currentImagesInAlbum, currentSelectAlbum, "list");
+                ft.replace(R.id.layout_display_images, albumImagesList).commit();
             }
         } else {
             ft = getSupportFragmentManager().beginTransaction();
