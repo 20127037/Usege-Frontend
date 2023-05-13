@@ -1,31 +1,22 @@
 package com.group_1.usege.userInfo.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserInfo {
     private String userId;
     private String email;
+    //Use kb unit
+    private Long deletedImgCount;
+    private Long imgCount;
+    private Long albumCount;
+    private Long usedSpace;
+    private Long maxSpace;
     private String plan;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPlan() {
-        return plan;
-    }
-
-    public void setPlan(String plan) {
-        this.plan = plan;
-    }
+    private int planOrder;
+    private String purchasedPlanDate;
 }

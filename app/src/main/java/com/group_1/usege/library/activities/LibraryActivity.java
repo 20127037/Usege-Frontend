@@ -133,7 +133,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     };
 
     Album trashBin = albumList.get(1);
-    private String displayView = "card";
+    private String displayView = "list";
     private String mode = imageMode;
     // mode image or album
     private Boolean firstAccess = true;
@@ -878,32 +878,46 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             clonedImgList = new ArrayList<>(imgList);
         }
 
-        if (imgList.size() == 0) {
-            setStatusOfWidgets();
+//        if (imgList.size() == 0) {
+//            setStatusOfWidgets();
+//            ft = getSupportFragmentManager().beginTransaction();
+//            emptyFragment = EmptyFragment.newInstance(imageMode, true);
+//            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+//            return;
+//        }
+
+        if (userInfoRepository.getInfo().getImgCount() == 0){
             ft = getSupportFragmentManager().beginTransaction();
             emptyFragment = EmptyFragment.newInstance(imageMode, true);
             ft.replace(R.id.layout_display_images, emptyFragment).commit();
-            return;
         }
-
-
-        if (displayView.equals("card")) {
-            imgViewList.setAlpha(0.5F);
-            imgViewCard.setAlpha(1F);
-
-            ft = getSupportFragmentManager().beginTransaction();
-            imageCardFragment = ImageCardFragment.newInstance(clonedImgList, new ArrayList<Image>(albumList.get(0).getAlbumImages()));
-            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-
-        } else if (displayView.equals("list")) {
+        else {
             imgViewList.setAlpha(1F);
-            imgViewCard.setAlpha(0.5F);
+            imgViewCard.setAlpha(1F);
 
             ft = getSupportFragmentManager().beginTransaction();
             imageListFragment = ImageListFragment.newInstance();
             ft.replace(R.id.layout_display_images, imageListFragment).commit();
-
         }
+        setStatusOfWidgets();
+
+//        if (displayView.equals("card")) {
+//            imgViewList.setAlpha(0.5F);
+//            imgViewCard.setAlpha(1F);
+//
+//            ft = getSupportFragmentManager().beginTransaction();
+//            imageCardFragment = ImageCardFragment.newInstance(clonedImgList, new ArrayList<Image>(albumList.get(0).getAlbumImages()));
+//            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+//
+//        } else if (displayView.equals("list")) {
+//            imgViewList.setAlpha(1F);
+//            imgViewCard.setAlpha(0.5F);
+//
+//            ft = getSupportFragmentManager().beginTransaction();
+//            imageListFragment = ImageListFragment.newInstance();
+//            ft.replace(R.id.layout_display_images, imageListFragment).commit();
+//
+//        }
     }
 
     public void updateAlbumViewDisplay() {
@@ -1012,7 +1026,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
 
     public void setStatusOfWidgets() {
-        if (imgList.size() > 0) {
+        if (userInfoRepository.getInfo().getImgCount() > 0) {
             //imgViewCard.setAlpha(1F);
             //imgViewList.setAlpha(1F);
             imgViewCard.setEnabled(true);
@@ -1265,6 +1279,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     protected void handleCallSuccess(UserInfo body) {
 
         userInfoRepository.setInfo(body);
+
+        updateImageViewDisplay();
     }
 
     public class GetInformationThread extends Thread {

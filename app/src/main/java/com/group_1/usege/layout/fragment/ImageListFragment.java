@@ -64,7 +64,7 @@ public class ImageListFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        viewDetailsSignalReceiver = (ViewDetailsSignalByItemReceiver<Image>)context;
+       // viewDetailsSignalReceiver = (ViewDetailsSignalByItemReceiver<Image>)context;
     }
 
     public static ImageListFragment newInstance() {
