@@ -1013,7 +1013,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     image.setUri(imageURI);
                     image.setLocation("");
                     image.setDescription("");
-                    GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+
+
+                    GetInformationThread getInformationThread = new GetInformationThread(this, image, imageURI);
                     getInformationThread.start();
 
                     Log.e("NOTE", "URI1 " + image.getUri());
@@ -1029,7 +1031,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                 image.setUri(imageURI);
                 image.setLocation("");
                 image.setDescription("");
-                GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
+                GetInformationThread getInformationThread = new GetInformationThread(this, image, imageURI);
                 getInformationThread.start();
             }
         } else {
@@ -1037,7 +1039,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         }
 
         // Update Fragment View
-        updateImageViewDisplay();
     });
 
     //Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
@@ -1256,19 +1257,16 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
             switch (task) {
                 case UPDATE_IMAGE: {
-                    // update description
-                    //imgList.get(position).setDescription(selectedImage.getDescription());
-
-                    UserFile userFile = new UserFile();
-                    userFile.setDescription(selectedImage.getDescription());
-
-                    ApiUpdateFile apiUpdateFile = new ApiUpdateFile(fileServiceGenerator,
-                            tokenRepository.getToken().getAccessToken(),
-                            tokenRepository.getToken().getUserId(),
-                            userFile);
-
-                    apiUpdateFile.callApiUpdateFile();
-
+                    fileServiceGenerator.getService()
+                            .updateFile(tokenRepository.getToken().getUserId(), UserFile.builder()
+                                    .fileName(selectedImage.getId())
+                                    .description(selectedImage.getDescription()).build())
+                            .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                            .subscribe((res, err) -> {
+                                if (err != null || !res.isSuccessful())
+                                    return;
+                                //updateImageViewDisplay();
+                            });
                     break;
                 }
 
@@ -1281,7 +1279,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     //trashBin.getAlbumImages().add(selectedImage);
                     selectedImages.add(selectedImage);
                     deleteImages(selectedImages.stream().map(Image::getId).toArray(String[]::new));
-
                     break;
                 }
             }
@@ -1338,10 +1335,12 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     public class GetInformationThread extends Thread {
         private Image image;
         private Uri uri;
+        private LibraryActivity libraryActivity;
 
-        private GetInformationThread(Image image, Uri uri) {
+        private GetInformationThread(LibraryActivity libraryActivity, Image image, Uri uri) {
             this.image = image;
             this.uri = uri;
+            this.libraryActivity = libraryActivity;
         }
 
         @Override
@@ -1389,7 +1388,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
             // Call Api Upload File
             ApiUploadFile apiUploadFile = new ApiUploadFile(fileServiceGenerator, tokenRepository.getToken().getUserId(), imageDto, imagePath);
-            apiUploadFile.callApiUploadFile();
+            apiUploadFile.callApiUploadFile(libraryActivity::updateImageViewDisplay);
 
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
         }

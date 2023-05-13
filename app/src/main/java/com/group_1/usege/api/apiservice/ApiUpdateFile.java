@@ -27,21 +27,21 @@ public class ApiUpdateFile {
         this.accessToken = accessToken;
     }
 
-    public void callApiUpdateFile() {
-        Gson gson = new Gson();
-        //String userFileJson = gson.toJson(userFile);
-
-        Call<UserFile> call = fileServiceGenerator.getService().updateFile(userId, userFile);
-        call.enqueue(new Callback<UserFile>() {
-            @Override
-            public void onResponse(Call<UserFile> call, Response<UserFile> response) {
-                Log.i("Update -----> ", "Update successfully");
-            }
-
-            @Override
-            public void onFailure(Call<UserFile> call, Throwable t) {
-
-            }
-        });
-    }
+//    public void callApiUpdateFile() {
+//        Gson gson = new Gson();
+//        //String userFileJson = gson.toJson(userFile);
+//
+//        Call<UserFile> call = fileServiceGenerator.getService().updateFile(userId, userFile);
+//        call.enqueue(new Callback<UserFile>() {
+//            @Override
+//            public void onResponse(Call<UserFile> call, Response<UserFile> response) {
+//                Log.i("Update -----> ", "Update successfully");
+//            }
+//
+//            @Override
+//            public void onFailure(Call<UserFile> call, Throwable t) {
+//
+//            }
+//        });
+//    }
 }

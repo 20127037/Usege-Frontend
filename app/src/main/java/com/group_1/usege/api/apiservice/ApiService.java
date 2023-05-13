@@ -38,7 +38,7 @@ public interface ApiService {
 
 
     @PUT("{id}")
-    Call<UserFile> updateFile(@Path("id")String userId,
+    Single<Response<UserFile>> updateFile(@Path("id")String userId,
                               @Body UserFile userFile);
 
     @POST("{id}")
