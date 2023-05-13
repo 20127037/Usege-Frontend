@@ -99,14 +99,17 @@ public class PaymentActivity extends AuthApiCallerActivity<Void> {
     @Override
     protected void handleCallFail(ErrorResponse errorResponse)
     {
-        switch (errorResponse.getMessage())
+        if (errorResponse.getMessage() != null)
         {
-            case ResponseMessages.INVALID_CARD:
-                DialogueUtilities.showNormalDialogue(this, R.string.invalid_card, null);
-                return;
-            case ResponseMessages.INVALID_PLAN:
-                DialogueUtilities.showNormalDialogue(this, R.string.invalid_plan, (d, w) -> ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class));
-                return;
+            switch (errorResponse.getMessage())
+            {
+                case ResponseMessages.INVALID_CARD:
+                    DialogueUtilities.showNormalDialogue(this, R.string.invalid_card, null);
+                    return;
+                case ResponseMessages.INVALID_PLAN:
+                    DialogueUtilities.showNormalDialogue(this, R.string.invalid_plan, (d, w) -> ActivityUtilities.TransitActivityAndFinish(this, LibraryActivity.class));
+                    return;
+            }
         }
         super.handleCallFail(errorResponse);
     }

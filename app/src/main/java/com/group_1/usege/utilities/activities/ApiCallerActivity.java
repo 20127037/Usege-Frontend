@@ -141,7 +141,7 @@ public abstract class ApiCallerActivity<S> extends AppCompatActivity {
     {
         try (ResponseBody errorBody = response.errorBody()) {
             ErrorResponse errorResponse = jsonParser.fromJson(errorBody.charStream(), ErrorResponse.class);
-            if (errorResponse == null || errorResponse.getMessage() == null)
+            if (errorResponse == null)
                 setCallApiFail();
             else
                 handleCallFail(errorResponse);

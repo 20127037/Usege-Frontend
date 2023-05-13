@@ -64,6 +64,11 @@ public class ResetPasswordActivity extends ApiCallerActivity<Void> {
 
     @Override
     protected void handleCallFail(ErrorResponse errorResponse) {
+        if (errorResponse.getMessage() == null)
+        {
+            setCallApiFail();
+            return;
+        }
         switch (errorResponse.getMessage())
         {
             case ResponseMessages.USER_NOT_FOUND:
