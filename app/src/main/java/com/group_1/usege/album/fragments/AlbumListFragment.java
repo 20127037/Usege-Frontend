@@ -2,11 +2,13 @@ package com.group_1.usege.album.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,26 +26,40 @@ import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
+import retrofit2.Response;
 
+@AndroidEntryPoint
 public class AlbumListFragment extends Fragment {
     TextView totalImage;
 
     public RecyclerView rcvPhoto;
 
     public AlbumAdapter albumAdapter;
-    private List<Album> lstAlbum;
+    private List<UserAlbum> lstAlbum = new ArrayList<UserAlbum>() {
+        {
+            add(new UserAlbum("", "favorite", "", 0)); // favorite album
+            add(new UserAlbum("", "trash", "", 0)); // trash album
+        }
+    };
     private Context context = null;
 
     @Inject
     public MasterAlbumServiceGenerator masterAlbumServiceGenerator;
     @Inject
     public TokenRepository tokenRepository;
+    public int LIMIT = 999;
+
     public AlbumListFragment() {
         // Required empty public constructor
     }
@@ -61,18 +77,33 @@ public class AlbumListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            lstAlbum = (List<Album>) getArguments().getSerializable("List_albums");
+//            lstAlbum = (List<Album>) getArguments().getSerializable("List_albums");
         }
 
         try {
             context = getActivity();
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
 
+        albumAdapter = new AlbumAdapter(lstAlbum, context, "list");
+
         Single<MasterAlbumService.QueryResponse<UserAlbum>> results = paging();
-        System.out.println(results);
+        results
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe(this::handleAfterCall);
+    }
+
+    private void handleAfterCall(MasterAlbumService.QueryResponse<UserAlbum> response, Throwable throwable) {
+        if (throwable != null)
+            System.out.println("Get Album error!");
+        else {
+            List<UserAlbum> albums = response.getResponse();
+            System.out.println("Album size " + albums.size());
+            lstAlbum.addAll(albums);
+            albumAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -83,7 +114,6 @@ public class AlbumListFragment extends Fragment {
 
         rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
 
-        albumAdapter = new AlbumAdapter(lstAlbum, context, "list");
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rcvPhoto.setLayoutManager(linearLayoutManager);
         rcvPhoto.setAdapter(albumAdapter);
@@ -94,6 +124,6 @@ public class AlbumListFragment extends Fragment {
     private Single<MasterAlbumService.QueryResponse<UserAlbum>> paging() {
         return masterAlbumServiceGenerator
                 .getService()
-                .getAlbums(tokenRepository.getToken().getUserId());
+                .getAlbums(tokenRepository.getToken().getUserId(), LIMIT);
     }
 }

@@ -22,11 +22,11 @@ import retrofit2.http.Query;
 public interface MasterAlbumService {
 
     @GET("{id}")
-    Single<QueryResponse<UserAlbum>> getAlbums(@Path("id") String id);
+    Single<QueryResponse<UserAlbum>> getAlbums(@Path("id") String id, @Query("limit") int limit);
 
     @GET("{id}/{name}/images")
     Single<QueryResponse2<UserFile>> getAlbumFiles(@Path("id") String id,
-                                         @Path("name") String name);
+                                         @Path("name") String name, @Query("limit") int limit);
 
     @Builder
     @Data

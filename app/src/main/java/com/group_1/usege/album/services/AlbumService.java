@@ -3,6 +3,7 @@ package com.group_1.usege.album.services;
 import androidx.annotation.Nullable;
 
 import com.group_1.usege.library.service.MasterFileService;
+import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
 
 import java.util.List;
@@ -26,15 +27,15 @@ public interface AlbumService {
 
 
 
-    @POST("/{id}/{name}")
-    Single<Response<Void>> createAlbum(@Path("id") String id, @Path("name") String name);
-    @DELETE("/{id}/{name}")
+    @POST("{id}/{name}")
+    Single<Response<UserAlbum>> createAlbum(@Path("id") String id, @Path("name") String name);
+    @DELETE("{id}/{name}")
     Single<Response<Void>> deleteAlbum(@Path("id") String id, @Path("name") String name);
-    @POST("/{id}/{name}/images")
+    @POST("{id}/{name}/images")
     Single<Response<Void>> addImagesToAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") List<String> fileNames);
-    @DELETE("/{id}/{name}/images")
+    @DELETE("{id}/{name}/images")
     Single<Response<Void>> removeImagesFromAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") List<String> fileNames);
-    @PUT("/{id}/{to}/images")
+    @PUT("{id}/{to}/images")
     Single<Response<Void>> moveImagesToAlbum(@Path("id") String id, @Path("to") String to, @Path("from") String from, @Query("file-names") List<String> fileNames);
     @GET("{id}")
     Single<MasterFileService.QueryResponse<UserFile>> getAlbums(@Path("id") String id,

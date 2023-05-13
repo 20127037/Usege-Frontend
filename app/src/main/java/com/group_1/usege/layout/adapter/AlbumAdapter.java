@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +16,39 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.group_1.usege.R;
+import com.group_1.usege.authen.repository.TokenRepository;
+import com.group_1.usege.library.service.MasterAlbumService;
+import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.model.UserAlbum;
+import com.group_1.usege.model.UserFile;
 
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
 
-    private List<Album> lstAlbum;
+    private List<UserAlbum> lstAlbum;
     private Context context;
     private String displayView = "";
+    public int LIMIT = 999;
+    private OnClickListener mListener;
+    @Inject
+    public MasterAlbumServiceGenerator masterAlbumServiceGenerator;
+    @Inject
+    public TokenRepository tokenRepository;
 
-    public AlbumAdapter(List<Album> lstImage, Context context, String displayView) {
-        this.lstAlbum = lstImage;
+    public AlbumAdapter(List<UserAlbum> lstAlbum, Context context, String displayView) {
+        this.lstAlbum = lstAlbum;
         this.context = context;
         this.displayView = displayView;
     }
@@ -39,6 +59,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = null;
+
+        System.out.println("Refresh!!!");
+
         if (displayView.equals("card")) {
             view = inflater.inflate(R.layout.item_photo_album, parent, false);
         }
@@ -52,41 +75,54 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull AlbumAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-        // Load ảnh ra layout
-        Album image = lstAlbum.get(position);
-
-        if (displayView.equals("card")) {
-            // set name for album
-            String albumName = image.getName();
-            holder.albumTextView.setText(albumName);
-
-            // set image for album if not default (favorite or trash)
-            if(Objects.equals(albumName, "favorite")) {
-                holder.albumImgView.setImageResource(R.drawable.album_favorite_img);
-            } else if (Objects.equals(albumName, "trash")) {
-                holder.albumImgView.setImageResource(R.drawable.album_trash_img);
-            }
-
-            holder.albumImgView.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View view) {
-                    if (context.getClass().equals(LibraryActivity.class)) {
-                        Activity activity = (Activity) context;
-                        if (activity instanceof LibraryActivity) {
-                            LibraryActivity libActivity = (LibraryActivity) activity;
-                            libActivity.clickOpenAlbumImageList(lstAlbum.get(position));
-                        }
-                    }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onItemClick(position);
                 }
-            });
-        }
+            }
+        });
+        return;
 
-        if (displayView.equals("list")) {
-            // set name for album
-            String albumName = image.getName();
-            holder.albumTextView.setText(albumName);
-        }
+        //  ================== Load ảnh ra layout
+//        UserAlbum image = lstAlbum.get(position);
+//
+//        if (displayView.equals("card")) {
+//            // set name for album
+//            String albumName = image.getName();
+//            holder.albumTextView.setText(albumName);
+//
+//            // set image for album if not default (favorite or trash)
+//            if(Objects.equals(albumName, "favorite")) {
+//                holder.albumImgView.setImageResource(R.drawable.album_favorite_img);
+//            } else if (Objects.equals(albumName, "trash")) {
+//                holder.albumImgView.setImageResource(R.drawable.album_trash_img);
+//            }
+//
+//            holder.albumImgView.setOnClickListener(new View.OnClickListener() {
+//
+//                @Override
+//                public void onClick(View view) {
+//                    if (context.getClass().equals(LibraryActivity.class)) {
+//                        Activity activity = (Activity) context;
+//                        if (activity instanceof LibraryActivity) {
+//                            LibraryActivity libActivity = (LibraryActivity) activity;
+////                            libActivity.clickOpenAlbumImageList(lstAlbum.get(position));
+//                            System.out.println("Album size: " + lstAlbum);
+//                            System.out.println("Album name: " + lstAlbum.get(position).getName());
+//                        }
+//                    }
+//                }
+//
+//            });
+//        }
+//
+//        if (displayView.equals("list")) {
+//            // set name for album
+//            String albumName = image.getName();
+//            holder.albumTextView.setText(albumName);
+//        }
     }
 
     @Override
@@ -123,5 +159,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         }
 
         return newDescription;
+    }
+
+    public interface OnClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        mListener = listener;
     }
 }

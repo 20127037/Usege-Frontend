@@ -42,8 +42,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
+import com.group_1.usege.account.dto.CreateAccountRequestDto;
+import com.group_1.usege.album.services.AlbumServiceGenerator;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
 import com.group_1.usege.api.apiservice.FileServiceGenerator;
+import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.dto.ImageDto;
 import com.group_1.usege.dto.LoadFileRequestDto;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
@@ -56,9 +59,11 @@ import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.library.fragment.EmptyFragment;
+import com.group_1.usege.library.service.MasterAlbumService;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
 import com.group_1.usege.realPath.RealPathUtil;
 import com.group_1.usege.userInfo.model.UserInfo;
@@ -79,7 +84,11 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.core.Single;
+import retrofit2.Response;
 
 @AndroidEntryPoint
 public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
@@ -277,7 +286,12 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         rootDrawerLayout.openDrawer(GravityCompat.START);
     }
 
-    //    Start Album handler
+    //    ============= Start Album handler =============
+    @Inject
+    AlbumServiceGenerator albumServiceGenerator;
+    @Inject
+    public TokenRepository tokenRepository;
+
     // menu bottom functions
     private Album destinationAlbum;
 
@@ -381,7 +395,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             System.out.println(String.format("after: %d", destinationAlbum.getAlbumImages().size()));
             Toast.makeText(this, "move image success!", Toast.LENGTH_SHORT).show();
             selectedImages.clear();
-            clickOpenAlbumImageList(fromAlbum);
+//            clickOpenAlbumImageList(fromAlbum);
             // Đóng bottommsheet
             chooseAlbumBottomSheetDialog.dismiss();
         });
@@ -472,34 +486,41 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
 
             String password = String.valueOf(passwordEditText.getText());
 
-            albumList.add(new Album(title, new ArrayList<Image>(selectedImages)));
-//            System.out.println("select add size " + selectedImages.size());
-            selectedImages.clear();
+            Single<Response<UserAlbum>> createAlbumResult = albumServiceGenerator.getService().createAlbum(tokenRepository.getToken().getUserId(), title);
 
-            Toast.makeText(this, "Created album success!", Toast.LENGTH_SHORT).show();
-
-            // Đóng bottommsheet
-            createAlbumBottomSheetDialog.dismiss();
-
-            triggerAlbumButton();
+            createAlbumResult
+                    .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                    .subscribe(this::handleAfterCreateAlbumCall);
+            Toast.makeText(this, "Create Album successfully!", Toast.LENGTH_SHORT).show();
         });
     }
 
-    public void clickOpenAlbumImageList(Album album) {
-        isOpeningAlbum = album;
-        mode = imageInAlbumMode;
-//        if(album.getName() != "favorite" && album.getName() != "trash") {
-        layoutLibFunctions.setVisibility(View.GONE);
-//        }
-        if (album.getAlbumImages().size() > 0) {
-            ft = getSupportFragmentManager().beginTransaction();
-            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, displayView);
-            ft.replace(R.id.layout_display_images, albumImagesList).commit();
-        } else {
-            ft = getSupportFragmentManager().beginTransaction();
-            EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
-            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+    public  void handleAfterCreateAlbumCall(Response<UserAlbum> response, Throwable throwable) {
+        if (throwable != null)
+        System.out.println("Create Album APi  error");
+        else {
+            UserAlbum album = response.body();
+            System.out.println(String.format("Created album: %s", album.getName()));
         }
+    }
+
+
+
+    public void clickOpenAlbumImageList(UserAlbum album) {
+//        isOpeningAlbum = album;
+//        mode = imageInAlbumMode;
+//        if(album.getName() != "favorite" && album.getName() != "trash") {
+//        layoutLibFunctions.setVisibility(View.GONE);
+//        }
+//        if (album.getAlbumImages().size() > 0) {
+//            ft = getSupportFragmentManager().beginTransaction();
+//            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, displayView);
+//            ft.replace(R.id.layout_display_images, albumImagesList).commit();
+//        } else {
+//            ft = getSupportFragmentManager().beginTransaction();
+//            EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
+//            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+//        }
     }
 
     public void setShowLayoutLibFuntions() {
@@ -534,13 +555,13 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     public void restoreAllTrash() {
         imgList.addAll(new ArrayList<Image>(albumList.get(1).getAlbumImages()));
         albumList.get(1).getAlbumImages().clear();
-        clickOpenAlbumImageList(albumList.get(1));
+//        clickOpenAlbumImageList(albumList.get(1));
         Toast.makeText(context, "Restore all image successfully!", Toast.LENGTH_SHORT).show();
     }
 
     public void clearTrash() {
         albumList.get(1).getAlbumImages().clear();
-        clickOpenAlbumImageList(albumList.get(1));
+//        clickOpenAlbumImageList(albumList.get(1));
         Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
     }
 
@@ -590,7 +611,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             if (album != null) {
                 album.setName(newName);
                 Toast.makeText(this, "Rename album successfully!", Toast.LENGTH_SHORT).show();
-                clickOpenAlbumImageList(album);
+//                clickOpenAlbumImageList(album);
             } else {
                 Toast.makeText(this, "There is some error, please try again!", Toast.LENGTH_SHORT).show();
             }
