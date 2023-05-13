@@ -34,7 +34,7 @@ public interface AlbumService {
     @POST("{id}/{name}")
     Single<Response<UserAlbum>> createAlbum(@Path("id") String id, @Path("name") String name);
     @DELETE("{id}/{name}")
-    Single<Response<Void>> deleteAlbum(@Path("id") String id, @Path("name") String name);
+    Single<Response<UserAlbum>> deleteAlbum(@Path("id") String id, @Path("name") String name);
     @POST("{id}/{name}/images")
     Single<Response<List<UserFileInAlbum>>> addImagesToAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") String[] fileNames);
     @DELETE("{id}/{name}/images")
