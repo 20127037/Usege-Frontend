@@ -65,6 +65,7 @@ import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.model.UserAlbum;
+import com.group_1.usege.model.UserFile;
 import com.group_1.usege.realPath.RealPathUtil;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
