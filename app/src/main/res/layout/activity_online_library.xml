@@ -16,11 +16,34 @@
             android:background="@android:color/transparent"
             app:liftOnScroll="false">
 
+            <RelativeLayout
+                android:id="@+id/title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/root_menu_image_view"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:onClick="openNavigationDrawer"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/icon" />
+
+                <ImageView
+                    android:id="@+id/avatar_image_view"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentRight="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile" />
+
+            </RelativeLayout>
+
             <com.google.android.material.appbar.MaterialToolbar
                 style="@style/Widget.MaterialComponents.Toolbar.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:menu="@menu/top_app_bar_online_library"
                 app:title="@string/label_online_library" />
 
             <androidx.appcompat.widget.SearchView
@@ -39,6 +62,7 @@
             android:background="?attr/colorPrimary"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 
     <com.google.android.material.navigation.NavigationView

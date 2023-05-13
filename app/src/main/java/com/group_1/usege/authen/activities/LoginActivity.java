@@ -123,6 +123,11 @@ public class LoginActivity extends ApiCallerActivity<CacheToken> {
     protected void handleCallFail(ErrorResponse errorResponse) {
         if (errorResponse.getStatus() == 401)
             tokenRepository.setToken(null);
+        if (errorResponse.getMessage() == null)
+        {
+            setCallApiFail();
+            return;
+        }
         switch (errorResponse.getMessage())
         {
             case ResponseMessages.USER_NOT_FOUND:

@@ -79,15 +79,16 @@ public class OnlineImageActivity extends AuthApiCallerActivity<UserFile> {
         startCallApi(masterFileServiceGenerator
                 .getService()
                 .getFile(tokenRepository.getToken().getUserId(), getPexelsName(receivedImg.getId()), true));
-        btnDownload.setOnClickListener(l -> fileServiceGenerator
-                .getService()
-                .uploadRefFile(tokenRepository.getToken().getUserId(),
-                        ApiService.UserFileRefUploadDto.builder()
-                                .fileName(getPexelsName(receivedImg.getId()))
-                                .description(receivedImg.getDescription())
-                                .tinyUri(receivedImg.getSmallUri().toString())
-                                .uri(receivedImg.getUri().toString())
-                                .build()));
+        btnDownload.setOnClickListener(l ->
+                startCallApi(fileServiceGenerator
+                        .getService()
+                        .uploadRefFile(tokenRepository.getToken().getUserId(),
+                                ApiService.UserFileRefUploadDto.builder()
+                                        .fileName(getPexelsName(receivedImg.getId()))
+                                        .description(receivedImg.getDescription())
+                                        .tinyUri(receivedImg.getSmallUri().toString())
+                                        .uri(receivedImg.getUri().toString())
+                                        .build())));
     }
 
     @Override

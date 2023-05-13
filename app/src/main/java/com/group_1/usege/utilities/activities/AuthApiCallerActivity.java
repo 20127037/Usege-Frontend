@@ -82,6 +82,11 @@ public abstract class AuthApiCallerActivity<S> extends ApiCallerActivity<S> {
             tryRefreshToken();
             return;
         }
+        if (errorResponse.getMessage() == null)
+        {
+            setCallApiFail();
+            return;
+        }
         switch (errorResponse.getMessage())
         {
             case ResponseMessages.TOKEN_EXPIRED:

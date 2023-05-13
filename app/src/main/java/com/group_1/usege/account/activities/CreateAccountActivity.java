@@ -99,7 +99,11 @@ public class CreateAccountActivity extends ApiCallerActivity<UserInfo> {
 
     @Override
     protected void handleCallFail(ErrorResponse errorResponse) {
-
+        if (errorResponse.getMessage() == null)
+        {
+            setCallApiFail();
+            return;
+        }
         switch (errorResponse.getMessage())
         {
             case ResponseMessages.USERNAME_EXISTS:

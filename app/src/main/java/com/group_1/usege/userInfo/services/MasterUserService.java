@@ -10,10 +10,10 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface MasterUserService {
-    @GET("user/{id}")
+    @GET("{id}")
     Single<Response<UserInfo>> getUserInfo(@Path("id") String id);
-    @GET("user/statistic/{id}")
+    @GET("statistic/{id}")
     Single<Response<UserStatistic>> getUserStatistic(@Path("id") String id);
-    @GET("user/plan/{id}")
+    @GET("plan/{id}")
     Single<Response<StoragePlan[]>> getUserPlan(@Path("id") String id);
 }
