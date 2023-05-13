@@ -28,11 +28,9 @@ public class ApiUploadFile {
 
     private final FileServiceGenerator fileServiceGenerator;
     public ApiUploadFile(FileServiceGenerator fileServiceGenerator, String userId, ImageDto imageDto, String pathFile) {
-        this.context = context;
         this.userId = userId;
         this.imageDto = imageDto;
         this.pathFile = pathFile;
-        this.accessToken = accessToken;
         this.fileServiceGenerator = fileServiceGenerator;
     }
 

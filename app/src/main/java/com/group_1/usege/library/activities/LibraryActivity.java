@@ -47,6 +47,7 @@ import com.group_1.usege.album.fragments.AlbumCardFragment;
 import com.group_1.usege.album.fragments.AlbumImageListFragment;
 import com.group_1.usege.album.fragments.AlbumListFragment;
 import com.group_1.usege.album.services.AlbumServiceGenerator;
+import com.group_1.usege.api.apiservice.ApiUpdateFile;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
 import com.group_1.usege.api.apiservice.FileServiceGenerator;
 import com.group_1.usege.authen.repository.TokenRepository;
@@ -1243,17 +1244,17 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             switch (task) {
                 case UPDATE_IMAGE: {
                     // update description
-                    imgList.get(position).setDescription(selectedImage.getDescription());
+                    //imgList.get(position).setDescription(selectedImage.getDescription());
 
-//                    UserFile userFile = new UserFile();
-//                    userFile.setDescription(selectedImage.getDescription());
-//
-//                    ApiUpdateFile apiUpdateFile = new ApiUpdateFile(context,
-//                            tokenRepository.getToken().getAccessToken(),
-//                            tokenRepository.getToken().getUserId(),
-//                            userFile);
-//
-//                    apiUpdateFile.callApiUpdateFile();
+                    UserFile userFile = new UserFile();
+                    userFile.setDescription(selectedImage.getDescription());
+
+                    ApiUpdateFile apiUpdateFile = new ApiUpdateFile(fileServiceGenerator,
+                            tokenRepository.getToken().getAccessToken(),
+                            tokenRepository.getToken().getUserId(),
+                            userFile);
+
+                    apiUpdateFile.callApiUpdateFile();
 
                     break;
                 }
@@ -1265,6 +1266,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     //List<Image> lstdeletedImage = new ArrayList<>();
                     //lstdeletedImage.add(selectedImage);
                     //trashBin.getAlbumImages().add(selectedImage);
+                    selectedImages.add(selectedImage);
                     deleteImages(selectedImages.stream().map(Image::getId).toArray(String[]::new));
 
                     break;
