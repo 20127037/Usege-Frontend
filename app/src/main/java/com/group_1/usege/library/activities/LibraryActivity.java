@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -56,6 +57,7 @@ import com.group_1.usege.layout.fragment.ImageListFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.library.fragment.EmptyFragment;
+import com.group_1.usege.library.service.TrashServiceGenerator;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
@@ -80,7 +82,10 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 @AndroidEntryPoint
 public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> implements ViewDetailsSignalByItemReceiver<Image> {
@@ -99,6 +104,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     public UserInfoRepository userInfoRepository;
     @Inject
     public FileServiceGenerator fileServiceGenerator;
+    @Inject
+    public TrashServiceGenerator trashServiceGenerator;
     EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
     EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
@@ -532,17 +539,66 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         albumButton.callOnClick();
     }
 
+
+    private void deleteImages(String[] fileNames)
+    {
+        trashServiceGenerator.getService()
+                .deleteFiles(tokenRepository.getToken().getUserId(), fileNames)
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                });
+    }
+
+    private void restoreImagesFromTrash(String[] fileNames)
+    {
+        trashServiceGenerator.getService()
+                .restoreFiles(tokenRepository.getToken().getUserId(), fileNames)
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                });
+    }
+
     public void restoreAllTrash() {
-        imgList.addAll(new ArrayList<Image>(albumList.get(1).getAlbumImages()));
-        albumList.get(1).getAlbumImages().clear();
-        clickOpenAlbumImageList(albumList.get(1));
-        Toast.makeText(context, "Restore all image successfully!", Toast.LENGTH_SHORT).show();
+        trashServiceGenerator.getService()
+                .restoreAllFiles(tokenRepository.getToken().getUserId())
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                    Toast.makeText(context, "Restore all image successfully!", Toast.LENGTH_SHORT).show();
+
+                });
+    }
+
+    private void clearImagesFromTrash(String[] fileNames)
+    {
+        trashServiceGenerator.getService()
+                .clearFiles(tokenRepository.getToken().getUserId(), fileNames)
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                });
     }
 
     public void clearTrash() {
-        albumList.get(1).getAlbumImages().clear();
-        clickOpenAlbumImageList(albumList.get(1));
-        Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
+        trashServiceGenerator.getService()
+                .clearAllFiles(tokenRepository.getToken().getUserId())
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                    Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
+                });
     }
 
     public void deleteAlbum(Album deleteAlbum) {
@@ -1418,8 +1474,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     }
 
     public void deleteImages(View v) {
-        trashBin.getAlbumImages().addAll(selectedImages);
-        imgList.removeAll(selectedImages);
+        deleteImages(selectedImages.stream().map(Image::getId).toArray(String[]::new));
+        //trashBin.getAlbumImages().addAll(selectedImages);
+        //imgList.removeAll(selectedImages);
         selectedImages.clear();
         bottomMenu.setVisibility(View.GONE);
         updateImageViewDisplay();

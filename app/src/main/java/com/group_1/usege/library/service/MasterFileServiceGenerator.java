@@ -10,7 +10,9 @@ import com.group_1.usege.utilities.api.BaseServiceGenerator;
 import javax.inject.Inject;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.android.scopes.ActivityScoped;
 
+@ActivityScoped
 public class MasterFileServiceGenerator extends BaseAuthServiceGenerator<MasterFileService> {
     @Inject
     public MasterFileServiceGenerator(@ApplicationContext Context context, TokenRepository tokenRepository) {
