@@ -60,12 +60,15 @@ import com.group_1.usege.library.adapter.ImagesAdapter;
 import com.group_1.usege.library.fragment.EmptyAlbumFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.library.fragment.EmptyFragment;
+import com.group_1.usege.library.service.MasterAlbumService;
+import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
 import com.group_1.usege.library.service.TrashServiceGenerator;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
+import com.group_1.usege.model.UserFileInAlbum;
 import com.group_1.usege.realPath.RealPathUtil;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
@@ -252,36 +255,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         //getFilesFromServer();
     }
 
-//    public void getFilesFromServer() {
-//        imgList = new ArrayList<>();
-////        String[] attributes = null;
-////        Map<String, String> lastKey = null;
-////        int limit = 6;
-//        loadFileRequestDto = new LoadFileRequestDto(6, null, null);
-//        ApiGetFiles apiGetFiles = new ApiGetFiles(context, tokenRepository.getToken().getUserId(), tokenRepository.getToken().getAccessToken(), loadFileRequestDto, imgList);
-//        apiGetFiles.callApiGetFiles();
-//
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Thread.sleep(1500);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                updateImageViewDisplay();
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        setStatusOfWidgets();
-//                    }
-//                });
-//            }
-//        });
-//
-//        thread.start();
-//    }
-
     @Override
     public int navigateId() {
         return R.id.nav_library;
@@ -295,120 +268,160 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
     //    ============= Start Album handler =============
     @Inject
-    AlbumServiceGenerator albumServiceGenerator;
+    public AlbumServiceGenerator albumServiceGenerator;
+    @Inject
+    public MasterAlbumServiceGenerator masterAlbumServiceGenerator;
     @Inject
     public TokenRepository tokenRepository;
 
     // menu bottom functions
-    private Album destinationAlbum;
+    private UserAlbum destinationAlbum = new UserAlbum();
 
     public void addToAlbum(View v) {
-        bottomMenu.setVisibility(View.GONE);
-        //  -------------------------
-        Button btnConfirm;
-        Button createAlbumButton;
-        ImageView imageViewBackward;
-
-        View viewDialog = getLayoutInflater().inflate(R.layout.layout_choose_destination_album, null);
-
-        final BottomSheetDialog chooseAlbumBottomSheetDialog = new BottomSheetDialog(this);
-        chooseAlbumBottomSheetDialog.setContentView(viewDialog);
-        chooseAlbumBottomSheetDialog.show();
-
-        createAlbumButton = viewDialog.findViewById(R.id.btn_create_album);
-        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
-        btnConfirm.setEnabled(false);
-        btnConfirm.setAlpha((float) 0.5);
-        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
-        RecyclerView albumRadioRecyclerView = viewDialog.findViewById(R.id.rcv_album);
-
-        // filter favortie and trash album
-        ArrayList<Album> cloneAlbumList = new ArrayList<Album>(albumList);
-        cloneAlbumList.removeIf(albumItem -> albumItem.getName() == "favorite" || albumItem.getName() == "trash");
-        AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, btnConfirm, this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        albumRadioRecyclerView.setLayoutManager(linearLayoutManager);
-        albumRadioRecyclerView.setAdapter(albumRadioAdapter);
-        imageViewBackward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseAlbumBottomSheetDialog.dismiss();
-            }
-        });
-
-
-        createAlbumButton.setOnClickListener(event -> {
-            clickOpenAlbumCreateBottomSheet();
-            chooseAlbumBottomSheetDialog.dismiss();
-        });
-
-        btnConfirm.setOnClickListener(event -> {
-            destinationAlbum.getAlbumImages().addAll(new ArrayList<Image>(selectedImages));
-            // Đóng bottommsheet
-            chooseAlbumBottomSheetDialog.dismiss();
-            Toast.makeText(this, "Add image success", Toast.LENGTH_SHORT).show();
-            selectedImages.clear();
-        });
+        Single<MasterAlbumService.QueryResponse<UserAlbum>> results = getAlbums();
+        results
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe(this::handleAlbumAfterCall);
     }
+
+    private void handleAlbumAfterCall(MasterAlbumService.QueryResponse<UserAlbum> response, Throwable throwable) {
+        if (throwable != null)
+            System.out.println("Get Album error!");
+        else {
+            List<UserAlbum> albums = response.getResponse();
+            System.out.println("Album size " + albums.size());
+
+            bottomMenu.setVisibility(View.GONE);
+            //  -------------------------
+            Button btnConfirm;
+            Button createAlbumButton;
+            ImageView imageViewBackward;
+
+            View viewDialog = getLayoutInflater().inflate(R.layout.layout_choose_destination_album, null);
+
+            final BottomSheetDialog chooseAlbumBottomSheetDialog = new BottomSheetDialog(this);
+            chooseAlbumBottomSheetDialog.setContentView(viewDialog);
+            chooseAlbumBottomSheetDialog.show();
+
+            createAlbumButton = viewDialog.findViewById(R.id.btn_create_album);
+            btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+            btnConfirm.setEnabled(false);
+            btnConfirm.setAlpha((float) 0.5);
+            imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+            RecyclerView albumRadioRecyclerView = viewDialog.findViewById(R.id.rcv_album);
+
+            // filter favortie and trash album
+            ArrayList<UserAlbum> cloneAlbumList = new ArrayList<UserAlbum>(albums);
+            cloneAlbumList.removeIf(albumItem -> albumItem.getName() == "favorite" || albumItem.getName() == "trash");
+            AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, btnConfirm, this);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            albumRadioRecyclerView.setLayoutManager(linearLayoutManager);
+            albumRadioRecyclerView.setAdapter(albumRadioAdapter);
+            imageViewBackward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    chooseAlbumBottomSheetDialog.dismiss();
+                }
+            });
+
+
+            createAlbumButton.setOnClickListener(event -> {
+                clickOpenAlbumCreateBottomSheet();
+                chooseAlbumBottomSheetDialog.dismiss();
+            });
+
+            btnConfirm.setOnClickListener(event -> {
+                String[] imageNames = selectedImages.stream().map(Image::getId).toArray(String[]::new);
+
+                Single<Response<List<UserFileInAlbum>>> createAlbumResult = albumServiceGenerator.getService().addImagesToAlbum(tokenRepository.getToken().getUserId(), destinationAlbum.getName(), imageNames);
+
+                createAlbumResult
+                        .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                        .subscribe(this::handleAfterAddAlbumCall);
+                // Đóng bottommsheet
+                chooseAlbumBottomSheetDialog.dismiss();
+                Toast.makeText(this, "Add image to album success", Toast.LENGTH_SHORT).show();
+                selectedImages.clear();
+            });
+        }
+    }
+
+    public  void handleAfterAddAlbumCall(Response<List<UserFileInAlbum>> response, Throwable throwable) {
+        if (throwable != null)
+            System.out.println("Create Album APi  error");
+        else {
+            List<UserFileInAlbum> album = response.body();
+        }
+    }
+
+    private Single<MasterAlbumService.QueryResponse<UserAlbum>> getAlbums() {
+        return masterAlbumServiceGenerator
+                .getService()
+                .getAlbums(tokenRepository.getToken().getUserId(), 999);
+    }
+
+
+
 
     public void moveToAlbum(Album fromAlbum) { // call in XML file
-        bottomMenu.setVisibility(View.GONE);
-        //  -------------------------
-        Button btnConfirm;
-        Button createAlbumButton;
-        ImageView imageViewBackward;
-
-        View viewDialog = getLayoutInflater().inflate(R.layout.layout_choose_destination_album, null);
-
-        final BottomSheetDialog chooseAlbumBottomSheetDialog = new BottomSheetDialog(this);
-        chooseAlbumBottomSheetDialog.setContentView(viewDialog);
-        chooseAlbumBottomSheetDialog.show();
-
-        createAlbumButton = viewDialog.findViewById(R.id.btn_create_album);
-        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
-        btnConfirm.setEnabled(false);
-        btnConfirm.setAlpha((float) 0.5);
-        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
-        RecyclerView albumRadioRecyclerView = viewDialog.findViewById(R.id.rcv_album);
-
-        // filter favortie and trash album
-        ArrayList<Album> cloneAlbumList = new ArrayList<Album>(albumList);
-        cloneAlbumList.removeIf(albumItem -> albumItem.getName() == "favorite" || albumItem.getName() == "trash");
-        AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, btnConfirm, this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        albumRadioRecyclerView.setLayoutManager(linearLayoutManager);
-        albumRadioRecyclerView.setAdapter(albumRadioAdapter);
-        imageViewBackward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseAlbumBottomSheetDialog.dismiss();
-            }
-        });
-
-
-        createAlbumButton.setVisibility(View.GONE);
-
-        btnConfirm.setOnClickListener(event -> {
-            fromAlbum.getAlbumImages().removeIf(s -> {
-                for (int i = 0; i < selectedImages.size(); i++) {
-                    if (s.getUri() == selectedImages.get(i).getUri()) {
-                        return true;
-                    }
-                }
-                return false;
-            });
-            System.out.println(String.format("before: %d", destinationAlbum.getAlbumImages().size()));
-            destinationAlbum.getAlbumImages().addAll(selectedImages);
-            System.out.println(String.format("after: %d", destinationAlbum.getAlbumImages().size()));
-            Toast.makeText(this, "move image success!", Toast.LENGTH_SHORT).show();
-            selectedImages.clear();
-//            clickOpenAlbumImageList(fromAlbum);
-            // Đóng bottommsheet
-            chooseAlbumBottomSheetDialog.dismiss();
-        });
+//        bottomMenu.setVisibility(View.GONE);
+//        //  -------------------------
+//        Button btnConfirm;
+//        Button createAlbumButton;
+//        ImageView imageViewBackward;
+//
+//        View viewDialog = getLayoutInflater().inflate(R.layout.layout_choose_destination_album, null);
+//
+//        final BottomSheetDialog chooseAlbumBottomSheetDialog = new BottomSheetDialog(this);
+//        chooseAlbumBottomSheetDialog.setContentView(viewDialog);
+//        chooseAlbumBottomSheetDialog.show();
+//
+//        createAlbumButton = viewDialog.findViewById(R.id.btn_create_album);
+//        btnConfirm = viewDialog.findViewById(R.id.btn_confirm);
+//        btnConfirm.setEnabled(false);
+//        btnConfirm.setAlpha((float) 0.5);
+//        imageViewBackward = viewDialog.findViewById(R.id.image_view_backward);
+//        RecyclerView albumRadioRecyclerView = viewDialog.findViewById(R.id.rcv_album);
+//
+//        // filter favortie and trash album
+//        ArrayList<Album> cloneAlbumList = new ArrayList<Album>(albumList);
+//        cloneAlbumList.removeIf(albumItem -> albumItem.getName() == "favorite" || albumItem.getName() == "trash");
+//        AlbumRadioAdapter albumRadioAdapter = new AlbumRadioAdapter(cloneAlbumList, btnConfirm, this);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        albumRadioRecyclerView.setLayoutManager(linearLayoutManager);
+//        albumRadioRecyclerView.setAdapter(albumRadioAdapter);
+//        imageViewBackward.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                chooseAlbumBottomSheetDialog.dismiss();
+//            }
+//        });
+//
+//
+//        createAlbumButton.setVisibility(View.GONE);
+//
+//        btnConfirm.setOnClickListener(event -> {
+//            fromAlbum.getAlbumImages().removeIf(s -> {
+//                for (int i = 0; i < selectedImages.size(); i++) {
+//                    if (s.getUri() == selectedImages.get(i).getUri()) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            });
+//            System.out.println(String.format("before: %d", destinationAlbum.getAlbumImages().size()));
+//            destinationAlbum.getAlbumImages().addAll(selectedImages);
+//            System.out.println(String.format("after: %d", destinationAlbum.getAlbumImages().size()));
+//            Toast.makeText(this, "move image success!", Toast.LENGTH_SHORT).show();
+//            selectedImages.clear();
+////            clickOpenAlbumImageList(fromAlbum);
+//            // Đóng bottommsheet
+//            chooseAlbumBottomSheetDialog.dismiss();
+//        });
     }
 
-    public void setDestinationAlbum(Album album) {
+    public void setDestinationAlbum(UserAlbum album) {
         destinationAlbum = album;
     }
 
@@ -521,7 +534,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         }
         if (files.size() > 0) {
             ft = getSupportFragmentManager().beginTransaction();
-            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(files, selectedAlbum, mode);
+            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(files, selectedAlbum, "card");
             ft.replace(R.id.layout_display_images, albumImagesList).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();

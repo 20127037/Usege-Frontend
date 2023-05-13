@@ -1,5 +1,6 @@
 package com.group_1.usege.layout.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,20 +17,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.group_1.usege.R;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.model.UserAlbum;
 
 import java.util.List;
 import java.util.Objects;
 
 public class AlbumRadioAdapter extends RecyclerView.Adapter<AlbumRadioAdapter.ViewHolder> {
 
-    private List<Album> lstAlbum;
+    private List<UserAlbum> lstAlbum;
     private Context context;
     private static RadioButton lastChecked = null;
 
     private static int lastCheckPosition = -1;
     Button btnConFirm;
 
-    public AlbumRadioAdapter(List<Album> lstAlbum, Button btnConFirm, Context context) {
+    public AlbumRadioAdapter(List<UserAlbum> lstAlbum, Button btnConFirm, Context context) {
         this.lstAlbum = lstAlbum;
         this.context = context;
         this.btnConFirm = btnConFirm;
@@ -45,7 +47,8 @@ public class AlbumRadioAdapter extends RecyclerView.Adapter<AlbumRadioAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AlbumRadioAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AlbumRadioAdapter.ViewHolder holder, int pos) {
+        final int position = pos;
 
         // set name for album
         holder.albumRadio.setText(lstAlbum.get(position).getName());

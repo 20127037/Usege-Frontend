@@ -118,6 +118,9 @@ public class AlbumCardFragment extends Fragment {
                 }
             }
         });
+
+
+
         Single<MasterAlbumService.QueryResponse<UserAlbum>> results = paging();
         results
                 .observeOn(AndroidSchedulers.from(Looper.myLooper()))
