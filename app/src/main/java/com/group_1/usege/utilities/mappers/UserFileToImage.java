@@ -16,6 +16,10 @@ public class UserFileToImage implements Mapper<UserFile, Image> {
 
     @Override
     public Image map(UserFile value) {
+        int remain = 0;
+        if (value.getRemainingDays() != null) {
+            remain = value.getRemainingDays();
+        }
         return Image.builder()
             .id(value.getUserId())
             .tags(value.getTags())
@@ -25,6 +29,7 @@ public class UserFileToImage implements Mapper<UserFile, Image> {
             .location(value.getLocation())
             .uri(Uri.parse(Uri.decode(value.getNormalUri())))
             .smallUri(Uri.parse(Uri.decode(value.getTinyUri())))
+                .remainedDay(remain)
             .build();
     }
 }

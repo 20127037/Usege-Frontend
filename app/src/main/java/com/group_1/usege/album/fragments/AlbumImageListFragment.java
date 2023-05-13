@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +34,6 @@ import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
-import com.group_1.usege.pagination.PaginationScrollListener;
 import com.group_1.usege.utilities.mappers.UserFileToImage;
 
 import java.io.Serializable;
@@ -180,15 +178,15 @@ public class AlbumImageListFragment extends Fragment {
                         // Do something when the "rename" item is clicked
                         if (activity instanceof LibraryActivity) {
                             LibraryActivity libActivity = (LibraryActivity) activity;
-//                            libActivity.renameAlbum(album);
+                            libActivity.renameAlbum(album);
                         }
                         return true;
                     case R.id.make_a_presentation_menu_item:
                         // Do something when the "Combine" item is clicked
                         return true;
-                    case R.id.unlock_image_menu_item:
-                        // Do something when the "Compress" item is clicked
-                        return true;
+//                    case R.id.unlock_image_menu_item:
+//                        // Do something when the "Compress" item is clicked
+//                        return true;
                     case R.id.compress_menu_item:
                         // Do something when the "Make a presentation" item is clicked
                         return true;
@@ -245,18 +243,6 @@ public class AlbumImageListFragment extends Fragment {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
             rcvPhoto.setLayoutManager(gridLayoutManager);
             rcvPhoto.setAdapter(cardAdapter);
-
-
-
-            if (context.getClass().equals(LibraryActivity.class)) {
-                Activity activity = (Activity) context;
-                if (activity instanceof LibraryActivity) {
-                    LibraryActivity libActivity = (LibraryActivity) activity;
-                    libActivity.moveToAlbum.setOnClickListener(v -> {
-                        System.out.print("clicked move!");
-                    });
-                }
-            }
         }
 
         return layoutImageList;
@@ -284,8 +270,8 @@ public class AlbumImageListFragment extends Fragment {
     }
 
     private void onClickGoToDetails(Image image, int position) {
-        Log.e("P", "P: " + position);
-//        libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
+       // libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
+
 
 }

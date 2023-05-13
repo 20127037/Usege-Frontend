@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import retrofit2.Response;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -24,13 +25,8 @@ import retrofit2.http.Query;
 
 public interface AlbumService {
 
-//    @POST(".")
-//    Single<Response<UserInfo>> create(@Body CreateAccountRequestDto accountRequestDto);
-//    @PUT("{id}")
-//    Single<Response<Void>> confirm(@Path("id") String id, @Query("code") String code);
-
-
-
+    @PUT("{id}/{name}")
+    Single<Response<UserAlbum>> updateAlbum(@Path("id") String id, @Path("name") String name, @Body UserAlbum newAlbum);
     @POST("{id}/{name}")
     Single<Response<UserAlbum>> createAlbum(@Path("id") String id, @Path("name") String name);
     @DELETE("{id}/{name}")
@@ -38,9 +34,9 @@ public interface AlbumService {
     @POST("{id}/{name}/images")
     Single<Response<List<UserFileInAlbum>>> addImagesToAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") String[] fileNames);
     @DELETE("{id}/{name}/images")
-    Single<Response<Void>> removeImagesFromAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") List<String> fileNames);
+    Single<Response<List<UserFileInAlbum>>> removeImagesFromAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") String[] fileNames);
     @PUT("{id}/{to}/images")
-    Single<Response<Void>> moveImagesToAlbum(@Path("id") String id, @Path("to") String to, @Path("from") String from, @Query("file-names") List<String> fileNames);
+    Single<Response<List<UserFileInAlbum>>>moveImagesToAlbum(@Path("id") String id, @Path("to") String to, @Query(value = "from", encoded = true) String from, @Query("file-names") String[] fileNames);
     @GET("{id}")
     Single<MasterFileService.QueryResponse<UserFile>> getAlbums(@Path("id") String id,
                                                                @Query("favourite") Boolean favourite,
