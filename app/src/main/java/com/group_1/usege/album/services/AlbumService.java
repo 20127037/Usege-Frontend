@@ -5,11 +5,15 @@ import androidx.annotation.Nullable;
 import com.group_1.usege.library.service.MasterFileService;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
+import com.group_1.usege.model.UserFileInAlbum;
 
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.rxjava3.core.Single;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import retrofit2.Response;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -32,7 +36,7 @@ public interface AlbumService {
     @DELETE("{id}/{name}")
     Single<Response<Void>> deleteAlbum(@Path("id") String id, @Path("name") String name);
     @POST("{id}/{name}/images")
-    Single<Response<Void>> addImagesToAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") List<String> fileNames);
+    Single<Response<List<UserFileInAlbum>>> addImagesToAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") String[] fileNames);
     @DELETE("{id}/{name}/images")
     Single<Response<Void>> removeImagesFromAlbum(@Path("id") String id, @Path("name") String name, @Query("file-names") List<String> fileNames);
     @PUT("{id}/{to}/images")
