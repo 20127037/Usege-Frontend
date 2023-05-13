@@ -46,7 +46,7 @@ public class AlbumImageListFragment extends Fragment {
     public RecyclerView rcvPhoto;
     public CardAdapter cardAdapter;
     public ListAdapter listAdapter;
-    private List<Image> lstVisibleImage;
+    private List<Image> lstVisibleImage = new ArrayList<Image>();
     private UserAlbum album;
     private String albumMode = Album.album_mode_default;
     private String mode;
@@ -68,12 +68,12 @@ public class AlbumImageListFragment extends Fragment {
         AlbumImageListFragment fragment = new AlbumImageListFragment();
         Bundle args = new Bundle();
         UserFileToImage parser = new UserFileToImage();
-//        ArrayImage images = files.stream().map(parser::map).toArray(s -> new Image[s]);
         Image[] images = files.stream().map(parser::map).toArray(Image[]::new);
 
         args.putParcelableArray("files", images);
         args.putParcelable("album", (Parcelable) selectedAlbum);
         args.putSerializable("album_mode", (Serializable) mode);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,19 +85,20 @@ public class AlbumImageListFragment extends Fragment {
         if (getArguments() != null) {
             album = (UserAlbum) getArguments().getParcelable("album");
             Image[] files = (Image[]) getArguments().getParcelableArray("files");
+
             lstVisibleImage.addAll(Arrays.asList(files));
-            if(Objects.equals(album.getName(), "trash")) {
+            if (Objects.equals(album.getName(), "trash")) {
                 albumMode = Album.album_mode_trash;
             }
             mode = (String) getArguments().getSerializable("album_mode");
+            System.out.println("Album mode: "+mode);
             totalPage = lstVisibleImage.size() / countItemInPage + 1;
         }
 
         try {
             context = getActivity();
             libraryActivity = (LibraryActivity) getActivity();
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
     }
@@ -118,7 +119,7 @@ public class AlbumImageListFragment extends Fragment {
         ImageView imageViewMore = layoutImageList.findViewById(R.id.image_view_more);
 
         imageViewMore.setOnClickListener(v -> {
-            if(albumMode == Album.album_mode_trash) {
+            if (albumMode == Album.album_mode_trash) {
                 PopupMenu popupMenu = new PopupMenu(context, v);
                 popupMenu.getMenuInflater().inflate(R.menu.image_selection_album_trash_more_options, popupMenu.getMenu());
 
@@ -182,7 +183,7 @@ public class AlbumImageListFragment extends Fragment {
             popupMenu.show();
         });
 
-        if(albumMode == Album.album_mode_trash) {
+        if (albumMode == Album.album_mode_trash) {
             headerRight.setText("Left time");
         }
 
@@ -199,41 +200,20 @@ public class AlbumImageListFragment extends Fragment {
             }
         });
 
-        //recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode);
-//        recycleAdapter = new RecycleAdapter(album.getAlbumImages(), context, mode, albumMode);
-
-        if(mode == "list") {
+        if (Objects.equals(mode, "list")) {
             listAdapter = new ListAdapter(context, new IClickItemImageListener() {
                 @Override
                 public void onClickItemImage(Image image, int position) {
                     onClickGoToDetails(image, position);
                 }
             }, albumMode);
+            listAdapter.setData(lstVisibleImage);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             rcvPhoto.setLayoutManager(linearLayoutManager);
             rcvPhoto.setAdapter(listAdapter);
 
-            setFirstDataListAdapter();
-            rcvPhoto.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
-                @Override
-                public void loadMoreItems() {
-                    isLoading = true;
 
-                    currentPage += 1;
-                    loadNextPageListAdapter();
-                }
-
-                @Override
-                public Boolean isLoading() {
-                    return isLoading;
-                }
-
-                @Override
-                public Boolean isLastPage() {
-                    return isLastPage;
-                }
-            });
-        } else if (mode == "card") {
+        } else if (Objects.equals(mode, "card")) {
             layoutListTitle.setVisibility(View.GONE);
             cardAdapter = new CardAdapter(context, new IClickItemImageListener() {
                 @Override
@@ -241,30 +221,12 @@ public class AlbumImageListFragment extends Fragment {
                     onClickGoToDetails(image, position);
                 }
             }, albumMode);
+            cardAdapter.setData(lstVisibleImage);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
             rcvPhoto.setLayoutManager(gridLayoutManager);
             rcvPhoto.setAdapter(cardAdapter);
 
-            setFirstDataCardAdapter();
-            rcvPhoto.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
-                @Override
-                public void loadMoreItems() {
-                    isLoading = true;
 
-                    currentPage += 1;
-                    loadNextPageCardAdapter();
-                }
-
-                @Override
-                public Boolean isLoading() {
-                    return isLoading;
-                }
-
-                @Override
-                public Boolean isLastPage() {
-                    return isLastPage;
-                }
-            });
 
             if (context.getClass().equals(LibraryActivity.class)) {
                 Activity activity = (Activity) context;
@@ -287,93 +249,5 @@ public class AlbumImageListFragment extends Fragment {
 //        libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
 
-    /**
-     * Load data page 1
-     */
-    private void setFirstDataListAdapter() {
-        position = 0;
-        lstVisibleImage = getListImage();
-        listAdapter.setData(lstVisibleImage);
 
-        if (currentPage < totalPage) {
-            listAdapter.addFooterLoading();
-            isLastPage = false;
-        } else {
-            isLastPage = true;
-        }
-    }
-
-    private void loadNextPageListAdapter() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                List<Image> images = getListImage();
-
-                listAdapter.removeFooterLoading();
-                lstVisibleImage.addAll(images);
-                listAdapter.notifyDataSetChanged();
-
-                isLoading = false;
-                Log.e("Page", "Current " + currentPage);
-                if (currentPage < totalPage) {
-                    listAdapter.addFooterLoading();
-                    isLastPage = false;
-                } else {
-                    isLastPage = true;
-                }
-            }
-        }, 750);
-
-    }
-
-    private void setFirstDataCardAdapter() {
-        position = 0;
-        lstVisibleImage = getListImage();
-        cardAdapter.setData(lstVisibleImage);
-
-        if (currentPage < totalPage) {
-            cardAdapter.addFooterLoading();
-            isLastPage = false;
-        } else {
-            isLastPage = true;
-        }
-    }
-
-    private void loadNextPageCardAdapter() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                List<Image> images = getListImage();
-
-                cardAdapter.removeFooterLoading();
-                lstVisibleImage.addAll(images);
-                cardAdapter.notifyDataSetChanged();
-
-                isLoading = false;
-                Log.e("Page", "Current " + currentPage);
-                if (currentPage < totalPage) {
-                    cardAdapter.addFooterLoading();
-                    isLastPage = false;
-                } else {
-                    isLastPage = true;
-                }
-            }
-        }, 750);
-
-    }
-
-    private List<Image> getListImage() {
-        Toast.makeText(context, "Load data page " + currentPage, Toast.LENGTH_LONG).show();
-
-        List<Image> images = new ArrayList<>();
-
-        for (int i = 0; i < countItemInPage; i++) {
-            if (position <= lstVisibleImage.size() - 1) {
-                images.add(lstVisibleImage.get(position));
-                position += 1;
-            }
-        }
-
-        return images;
-    }
 }
