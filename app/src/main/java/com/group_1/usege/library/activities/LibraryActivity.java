@@ -466,6 +466,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         imageViewBackward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedImages.clear();
                 createAlbumBottomSheetDialog.dismiss();
             }
         });
@@ -513,6 +514,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
                     .subscribe(this::handleAfterCreateAlbumCall);
             Toast.makeText(this, "Create Album successfully!", Toast.LENGTH_SHORT).show();
+            selectedImages.clear();
         });
     }
 
@@ -524,8 +526,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             System.out.println(String.format("Created album: %s", album.getName()));
         }
     }
-
-
 
     public void clickOpenAlbumImageList(List<UserFile> files, UserAlbum selectedAlbum) {
 //        isOpeningAlbum = album;
@@ -621,12 +621,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                         return;
                     Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    public void deleteAlbum(Album deleteAlbum) {
-        albumList.removeIf(v -> Objects.equals(v.getName(), deleteAlbum.getName()));
-        Toast.makeText(this, "Delete album successfully!", Toast.LENGTH_SHORT).show();
-        triggerAlbumButton();
     }
 
     public void renameAlbum(Album renamedAlbum) {
@@ -906,14 +900,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             clonedImgList = new ArrayList<>(imgList);
         }
 
-//        if (imgList.size() == 0) {
-//            setStatusOfWidgets();
-//            ft = getSupportFragmentManager().beginTransaction();
-//            emptyFragment = EmptyFragment.newInstance(imageMode, true);
-//            ft.replace(R.id.layout_display_images, emptyFragment).commit();
-//            return;
-//        }
-
         if (userInfoRepository.getInfo().getImgCount() == 0){
             ft = getSupportFragmentManager().beginTransaction();
             emptyFragment = EmptyFragment.newInstance(imageMode, true);
@@ -939,24 +925,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
         }
         setStatusOfWidgets();
-
-//        if (displayView.equals("card")) {
-//            imgViewList.setAlpha(0.5F);
-//            imgViewCard.setAlpha(1F);
-//
-//            ft = getSupportFragmentManager().beginTransaction();
-//            imageCardFragment = ImageCardFragment.newInstance(clonedImgList, new ArrayList<Image>(albumList.get(0).getAlbumImages()));
-//            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-//
-//        } else if (displayView.equals("list")) {
-//            imgViewList.setAlpha(1F);
-//            imgViewCard.setAlpha(0.5F);
-//
-//            ft = getSupportFragmentManager().beginTransaction();
-//            imageListFragment = ImageListFragment.newInstance();
-//            ft.replace(R.id.layout_display_images, imageListFragment).commit();
-//
-//        }
     }
 
     public void updateAlbumViewDisplay() {

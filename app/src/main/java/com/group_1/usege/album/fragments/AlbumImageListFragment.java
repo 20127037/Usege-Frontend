@@ -3,6 +3,7 @@ package com.group_1.usege.album.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.os.Handler;
 import android.util.Log;
@@ -22,7 +23,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.album.services.AlbumServiceGenerator;
+import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.library.service.MasterAlbumService;
+import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.CardAdapter;
@@ -39,6 +44,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.core.Single;
+import retrofit2.Response;
+
+@AndroidEntryPoint
 public class AlbumImageListFragment extends Fragment {
     LibraryActivity libraryActivity;
     public int position;
@@ -55,7 +71,7 @@ public class AlbumImageListFragment extends Fragment {
     private Boolean isLastPage = false;
     private int totalPage;
     private int currentPage = 1;
-
+    ImageView backImageView;
     private String albumName = "fake name";
 
     private static final int countItemInPage = 5;
@@ -63,6 +79,13 @@ public class AlbumImageListFragment extends Fragment {
     public AlbumImageListFragment() {
         // Required empty public constructor
     }
+
+    @Inject
+    public AlbumServiceGenerator albumServiceGenerator;
+    @Inject
+    public MasterAlbumServiceGenerator masterAlbumServiceGenerator;
+    @Inject
+    public TokenRepository tokenRepository;
 
     public static AlbumImageListFragment newInstance(List<UserFile> files, UserAlbum selectedAlbum, String mode) {
         AlbumImageListFragment fragment = new AlbumImageListFragment();
@@ -115,7 +138,7 @@ public class AlbumImageListFragment extends Fragment {
         TextView albumNameTextView = layoutImageList.findViewById(R.id.text_view_album_name);
         TextView albumSubtitle = layoutImageList.findViewById(R.id.text_view_album_sub_title);
         TextView headerRight = layoutImageList.findViewById(R.id.layout_header_right);
-        ImageView backImageView = layoutImageList.findViewById(R.id.image_view_backward);
+        backImageView = layoutImageList.findViewById(R.id.image_view_backward);
         ImageView imageViewMore = layoutImageList.findViewById(R.id.image_view_more);
 
         imageViewMore.setOnClickListener(v -> {
@@ -171,10 +194,7 @@ public class AlbumImageListFragment extends Fragment {
                         return true;
                     case R.id.delete_menu_item:
                         // Do something when the "Delete" item is clicked
-                        if (activity instanceof LibraryActivity) {
-                            LibraryActivity libActivity = (LibraryActivity) activity;
-//                            libActivity.deleteAlbum(album);
-                        }
+                        handleDeleteAlbum();
                         return true;
                     default:
                         return false;
@@ -234,7 +254,6 @@ public class AlbumImageListFragment extends Fragment {
                     LibraryActivity libActivity = (LibraryActivity) activity;
                     libActivity.moveToAlbum.setOnClickListener(v -> {
                         System.out.print("clicked move!");
-//                        libActivity.moveToAlbum(album);
                     });
                 }
             }
@@ -244,10 +263,29 @@ public class AlbumImageListFragment extends Fragment {
 
     }
 
+    private void handleDeleteAlbum() {
+        Single<Response<UserAlbum>> deleteAlbumResult = albumServiceGenerator.getService().deleteAlbum(tokenRepository.getToken().getUserId(), album.getName());
+
+        deleteAlbumResult
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe(this::handleAfterDeleteAlbumCall);
+    }
+
+    public  void handleAfterDeleteAlbumCall(Response<UserAlbum> response, Throwable throwable) {
+        if (throwable != null)
+            System.out.println("Delete Album APi  error");
+        else {
+            UserAlbum album = response.body();
+            System.out.println(String.format("Delete album: %s", album.getName()));
+            backImageView.performClick();
+            Toast.makeText(context, "Delete album successfully!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void onClickGoToDetails(Image image, int position) {
         Log.e("P", "P: " + position);
 //        libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
-
 
 }
