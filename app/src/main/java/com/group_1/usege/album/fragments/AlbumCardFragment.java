@@ -21,6 +21,8 @@ import com.group_1.usege.layout.adapter.AlbumAdapter;
 import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.library.service.MasterAlbumService;
 import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
+import com.group_1.usege.library.service.MasterFileService;
+import com.group_1.usege.library.service.MasterFileServiceGenerator;
 import com.group_1.usege.library.service.MasterTrashService;
 import com.group_1.usege.library.service.MasterTrashServiceGenerator;
 import com.group_1.usege.model.Album;
@@ -62,6 +64,8 @@ public class AlbumCardFragment extends Fragment {
     @Inject
     public MasterTrashServiceGenerator masterTrashServiceGeneratior;
     @Inject
+    public MasterFileServiceGenerator masterFileServiceGenerator;
+    @Inject
     public MasterAlbumServiceGenerator masterAlbumServiceGenerator;
     @Inject
     public TokenRepository tokenRepository;
@@ -102,6 +106,12 @@ public class AlbumCardFragment extends Fragment {
                             .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
                             .subscribe((res, err) -> handleAfterCallTrash(res, err, lstAlbum.get(position)));
                 }
+                else if (lstAlbum.get(position).getName().equals("favorite")){
+                    Single<MasterFileService.QueryResponse<UserFile>> results = getFiles();
+                    results.observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                            .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                            .subscribe((res, err) -> handleAfterCallFavorite(res, err, lstAlbum.get(position)));
+                }
                 else {
                     Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(lstAlbum.get(position).getName());
                     results
@@ -131,23 +141,7 @@ public class AlbumCardFragment extends Fragment {
                 }
             }
 
-            private void handleAfterCallTrash(MasterTrashService.QueryResponse<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
-                if (throwable != null)
-                    System.out.println("Get file in album error!");
-                else {
-                    List<UserFile> files = response.getResponse();
-                    System.out.println("File size " + files.size());
 
-                    if (context.getClass().equals(LibraryActivity.class)) {
-                        Activity activity = (Activity) context;
-                        if (activity instanceof LibraryActivity) {
-                            LibraryActivity libActivity = (LibraryActivity) activity;
-                            libActivity.clickOpenAlbumImageList(files, selectedAlbum);
-                            System.out.println("Album size: " + lstAlbum);
-                        }
-                    }
-                }
-            }
         });
 
 
@@ -167,6 +161,42 @@ public class AlbumCardFragment extends Fragment {
             System.out.println("Album size " + albums.size());
             lstAlbum.addAll(albums);
             albumAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void handleAfterCallTrash(MasterTrashService.QueryResponse<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
+        if (throwable != null)
+            System.out.println("Get file in album error!");
+        else {
+            List<UserFile> files = response.getResponse();
+            System.out.println("File size " + files.size());
+
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    libActivity.clickOpenAlbumImageList(files, selectedAlbum);
+                    System.out.println("Album size: " + lstAlbum);
+                }
+            }
+        }
+    }
+
+    private void handleAfterCallFavorite(MasterFileService.QueryResponse<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
+        if (throwable != null)
+            System.out.println("Get file in album error!");
+        else {
+            List<UserFile> files = response.getResponse();
+            System.out.println("File size " + files.size());
+
+            if (context.getClass().equals(LibraryActivity.class)) {
+                Activity activity = (Activity) context;
+                if (activity instanceof LibraryActivity) {
+                    LibraryActivity libActivity = (LibraryActivity) activity;
+                    libActivity.clickOpenAlbumImageList(files, selectedAlbum);
+                    System.out.println("Album size: " + lstAlbum);
+                }
+            }
         }
     }
 
@@ -201,5 +231,11 @@ public class AlbumCardFragment extends Fragment {
         return masterTrashServiceGeneratior
                 .getService()
                 .getTrashFiles(tokenRepository.getToken().getUserId(), LIMIT, null);
+    }
+
+    private Single<MasterFileService.QueryResponse<UserFile>> getFiles() {
+        return masterFileServiceGenerator
+                .getService()
+                .getFiles(tokenRepository.getToken().getUserId(), true, LIMIT, null, null);
     }
 }

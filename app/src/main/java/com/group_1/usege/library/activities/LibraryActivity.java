@@ -142,7 +142,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     };
 
     Album trashBin = albumList.get(1);
-    private String displayView = "list";
+    private String displayView = "card";
     private String mode = imageMode;
     // mode image or album
     private Boolean firstAccess = true;
@@ -223,7 +223,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             imgViewCard.setAlpha((float) 1);
             imgViewList.setEnabled(true);
             imgViewList.setAlpha((float) 0.5);
-            firstAccess = true;
+
             switch (mode) {
                 case imageMode:
                     updateImageViewDisplay();
@@ -243,7 +243,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             imgViewList.setAlpha((float) 1);
             imgViewCard.setEnabled(true);
             imgViewCard.setAlpha((float) 0.5);
-            firstAccess = true;
+
             switch (mode) {
                 case imageMode:
                     updateImageViewDisplay();
@@ -532,9 +532,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     public void clickOpenAlbumImageList(List<UserFile> files, UserAlbum selectedAlbum) {
 //        isOpeningAlbum = album;
         mode = imageInAlbumMode;
-        if(selectedAlbum.getName() != "favorite" && selectedAlbum.getName() != "trash") {
-            layoutLibFunctions.setVisibility(View.GONE);
-        }
+        layoutLibFunctions.setVisibility(View.GONE);
+//        if(selectedAlbum.getName() != "favorite" && selectedAlbum.getName() != "trash") {
+//            layoutLibFunctions.setVisibility(View.GONE);
+//        }
         if (files.size() > 0) {
             ft = getSupportFragmentManager().beginTransaction();
             currentImagesInAlbum = files;
