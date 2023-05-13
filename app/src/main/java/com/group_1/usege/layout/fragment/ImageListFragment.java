@@ -6,16 +6,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
 import com.group_1.usege.authen.repository.TokenRepository;
+import com.group_1.usege.library.adapter.ImagesAdapter;
 import com.group_1.usege.library.adapter.SimpleImagesAdapter;
 import com.group_1.usege.library.paging.PagingProvider;
 import com.group_1.usege.library.service.MasterFileService;
@@ -37,34 +44,12 @@ import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.core.Single;
 
-@AndroidEntryPoint
-public class ImageListFragment extends Fragment {
 
-    @Inject
-    public TokenRepository tokenRepository;
-    @Inject
-    @ActivityModule.SmallPlaceHolder
-    public RequestManager requestManager;
-    @Inject
-    public ImageComparator comparator;
-    @Inject
-    public LoadStateAdapter loadStateAdapter;
-    @Inject
-    public MasterFileServiceGenerator masterFileServiceGenerator;
-    private static final int SPAN_COUNT = 3;
-    private final PagingProvider<Map<String,String>, MasterFileService.QueryResponse<UserFile>> defaultProvider = this::paging;
-    private SimpleImagesAdapter imageAdapter;
-    private UsegeImageViewModel mainViewModel;
-    private ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver;
-    private RecyclerView rcvPhoto;
+@AndroidEntryPoint
+public class ImageListFragment extends ImageCollectionFragment<ImageListFragment.ViewHolder> {
+
     public ImageListFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        viewDetailsSignalReceiver = (ViewDetailsSignalByItemReceiver<Image>)context;
     }
 
     public static ImageListFragment newInstance() {
@@ -72,43 +57,66 @@ public class ImageListFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public ImagesAdapter<ViewHolder> provideImageAdapter() {
+        return new Adapter(comparator, requestManager, viewDetailsSignalReceiver);
+    }
 
-        if (getArguments() != null) {
-            imageAdapter = new SimpleImagesAdapter(comparator, requestManager, viewDetailsSignalReceiver);
-            mainViewModel = new ViewModelProvider(this).get(UsegeImageViewModel.class);
-            mainViewModel.init(defaultProvider);
+    @Override
+    public RecyclerView.LayoutManager provideLayoutManager() {
+        return new LinearLayoutManager(getContext());
+    }
+
+    @Override
+    public int provideLayout() {
+        return R.layout.fragment_image_list;
+    }
+
+    public static class Adapter  extends ImagesAdapter<ImageListFragment.ViewHolder>
+    {
+
+        public Adapter(@NonNull DiffUtil.ItemCallback<Image> diffCallback,
+                                   RequestManager glide,
+                                   ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver) {
+            super(diffCallback, glide, viewDetailsSignalReceiver);
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.layout_item_list, parent, false);
+            return new ViewHolder(view);
         }
     }
 
+    public static class ViewHolder extends ImagesAdapter.ImageViewHolder
+    {
+        TextView description;
+        public ViewHolder(@NonNull View view) {
+            super(view);
+            description = view.findViewById(R.id.text_view_description);
+            layoutContainer = view.findViewById(R.id.layout_item_list);
+        }
 
+        @Override
+        public void bind(Image img, RequestManager glide, ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver)
+        {
+            super.bind(img, glide, viewDetailsSignalReceiver);
+            setUpDescription(img.getDescription());
+        }
+        public String setUpDescription(String curDescription) {
+            String newDescription = "";
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            if (curDescription != null) {
+                newDescription = curDescription;
 
-        LinearLayout layoutImageList = (LinearLayout) inflater.inflate(R.layout.fragment_image_list, null);
-        rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
-        //set recyclerview and adapter
-        // Subscribe to to paging data
-        initRecyclerviewAndAdapter(rcvPhoto);
-        mainViewModel.getImagePagingDataFlowable()
-                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
-                .subscribe(imagePagingData -> imageAdapter.submitData(getLifecycle(), imagePagingData));
-        return layoutImageList;
-    }
+                if (curDescription.length() > 16) {
+                    newDescription = curDescription.substring(0, 16);
+                    newDescription += "...";
+                }
+            }
 
-
-    public void initRecyclerviewAndAdapter(RecyclerView recyclerView) {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), SPAN_COUNT);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setAdapter(imageAdapter.withLoadStateFooter(loadStateAdapter));
-    }
-
-    private Single<MasterFileService.QueryResponse<UserFile>> paging(Map<String, String> page) {
-        return masterFileServiceGenerator
-                .getService()
-                .getFiles(tokenRepository.getToken().getUserId(), false, UsegeImageViewModel.PAGE_SIZE, null, page);
+            return newDescription;
+        }
     }
 }

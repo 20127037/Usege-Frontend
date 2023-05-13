@@ -44,7 +44,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.group_1.usege.R;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
 import com.group_1.usege.api.apiservice.FileServiceGenerator;
-import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.dto.ImageDto;
 import com.group_1.usege.dto.LoadFileRequestDto;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
@@ -519,7 +518,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         if (Objects.equals(displayView, "card")) {
             ft = getSupportFragmentManager().beginTransaction();
             List<Image> favoriteImgList = albumList.get(0).getAlbumImages();
-            imageCardFragment = ImageCardFragment.newInstance(imgList, favoriteImgList);
+            imageCardFragment = ImageCardFragment.newInstance();
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();
@@ -842,7 +841,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
             imgViewCard.setAlpha(1F);
 
             ft = getSupportFragmentManager().beginTransaction();
-            imageCardFragment = ImageCardFragment.newInstance(clonedImgList, new ArrayList<Image>(albumList.get(0).getAlbumImages()));
+            imageCardFragment = ImageCardFragment.newInstance();
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
 
         } else if (displayView.equals("list")) {
@@ -1272,10 +1271,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (imageCardFragment.cardAdapter != null) {
-            imageCardFragment.cardAdapter.release();
-            //imageListFragment.listAdapter.release();
-        }
+//        if (imageCardFragment.cardAdapter != null) {
+//            imageCardFragment.cardAdapter.release();
+//            //imageListFragment.listAdapter.release();
+//        }
     }
 
     public void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
