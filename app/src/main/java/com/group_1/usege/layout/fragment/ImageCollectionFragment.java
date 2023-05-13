@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,7 +58,6 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
     protected UsegeImageViewModel mainViewModel;
     protected ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> clickItemReceiver;
     protected LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> longClickItemReceiver;
-    private RecyclerView rcvPhoto;
     LibraryActivity libraryActivity;
 
     public ImageCollectionFragment() {
@@ -84,14 +85,7 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
         imageAdapter = provideImageAdapter();
         mainViewModel = new ViewModelProvider(this).get(UsegeImageViewModel.class);
         mainViewModel.init(defaultProvider);
-
         libraryActivity = (LibraryActivity) getActivity();
-//        imageAdapter.setOnClickListener(new ImagesAdapter.OnClickListener() {
-//            @Override
-//            public void onItemClick(Image image, int position) {
-//                libraryActivity.sendAndReceiveImage(image, position);
-//            }
-//        });
     }
 
     @Override
@@ -99,21 +93,21 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
                              Bundle savedInstanceState) {
 
         View layoutImageList = inflater.inflate(provideLayout(), null);
-        rcvPhoto = layoutImageList.findViewById(R.id.rcv_photo);
-        //set recyclerview and adapter
-        // Subscribe to to paging data
-        initRecyclerviewAndAdapter(rcvPhoto);
-        mainViewModel.getImagePagingDataFlowable()
-                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
-                .subscribe(imagePagingData -> imageAdapter.submitData(getLifecycle(), imagePagingData));
+        attachViewModelToAdapter(layoutImageList, R.id.rcv_photo, mainViewModel, imageAdapter);
         return layoutImageList;
     }
 
-
-    public void initRecyclerviewAndAdapter(RecyclerView recyclerView) {
-        //GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), SPAN_COUNT);
-        recyclerView.setLayoutManager(provideLayoutManager());
-        recyclerView.setAdapter(imageAdapter.withLoadStateFooter(loadStateAdapter));
+    public  void attachViewModelToAdapter(View layoutImageList, @IdRes int recycleId,
+                                         UsegeImageViewModel viewModel, ImagesAdapter<S> adapter)
+    {
+        RecyclerView rcvPhoto = layoutImageList.findViewById(recycleId);
+        //set recyclerview and adapter
+        // Subscribe to to paging data
+        rcvPhoto.setLayoutManager(provideLayoutManager());
+        rcvPhoto.setAdapter(adapter.withLoadStateFooter(loadStateAdapter));
+        viewModel.getImagePagingDataFlowable()
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
+                .subscribe(imagePagingData -> adapter.submitData(getLifecycle(), imagePagingData));
     }
 
     private Single<MasterFileService.QueryResponse<UserFile>> paging(Map<String, String> page) {
