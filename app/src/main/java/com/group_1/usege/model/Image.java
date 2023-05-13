@@ -30,6 +30,8 @@ public class Image implements Parcelable {
     private Uri uri;
     private Uri smallUri;
 
+    private int remainedDay;
+
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override
         public Image createFromParcel(Parcel in) {
@@ -82,6 +84,7 @@ public class Image implements Parcelable {
         smallUri = in.readParcelable(Uri.class.getClassLoader());
         tags = new ArrayList<>();
         in.readList(tags, null);
+        remainedDay = in.readInt();
     }
 
     @Override
@@ -99,5 +102,6 @@ public class Image implements Parcelable {
         dest.writeParcelable(uri, flags);
         dest.writeParcelable(smallUri, flags);
         dest.writeList(tags);
+        dest.writeInt(remainedDay);
     }
 }

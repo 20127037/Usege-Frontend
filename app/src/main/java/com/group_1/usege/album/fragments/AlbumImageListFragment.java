@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,17 +11,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavType;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group_1.usege.R;
+import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.library.activities.LibraryActivity;
+import com.group_1.usege.library.service.MasterTrashService;
+import com.group_1.usege.library.service.MasterTrashServiceGenerator;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.CardAdapter;
@@ -30,7 +30,6 @@ import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
-import com.group_1.usege.pagination.PaginationScrollListener;
 import com.group_1.usege.utilities.mappers.UserFileToImage;
 
 import java.io.Serializable;
@@ -39,7 +38,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import io.reactivex.rxjava3.core.Single;
+
 public class AlbumImageListFragment extends Fragment {
+
+
     LibraryActivity libraryActivity;
     public int position;
 
@@ -185,6 +190,7 @@ public class AlbumImageListFragment extends Fragment {
 
         if (albumMode == Album.album_mode_trash) {
             headerRight.setText("Left time");
+
         }
 
         albumNameTextView.setText(albumName);
@@ -244,9 +250,10 @@ public class AlbumImageListFragment extends Fragment {
 
     }
 
+
+
     private void onClickGoToDetails(Image image, int position) {
-        Log.e("P", "P: " + position);
-//        libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
+       // libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
 
 
