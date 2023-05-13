@@ -74,6 +74,7 @@ import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
+import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,10 +92,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
-
-    @Inject
-    public TokenRepository tokenRepository;
+public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> implements ViewDetailsSignalByItemReceiver<Image> {
     Context context = this;
     DrawerLayout rootDrawerLayout;
     FragmentTransaction ft;
@@ -1281,6 +1279,11 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         userInfoRepository.setInfo(body);
 
         updateImageViewDisplay();
+    }
+
+    @Override
+    public void view(Image item) {
+
     }
 
     public class GetInformationThread extends Thread {
