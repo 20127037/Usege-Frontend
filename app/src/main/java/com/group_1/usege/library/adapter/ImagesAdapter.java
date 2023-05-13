@@ -53,8 +53,8 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
         // Define movie_item layout view binding
-        private final ImageView imgView;
-        private final ViewGroup layoutContainer;
+        protected final ImageView imgView;
+        protected  ViewGroup layoutContainer;
 
         public ImageViewHolder(@NonNull View view) {
             super(view);

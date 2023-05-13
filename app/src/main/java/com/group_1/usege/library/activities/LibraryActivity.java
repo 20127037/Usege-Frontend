@@ -569,7 +569,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
         if (Objects.equals(displayView, "card")) {
             ft = getSupportFragmentManager().beginTransaction();
             List<Image> favoriteImgList = albumList.get(0).getAlbumImages();
-            imageCardFragment = ImageCardFragment.newInstance(imgList, favoriteImgList);
+            imageCardFragment = ImageCardFragment.newInstance();
             ft.replace(R.id.layout_display_images, imageCardFragment).commit();
         } else {
             ft = getSupportFragmentManager().beginTransaction();
@@ -1346,10 +1346,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (imageCardFragment.cardAdapter != null) {
-            imageCardFragment.cardAdapter.release();
-            //imageListFragment.listAdapter.release();
-        }
+//        if (imageCardFragment.cardAdapter != null) {
+//            imageCardFragment.cardAdapter.release();
+//            //imageListFragment.listAdapter.release();
+//        }
     }
 
     public void selectSingleImageAndOpenBottomMenuIfNotYet(Image image) {
