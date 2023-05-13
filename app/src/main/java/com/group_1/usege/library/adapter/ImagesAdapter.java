@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
+import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByIdReceiver;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
@@ -45,13 +46,9 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
         if (currentImg != null) {
             holder.bind(currentImg, glide, viewDetailsSignalReceiver);
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mListener != null) {
-                        mListener.onItemClick(currentImg, position);
-                    }
-                }
+            holder.itemView.setOnClickListener(v -> {
+                mListener.onItemClick(currentImg, position);
+
             });
         }
     }

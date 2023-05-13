@@ -1254,12 +1254,12 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
                 case DELETE_IMAGE: {
                     // delete image
-                    imgList.remove(position);
+                    //imgList.remove(position);
 
                     //List<Image> lstdeletedImage = new ArrayList<>();
                     //lstdeletedImage.add(selectedImage);
-                    trashBin.getAlbumImages().add(selectedImage);
-
+                    //trashBin.getAlbumImages().add(selectedImage);
+                    deleteImages(selectedImages.stream().map(Image::getId).toArray(String[]::new));
                     updateImageViewDisplay();
 
                     break;
