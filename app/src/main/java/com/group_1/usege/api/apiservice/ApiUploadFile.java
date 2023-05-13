@@ -34,7 +34,7 @@ public class ApiUploadFile {
         this.fileServiceGenerator = fileServiceGenerator;
     }
 
-    public void callApiUploadFile() {
+    public void callApiUploadFile(Runnable callback) {
 
 ////        tokenHttpClient.addInterceptor(chain -> {
 ////            Request original = chain.request();
@@ -74,12 +74,14 @@ public class ApiUploadFile {
             public void onResponse(Call<UserFile> call, Response<UserFile> response) {
 //                Toast.makeText(context, "Call API Successfully", Toast.LENGTH_LONG).show();
                 System.out.println("Call API Successfully");
+                callback.run();
             }
 
             @Override
             public void onFailure(Call<UserFile> call, Throwable t) {
                 //Toast.makeText(context, "Call API Fail", Toast.LENGTH_LONG).show();
                 System.out.println("Call API Failure");
+                callback.run();
             }
         });
 

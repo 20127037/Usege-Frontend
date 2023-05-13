@@ -28,3 +28,4 @@ public class UsegeImageViewModel extends ImageViewModel<Map<String,String>, Mast
                 });
     }
 }
+
