@@ -2,7 +2,6 @@ package com.group_1.usege.library.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +10,11 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,7 +30,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -45,9 +42,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.navigation.NavigationView;
 import com.group_1.usege.R;
-import com.group_1.usege.account.dto.CreateAccountRequestDto;
+import com.group_1.usege.album.fragments.AlbumCardFragment;
+import com.group_1.usege.album.fragments.AlbumImageListFragment;
+import com.group_1.usege.album.fragments.AlbumListFragment;
 import com.group_1.usege.album.services.AlbumServiceGenerator;
 import com.group_1.usege.api.apiservice.ApiUploadFile;
 import com.group_1.usege.api.apiservice.FileServiceGenerator;
@@ -55,30 +53,25 @@ import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.dto.ImageDto;
 import com.group_1.usege.dto.LoadFileRequestDto;
 import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
-import com.group_1.usege.album.fragments.AlbumCardFragment;
-import com.group_1.usege.album.fragments.AlbumImageListFragment;
-import com.group_1.usege.album.fragments.AlbumListFragment;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
+import com.group_1.usege.library.adapter.ImagesAdapter;
 import com.group_1.usege.library.fragment.EmptyAlbumFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.library.fragment.EmptyFragment;
-import com.group_1.usege.library.service.MasterAlbumService;
+import com.group_1.usege.library.service.TrashServiceGenerator;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.model.UserAlbum;
-import com.group_1.usege.model.UserFile;
 import com.group_1.usege.realPath.RealPathUtil;
-import com.group_1.usege.userInfo.activities.UserPlanActivity;
-import com.group_1.usege.userInfo.activities.UserStatisticActivity;
 import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
-import com.group_1.usege.utilities.activities.ActivityUtilities;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
+import com.group_1.usege.utilities.interfaces.ClickItemReceiver;
+import com.group_1.usege.utilities.interfaces.LongClickItemReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,11 +89,13 @@ import javax.inject.Inject;
 import autodispose2.AutoDispose;
 import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import retrofit2.Response;
 
 @AndroidEntryPoint
-public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> implements ViewDetailsSignalByItemReceiver<Image> {
+public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> implements
+        ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder>, LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> {
     Context context = this;
     DrawerLayout rootDrawerLayout;
     FragmentTransaction ft;
@@ -116,6 +111,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     public UserInfoRepository userInfoRepository;
     @Inject
     public FileServiceGenerator fileServiceGenerator;
+    @Inject
+    public TrashServiceGenerator trashServiceGenerator;
     EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
     EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
@@ -165,48 +162,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        ft = getSupportFragmentManager().beginTransaction();
-//        emptyFragment = EmptyFragment.newInstance(mode, false);
-//        ft.replace(R.id.layout_display_images, emptyFragment).commit();
-        // handle toggle Menu
-        DrawerLayout drawerLayout = findViewById(R.id.root_drawer_layout);
-        NavigationView rootNavigationView = findViewById(R.id.root_navigation_view);
-        rootNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Do something when a menu item is clicked
-                switch (item.getItemId()) {
-//                            case R.id.nav_library:
-//                                // Handle menu item 1 click
-//                                ActivityUtilities.TransitActivity((Activity) context, LibraryActivity.class);
-//                                break;
-//                            case R.id.nav_external_library:
-//                                // Handle menu item 2 click
-////                                intentSettings = new Intent(LibraryActivity.this, OnlineLibraryActivity.class);
-////                                startActivity(intentSettings);
-//                                break;
-                    case R.id.nav_plan:
-                        // Handle menu item 2 click
-                        ActivityUtilities.TransitActivity((Activity) context, UserPlanActivity.class);
-                        break;
-                    case R.id.nav_statistic:
-                        // Handle menu item 2 click
-                        ActivityUtilities.TransitActivity((Activity) context, UserStatisticActivity.class);
-                        break;
-                    // Add more cases for other menu items as needed
-                }
-                return false;
-            }
-        });
-        ImageView rootMenuImageView = findViewById(R.id.root_menu_image_view);
-        rootMenuImageView.setOnClickListener(v -> {
-            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-
+        ft = getSupportFragmentManager().beginTransaction();
+        emptyFragment = EmptyFragment.newInstance(mode, false);
+        ft.replace(R.id.layout_display_images, emptyFragment).commit();
 
         imageDisplayLayout = findViewById(R.id.layout_display_images);
         imgViewCard = findViewById(R.id.icon_card);
@@ -586,17 +544,66 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         albumButton.callOnClick();
     }
 
+
+    private void deleteImages(String[] fileNames)
+    {
+        trashServiceGenerator.getService()
+                .deleteFiles(tokenRepository.getToken().getUserId(), fileNames)
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                });
+    }
+
+    private void restoreImagesFromTrash(String[] fileNames)
+    {
+        trashServiceGenerator.getService()
+                .restoreFiles(tokenRepository.getToken().getUserId(), fileNames)
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                });
+    }
+
     public void restoreAllTrash() {
-        imgList.addAll(new ArrayList<Image>(albumList.get(1).getAlbumImages()));
-        albumList.get(1).getAlbumImages().clear();
-//        clickOpenAlbumImageList(albumList.get(1));
-        Toast.makeText(context, "Restore all image successfully!", Toast.LENGTH_SHORT).show();
+        trashServiceGenerator.getService()
+                .restoreAllFiles(tokenRepository.getToken().getUserId())
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                    Toast.makeText(context, "Restore all image successfully!", Toast.LENGTH_SHORT).show();
+
+                });
+    }
+
+    private void clearImagesFromTrash(String[] fileNames)
+    {
+        trashServiceGenerator.getService()
+                .clearFiles(tokenRepository.getToken().getUserId(), fileNames)
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                });
     }
 
     public void clearTrash() {
-        albumList.get(1).getAlbumImages().clear();
-//        clickOpenAlbumImageList(albumList.get(1));
-        Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
+        trashServiceGenerator.getService()
+                .clearAllFiles(tokenRepository.getToken().getUserId())
+                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                .subscribe((res, err) -> {
+                    if (err != null || !res.isSuccessful())
+                        return;
+                    Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
+                });
     }
 
     public void deleteAlbum(Album deleteAlbum) {
@@ -1250,12 +1257,12 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
                 case DELETE_IMAGE: {
                     // delete image
-                    imgList.remove(position);
+                    //imgList.remove(position);
 
                     //List<Image> lstdeletedImage = new ArrayList<>();
                     //lstdeletedImage.add(selectedImage);
-                    trashBin.getAlbumImages().add(selectedImage);
-
+                    //trashBin.getAlbumImages().add(selectedImage);
+                    deleteImages(selectedImages.stream().map(Image::getId).toArray(String[]::new));
                     updateImageViewDisplay();
 
                     break;
@@ -1285,10 +1292,36 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         updateImageViewDisplay();
     }
 
-    @Override
-    public void view(Image item) {
 
+    @Override
+    public void view(Image item, ImagesAdapter.ImageViewHolder viewHolder, int pos) {
+        viewHolder.getImgView().setOnClickListener(v -> {
+            ImageView imageView = (ImageView) v;
+            if (imageView.getColorFilter() != null) {
+                // FOR UI
+                imageView.clearColorFilter();
+                // FOR LOGIC
+                removeSingleImageAndRemoveBottomMenuIfNoImageLeft(item);
+            } else {
+                sendAndReceiveImage(item, pos);
+            }
+        });
     }
+
+    @Override
+    public void longView(Image item, ImagesAdapter.ImageViewHolder viewHolder, int pos) {
+        viewHolder.getImgView().setOnLongClickListener(v -> {
+            ImageView imageView = (ImageView) v;
+            if (imageView.getColorFilter() == null) {
+                // FOR UI
+                imageView.setColorFilter(ContextCompat.getColor(context, R.color.chosen_image));
+                // FOR LOGIC
+                selectSingleImageAndOpenBottomMenuIfNotYet(item);
+            }
+            return true;
+        });
+    }
+
 
     public class GetInformationThread extends Thread {
         private Image image;
@@ -1495,8 +1528,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     }
 
     public void deleteImages(View v) {
-        trashBin.getAlbumImages().addAll(selectedImages);
-        imgList.removeAll(selectedImages);
+        deleteImages(selectedImages.stream().map(Image::getId).toArray(String[]::new));
+        //trashBin.getAlbumImages().addAll(selectedImages);
+        //imgList.removeAll(selectedImages);
         selectedImages.clear();
         bottomMenu.setVisibility(View.GONE);
         updateImageViewDisplay();

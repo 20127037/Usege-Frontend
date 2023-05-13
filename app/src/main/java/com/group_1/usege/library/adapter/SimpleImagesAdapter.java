@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
 import com.group_1.usege.model.Image;
+import com.group_1.usege.utilities.interfaces.ClickItemReceiver;
+import com.group_1.usege.utilities.interfaces.LongClickItemReceiver;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByIdReceiver;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 
@@ -19,8 +21,9 @@ import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 public class SimpleImagesAdapter extends ImagesAdapter<ImagesAdapter.ImageViewHolder> {
     public SimpleImagesAdapter(@NonNull DiffUtil.ItemCallback<Image> diffCallback,
                                RequestManager glide,
-                               ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver) {
-        super(diffCallback, glide, viewDetailsSignalReceiver);
+                               ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> viewDetailsSignalReceiver,
+                               LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> longClickItemReceiver) {
+        super(diffCallback, glide, viewDetailsSignalReceiver, longClickItemReceiver);
     }
 
     @NonNull

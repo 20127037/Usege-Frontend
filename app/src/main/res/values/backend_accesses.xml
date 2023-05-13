@@ -12,4 +12,5 @@
     <string name="service_payment">payment</string>
     <string name="service_file">file</string>
     <string name="service_album">album</string>
+    <string name="service_trash">trash</string>
 </resources>
