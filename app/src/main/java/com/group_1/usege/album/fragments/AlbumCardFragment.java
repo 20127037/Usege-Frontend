@@ -1,5 +1,6 @@
 package com.group_1.usege.album.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.group_1.usege.R;
 import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.layout.adapter.AlbumAdapter;
+import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.library.service.MasterAlbumService;
 import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
 import com.group_1.usege.model.Album;
@@ -95,15 +97,24 @@ public class AlbumCardFragment extends Fragment {
                 results
                         .observeOn(AndroidSchedulers.from(Looper.myLooper()))
                         .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
-                        .subscribe(this::handleAfterCall);
+                        .subscribe((res, err) -> handleAfterCall(res, err, lstAlbum.get(position)));
             }
 
-            private void handleAfterCall(MasterAlbumService.QueryResponse2<UserFile> response, Throwable throwable) {
+            private void handleAfterCall(MasterAlbumService.QueryResponse2<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
                 if (throwable != null)
                     System.out.println("Get file in album error!");
                 else {
                     List<UserFile> files = response.getResponse();
                     System.out.println("File size " + files.size());
+
+                    if (context.getClass().equals(LibraryActivity.class)) {
+                        Activity activity = (Activity) context;
+                        if (activity instanceof LibraryActivity) {
+                            LibraryActivity libActivity = (LibraryActivity) activity;
+                            libActivity.clickOpenAlbumImageList(files, selectedAlbum);
+                            System.out.println("Album size: " + lstAlbum);
+                        }
+                    }
                 }
             }
         });

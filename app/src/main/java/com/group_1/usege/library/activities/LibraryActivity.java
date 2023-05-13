@@ -554,21 +554,21 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
 
 
-    public void clickOpenAlbumImageList(UserAlbum album) {
+    public void clickOpenAlbumImageList(List<UserFile> files, UserAlbum selectedAlbum) {
 //        isOpeningAlbum = album;
-//        mode = imageInAlbumMode;
-//        if(album.getName() != "favorite" && album.getName() != "trash") {
-//        layoutLibFunctions.setVisibility(View.GONE);
-//        }
-//        if (album.getAlbumImages().size() > 0) {
-//            ft = getSupportFragmentManager().beginTransaction();
-//            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(album, displayView);
-//            ft.replace(R.id.layout_display_images, albumImagesList).commit();
-//        } else {
-//            ft = getSupportFragmentManager().beginTransaction();
-//            EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
-//            ft.replace(R.id.layout_display_images, emptyFragment).commit();
-//        }
+        mode = imageInAlbumMode;
+        if(selectedAlbum.getName() != "favorite" && selectedAlbum.getName() != "trash") {
+            layoutLibFunctions.setVisibility(View.GONE);
+        }
+        if (files.size() > 0) {
+            ft = getSupportFragmentManager().beginTransaction();
+            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(files, selectedAlbum, mode);
+            ft.replace(R.id.layout_display_images, albumImagesList).commit();
+        } else {
+            ft = getSupportFragmentManager().beginTransaction();
+            EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
+            ft.replace(R.id.layout_display_images, emptyFragment).commit();
+        }
     }
 
     public void setShowLayoutLibFuntions() {
@@ -957,13 +957,13 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         if (isOpeningAlbum.getAlbumImages().size() > 0) {
 
             if (Objects.equals(displayView, "card")) {
-                ft = getSupportFragmentManager().beginTransaction();
-                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "card");
-                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+//                ft = getSupportFragmentManager().beginTransaction();
+//                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "card");
+//                ft.replace(R.id.layout_display_images, albumImagesList).commit();
             } else {
-                ft = getSupportFragmentManager().beginTransaction();
-                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "list");
-                ft.replace(R.id.layout_display_images, albumImagesList).commit();
+//                ft = getSupportFragmentManager().beginTransaction();
+//                AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(isOpeningAlbum, "list");
+//                ft.replace(R.id.layout_display_images, albumImagesList).commit();
             }
         } else {
             ft = getSupportFragmentManager().beginTransaction();
