@@ -32,6 +32,8 @@ import com.group_1.usege.library.viewModel.UsegeImageViewModel;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.model.UserFile;
 import com.group_1.usege.utilities.adapter.LoadStateAdapter;
+import com.group_1.usege.utilities.interfaces.ClickItemReceiver;
+import com.group_1.usege.utilities.interfaces.LongClickItemReceiver;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 import com.group_1.usege.utilities.modules.ActivityModule;
 
@@ -58,7 +60,7 @@ public class ImageListFragment extends ImageCollectionFragment<ImageListFragment
 
     @Override
     public ImagesAdapter<ViewHolder> provideImageAdapter() {
-        return new Adapter(comparator, requestManager, viewDetailsSignalReceiver);
+        return new Adapter(comparator, requestManager, clickItemReceiver, longClickItemReceiver);
     }
 
     @Override
@@ -71,13 +73,14 @@ public class ImageListFragment extends ImageCollectionFragment<ImageListFragment
         return R.layout.fragment_image_list;
     }
 
-    public static class Adapter  extends ImagesAdapter<ImageListFragment.ViewHolder>
+    public static class Adapter extends ImagesAdapter<ImageListFragment.ViewHolder>
     {
 
         public Adapter(@NonNull DiffUtil.ItemCallback<Image> diffCallback,
                                    RequestManager glide,
-                                   ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver) {
-            super(diffCallback, glide, viewDetailsSignalReceiver);
+                                   ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> clickItemReceiver,
+                       LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> longClickItemReceiver) {
+            super(diffCallback, glide, clickItemReceiver, longClickItemReceiver);
         }
 
         @NonNull
@@ -99,9 +102,12 @@ public class ImageListFragment extends ImageCollectionFragment<ImageListFragment
         }
 
         @Override
-        public void bind(Image img, RequestManager glide, ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver)
+        public void bind(Image img, RequestManager glide,
+                         ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> viewDetailsSignalReceiver,
+                         LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> longClickItemReceiver,
+                         int pos)
         {
-            super.bind(img, glide, viewDetailsSignalReceiver);
+            super.bind(img, glide, viewDetailsSignalReceiver, longClickItemReceiver, pos);
             setUpDescription(img.getDescription());
         }
         public String setUpDescription(String curDescription) {

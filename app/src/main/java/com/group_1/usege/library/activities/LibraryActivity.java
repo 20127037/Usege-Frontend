@@ -56,6 +56,7 @@ import com.group_1.usege.layout.adapter.AlbumRadioAdapter;
 import com.group_1.usege.layout.fragment.EmptyFilteringResultFragment;
 import com.group_1.usege.layout.fragment.ImageCardFragment;
 import com.group_1.usege.layout.fragment.ImageListFragment;
+import com.group_1.usege.library.adapter.ImagesAdapter;
 import com.group_1.usege.library.fragment.EmptyAlbumFragment;
 import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.library.fragment.EmptyFragment;
@@ -69,7 +70,8 @@ import com.group_1.usege.userInfo.model.UserInfo;
 import com.group_1.usege.userInfo.repository.UserInfoRepository;
 import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
-import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
+import com.group_1.usege.utilities.interfaces.ClickItemReceiver;
+import com.group_1.usege.utilities.interfaces.LongClickItemReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +94,8 @@ import io.reactivex.rxjava3.core.Single;
 import retrofit2.Response;
 
 @AndroidEntryPoint
-public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> implements ViewDetailsSignalByItemReceiver<Image> {
+public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> implements
+        ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder>, LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> {
     Context context = this;
     DrawerLayout rootDrawerLayout;
     FragmentTransaction ft;
@@ -1289,10 +1292,17 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         updateImageViewDisplay();
     }
 
+
     @Override
-    public void view(Image item) {
+    public void view(Image item, ImagesAdapter.ImageViewHolder viewHolder, int pos) {
 
     }
+
+    @Override
+    public void longView(Image item, ImagesAdapter.ImageViewHolder viewHolder, int pos) {
+
+    }
+
 
     public class GetInformationThread extends Thread {
         private Image image;

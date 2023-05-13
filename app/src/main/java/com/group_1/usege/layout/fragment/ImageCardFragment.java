@@ -49,7 +49,7 @@ public class ImageCardFragment  extends ImageCollectionFragment<ImagesAdapter.Im
 
     @Override
     public ImagesAdapter<ImagesAdapter.ImageViewHolder> provideImageAdapter() {
-        return new SimpleImagesAdapter(comparator, requestManager, viewDetailsSignalReceiver);
+        return new SimpleImagesAdapter(comparator, requestManager, clickItemReceiver, longClickItemReceiver);
     }
 
     @Override

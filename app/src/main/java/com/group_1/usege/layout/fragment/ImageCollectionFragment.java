@@ -25,6 +25,8 @@ import com.group_1.usege.library.viewModel.UsegeImageViewModel;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.model.UserFile;
 import com.group_1.usege.utilities.adapter.LoadStateAdapter;
+import com.group_1.usege.utilities.interfaces.ClickItemReceiver;
+import com.group_1.usege.utilities.interfaces.LongClickItemReceiver;
 import com.group_1.usege.utilities.interfaces.ViewDetailsSignalByItemReceiver;
 import com.group_1.usege.utilities.modules.ActivityModule;
 
@@ -52,7 +54,8 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
     protected final PagingProvider<Map<String, String>, MasterFileService.QueryResponse<UserFile>> defaultProvider = this::paging;
     protected ImagesAdapter<S> imageAdapter;
     protected UsegeImageViewModel mainViewModel;
-    protected ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver;
+    protected ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> clickItemReceiver;
+    protected LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder> longClickItemReceiver;
     private RecyclerView rcvPhoto;
     LibraryActivity libraryActivity;
 
@@ -63,7 +66,8 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        viewDetailsSignalReceiver = (ViewDetailsSignalByItemReceiver<Image>) context;
+        clickItemReceiver = (ClickItemReceiver<Image, ImagesAdapter.ImageViewHolder>) context;
+        longClickItemReceiver = (LongClickItemReceiver<Image, ImagesAdapter.ImageViewHolder>) context;
     }
 
 
@@ -82,12 +86,12 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
         mainViewModel.init(defaultProvider);
 
         libraryActivity = (LibraryActivity) getActivity();
-        imageAdapter.setOnClickListener(new ImagesAdapter.OnClickListener() {
-            @Override
-            public void onItemClick(Image image, int position) {
-                libraryActivity.sendAndReceiveImage(image, position);
-            }
-        });
+//        imageAdapter.setOnClickListener(new ImagesAdapter.OnClickListener() {
+//            @Override
+//            public void onItemClick(Image image, int position) {
+//                libraryActivity.sendAndReceiveImage(image, position);
+//            }
+//        });
     }
 
     @Override
