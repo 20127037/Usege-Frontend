@@ -212,7 +212,7 @@ public class ImageActivity extends AppCompatActivity {
         if (datetime != null && datetime.length() > 0) {
             Date date = new Date();
             // Chuyển String thành Date
-            SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
             try {
                 date = format.parse(datetime);
             } catch (ParseException e) {

@@ -33,6 +33,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ImageCardFragment  extends ImageCollectionFragment<ImagesAdapter.ImageViewHolder> {
 
     private static final int SPAN_COUNT = 3;

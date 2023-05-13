@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.group_1.usege.R;
 import com.group_1.usege.authen.repository.TokenRepository;
+import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.library.adapter.ImagesAdapter;
 import com.group_1.usege.library.paging.PagingProvider;
 import com.group_1.usege.library.service.MasterFileService;
@@ -53,6 +54,7 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
     protected UsegeImageViewModel mainViewModel;
     protected ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver;
     private RecyclerView rcvPhoto;
+    LibraryActivity libraryActivity;
 
     public ImageCollectionFragment() {
         // Required empty public constructor
@@ -78,6 +80,14 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
         imageAdapter = provideImageAdapter();
         mainViewModel = new ViewModelProvider(this).get(UsegeImageViewModel.class);
         mainViewModel.init(defaultProvider);
+
+        libraryActivity = (LibraryActivity) getActivity();
+        imageAdapter.setOnClickListener(new ImagesAdapter.OnClickListener() {
+            @Override
+            public void onItemClick(Image image, int position) {
+                libraryActivity.sendAndReceiveImage(image, position);
+            }
+        });
     }
 
     @Override

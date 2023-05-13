@@ -558,22 +558,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     public void clickOpenImageList() {
         // check empty list
         mode = imageMode;
-        if (imgList.size() == 0) {
-            ft = getSupportFragmentManager().beginTransaction();
-            emptyFragment = EmptyFragment.newInstance(mode, true);
-            ft.replace(R.id.layout_display_images, emptyFragment).commit();
-            return;
-        }
-        if (Objects.equals(displayView, "card")) {
-            ft = getSupportFragmentManager().beginTransaction();
-            List<Image> favoriteImgList = albumList.get(0).getAlbumImages();
-            imageCardFragment = ImageCardFragment.newInstance();
-            ft.replace(R.id.layout_display_images, imageCardFragment).commit();
-        } else {
-            ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance();
-            ft.replace(R.id.layout_display_images, imageListFragment).commit();
-        }
+
+        updateImageViewDisplay();
     }
 
     public void triggerAlbumButton() {
@@ -890,12 +876,23 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             ft.replace(R.id.layout_display_images, emptyFragment).commit();
         }
         else {
-            imgViewList.setAlpha(1F);
-            imgViewCard.setAlpha(1F);
+            if (displayView.equals("card")) {
+                imgViewList.setAlpha(0.5F);
+                imgViewCard.setAlpha(1F);
 
-            ft = getSupportFragmentManager().beginTransaction();
-            imageListFragment = ImageListFragment.newInstance();
-            ft.replace(R.id.layout_display_images, imageListFragment).commit();
+                ft = getSupportFragmentManager().beginTransaction();
+                imageCardFragment = ImageCardFragment.newInstance();
+                ft.replace(R.id.layout_display_images, imageCardFragment).commit();
+            }
+            else if (displayView.equals("list")) {
+                imgViewList.setAlpha(1F);
+                imgViewCard.setAlpha(0.5F);
+
+                ft = getSupportFragmentManager().beginTransaction();
+                imageListFragment = ImageListFragment.newInstance();
+                ft.replace(R.id.layout_display_images, imageListFragment).commit();
+            }
+
         }
         setStatusOfWidgets();
 
@@ -967,16 +964,14 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                 for (int i = 0; i < countOfImages; i++) {
                     // Thêm dữ liệu
                     Uri imageURI = data.getClipData().getItemAt(i).getUri();
-                    //Image image = getInformationOfImage(imageURI);
+
                     Image image = new Image();
                     image.setUri(imageURI);
                     image.setLocation("");
                     image.setDescription("");
                     GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                     getInformationThread.start();
-                    // Đây là dữ liệu mẫu
 
-                    //Image image = new Image("", 0F, "A favorite image", "", imageURI);
                     Log.e("NOTE", "URI1 " + image.getUri());
 
                     //imgList.add(0, image);
@@ -986,30 +981,19 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             } else {
                 Uri imageURI = data.getData();
                 // Thêm dữ liệu
-                //Image image = getInformationOfImage(imageURI);
-                // Đây là dữ liệu mẫu
-                //Image image = new Image("", 0F, "The beautiful place", "", imageURI);
                 Image image = new Image();
                 image.setUri(imageURI);
                 image.setLocation("");
                 image.setDescription("");
                 GetInformationThread getInformationThread = new GetInformationThread(image, imageURI);
                 getInformationThread.start();
-
-                //imgList.add(0, image);
-//                        Log.e("NOTE", "LOCATION " + imgList.get(0).getLocation());
-//                        Log.e("NOTE", "LOCATION " + imgList.get(1).getLocation());
-
             }
-
-            setStatusOfWidgets();
         } else {
             Toast.makeText(this, "You haven't picked any images", Toast.LENGTH_LONG).show();
         }
-        // Thread
 
         // Update Fragment View
-        //updateImageViewDisplay();
+        updateImageViewDisplay();
     });
 
     //Kiểm tra xem ứng dụng có quyền truy cập chưa, nếu chưa sẽ yêu cầu
@@ -1341,6 +1325,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             // Call Api Upload File
             ApiUploadFile apiUploadFile = new ApiUploadFile(fileServiceGenerator, tokenRepository.getToken().getUserId(), imageDto, imagePath);
             apiUploadFile.callApiUploadFile();
+
             //Image image = new Image(dateTime, sizeOfImage, "A favorite image", address, uri);
         }
     }
