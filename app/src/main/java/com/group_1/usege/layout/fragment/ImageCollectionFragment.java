@@ -74,13 +74,10 @@ public abstract class ImageCollectionFragment<S extends ImagesAdapter.ImageViewH
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            //imageAdapter = new SimpleImagesAdapter(comparator, requestManager, viewDetailsSignalReceiver);
-            imageAdapter = provideImageAdapter();
-            mainViewModel = new ViewModelProvider(this).get(UsegeImageViewModel.class);
-            mainViewModel.init(defaultProvider);
-        }
+        //imageAdapter = new SimpleImagesAdapter(comparator, requestManager, viewDetailsSignalReceiver);
+        imageAdapter = provideImageAdapter();
+        mainViewModel = new ViewModelProvider(this).get(UsegeImageViewModel.class);
+        mainViewModel.init(defaultProvider);
     }
 
     @Override
