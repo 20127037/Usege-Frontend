@@ -4,6 +4,8 @@ package com.group_1.usege.api.apiservice;
 import com.group_1.usege.api.googlemaps.GeocodeResponse;
 import com.group_1.usege.model.UserFile;
 
+import java.util.List;
+
 import io.reactivex.rxjava3.core.Single;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +40,10 @@ public interface ApiService {
     @PUT("{id}")
     Call<UserFile> updateFile(@Path("id")String userId,
                               @Body UserFile userFile);
+
+    @POST("{id}")
+    Call<List<UserFile>> deleteFile(@Path("id") String id,
+                                    @Query("file-names") String[] fileNames);
 
     @POST("ref/{id}")
     Single<Response<UserFile>> uploadRefFile(@Path("id") String id,

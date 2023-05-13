@@ -1,5 +1,6 @@
 package com.group_1.usege.library.adapter;
 
+import android.location.GnssAntennaInfo;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
     public static final int LOADING_ITEM = 0;
     // Define Movie ViewType
     public static final int IMAGE_ITEM = 1;
+    private OnClickListener mListener;
     private final RequestManager glide;
     private final ViewDetailsSignalByItemReceiver<Image> viewDetailsSignalReceiver;
     public ImagesAdapter(@NotNull DiffUtil.ItemCallback<Image> diffCallback,
@@ -42,6 +44,15 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
         // Check for null
         if (currentImg != null) {
             holder.bind(currentImg, glide, viewDetailsSignalReceiver);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onItemClick(currentImg, position);
+                    }
+                }
+            });
         }
     }
 
@@ -70,5 +81,13 @@ public abstract class ImagesAdapter<S extends ImagesAdapter.ImageViewHolder> ext
                 return;
             layoutContainer.setOnClickListener(v -> viewDetailsSignalReceiver.view(img));
         }
+    }
+
+    public interface OnClickListener {
+        void onItemClick(Image image, int position);
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        mListener = listener;
     }
 }

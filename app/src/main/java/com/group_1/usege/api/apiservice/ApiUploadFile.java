@@ -74,12 +74,14 @@ public class ApiUploadFile {
         call.enqueue(new Callback<UserFile>() {
             @Override
             public void onResponse(Call<UserFile> call, Response<UserFile> response) {
-                Toast.makeText(context, "Call API Successfully", Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, "Call API Successfully", Toast.LENGTH_LONG).show();
+                System.out.println("Call API Successfully");
             }
 
             @Override
             public void onFailure(Call<UserFile> call, Throwable t) {
-                Toast.makeText(context, "Call API Fail", Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Call API Fail", Toast.LENGTH_LONG).show();
+                System.out.println("Call API Failure");
             }
         });
 
