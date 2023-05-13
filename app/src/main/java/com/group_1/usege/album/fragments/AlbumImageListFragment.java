@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +34,6 @@ import com.group_1.usege.layout.adapter.ListAdapter;
 import com.group_1.usege.manipulation.impl.IClickItemImageListener;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
-import com.group_1.usege.pagination.PaginationScrollListener;
 import com.group_1.usege.utilities.mappers.UserFileToImage;
 
 import java.io.Serializable;
@@ -272,8 +270,8 @@ public class AlbumImageListFragment extends Fragment {
     }
 
     private void onClickGoToDetails(Image image, int position) {
-        Log.e("P", "P: " + position);
-//        libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
+       // libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
+
 
 }

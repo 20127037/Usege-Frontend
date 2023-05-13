@@ -108,7 +108,7 @@ public class ImageListFragment extends ImageCollectionFragment<ImageListFragment
                          int pos)
         {
             super.bind(img, glide, viewDetailsSignalReceiver, longClickItemReceiver, pos);
-            setUpDescription(img.getDescription());
+            description.setText(setUpDescription(img.getDescription()));
         }
         public String setUpDescription(String curDescription) {
             String newDescription = "";

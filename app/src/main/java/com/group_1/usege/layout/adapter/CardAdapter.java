@@ -147,6 +147,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     break;
                 case Album.album_mode_trash:
                     imageViewHolder.photoText.setVisibility(View.VISIBLE);
+                    imageViewHolder.photoText.setText(String.format("%d left days",image.getRemainedDay()));
                     break;
                 case Album.album_mode_favorite:
 //                    imageViewHolder.photoText.setVisibility(View.GONE);

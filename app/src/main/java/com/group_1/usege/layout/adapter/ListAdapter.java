@@ -110,7 +110,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                holder.imgViewMore.setVisibility(View.VISIBLE);
                     break;
                 case Album.album_mode_trash:
-                    imageViewHolder.description.setText("... days");
+                    //imageViewHolder.description.setText("... days");
+                    imageViewHolder.description.setText(String.format("%d days",image.getRemainedDay()));
 //                holder.imgViewMore.setVisibility(View.GONE);
                     break;
                 case Album.album_mode_favorite:
