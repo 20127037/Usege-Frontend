@@ -554,6 +554,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                 .subscribe((res, err) -> {
                     if (err != null || !res.isSuccessful())
                         return;
+
+                    updateImageViewDisplay();
                 });
     }
 
@@ -1263,7 +1265,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     //lstdeletedImage.add(selectedImage);
                     //trashBin.getAlbumImages().add(selectedImage);
                     deleteImages(selectedImages.stream().map(Image::getId).toArray(String[]::new));
-                    updateImageViewDisplay();
 
                     break;
                 }
