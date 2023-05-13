@@ -1254,7 +1254,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> {
     protected void onResume() {
         super.onResume();
 
-
         try {
             startCallApi(masterServiceGenerator.getService().getUserInfo(tokenRepository.getToken().getUserId()));
         } catch (Exception e) {

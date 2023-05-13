@@ -39,6 +39,7 @@ public interface ApiService {
     Call<UserFile> updateFile(@Path("id")String userId,
                               @Body UserFile userFile);
 
+    @POST("ref/{id}")
     Single<Response<UserFile>> uploadRefFile(@Path("id") String id,
                                              @Body UserFileRefUploadDto refUploadDto);
 

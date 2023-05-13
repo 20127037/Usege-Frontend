@@ -70,6 +70,11 @@ public abstract class BaseConfirmActivity extends ApiCallerActivity<Void> implem
 
     @Override
     protected void handleCallFail(ErrorResponse errorResponse) {
+        if (errorResponse.getMessage() == null)
+        {
+            setCallApiFail();
+            return;
+        }
         switch (errorResponse.getMessage()) {
             case ResponseMessages.CODE_MISMATCH:
                 handleCodeMismatch();

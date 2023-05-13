@@ -79,6 +79,7 @@ public class Image implements Parcelable {
         description = in.readString();
         location = in.readString();
         uri = in.readParcelable(Uri.class.getClassLoader());
+        smallUri = in.readParcelable(Uri.class.getClassLoader());
         tags = new ArrayList<>();
         in.readList(tags, null);
     }
@@ -96,6 +97,7 @@ public class Image implements Parcelable {
         dest.writeString(description);
         dest.writeString(location);
         dest.writeParcelable(uri, flags);
+        dest.writeParcelable(smallUri, flags);
         dest.writeList(tags);
     }
 }

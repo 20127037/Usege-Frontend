@@ -25,6 +25,6 @@ public abstract class BaseAuthServiceGenerator<S> extends BaseServiceGenerator<S
     }
 
     public synchronized S getService() {
-        return super.getService(tokenRepository.getToken().getAccessToken());
+        return super.getService(tokenRepository.getToken().getBearerAccessToken());
     }
 }
