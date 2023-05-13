@@ -83,23 +83,22 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
                 }
             }
         });
-        return;
 
         //  ================== Load ảnh ra layout
-//        UserAlbum image = lstAlbum.get(position);
-//
-//        if (displayView.equals("card")) {
-//            // set name for album
-//            String albumName = image.getName();
-//            holder.albumTextView.setText(albumName);
-//
-//            // set image for album if not default (favorite or trash)
-//            if(Objects.equals(albumName, "favorite")) {
-//                holder.albumImgView.setImageResource(R.drawable.album_favorite_img);
-//            } else if (Objects.equals(albumName, "trash")) {
-//                holder.albumImgView.setImageResource(R.drawable.album_trash_img);
-//            }
-//
+        UserAlbum image = lstAlbum.get(position);
+
+        if (displayView.equals("card")) {
+            // set name for album
+            String albumName = image.getName();
+            holder.albumTextView.setText(albumName);
+
+            // set image for album if not default (favorite or trash)
+            if(Objects.equals(albumName, "favorite")) {
+                holder.albumImgView.setImageResource(R.drawable.album_favorite_img);
+            } else if (Objects.equals(albumName, "trash")) {
+                holder.albumImgView.setImageResource(R.drawable.album_trash_img);
+            }
+
 //            holder.albumImgView.setOnClickListener(new View.OnClickListener() {
 //
 //                @Override
@@ -116,13 +115,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 //                }
 //
 //            });
-//        }
-//
-//        if (displayView.equals("list")) {
-//            // set name for album
-//            String albumName = image.getName();
-//            holder.albumTextView.setText(albumName);
-//        }
+        }
+
+        if (displayView.equals("list")) {
+            // set name for album
+            String albumName = image.getName();
+            holder.albumTextView.setText(albumName);
+        }
     }
 
     @Override
