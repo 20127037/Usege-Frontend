@@ -1,5 +1,9 @@
 package com.group_1.usege.layout.adapter;
 
+import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -121,6 +125,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             // set name for album
             String albumName = image.getName();
             holder.albumTextView.setText(albumName);
+            int visibility = image.getPassword() != null ? VISIBLE : INVISIBLE;
+            holder.protectView.setVisibility(visibility);
         }
     }
 
@@ -135,6 +141,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView albumImgView;
+        ImageView protectView;
         TextView albumTextView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -145,6 +152,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             else {
 //                albumImgView = itemView.findViewById(R.id.image_album_view_photo);
                 albumTextView = itemView.findViewById(R.id.text_view_album_name);
+                protectView = itemView.findViewById(R.id.image_view_thumbnail);
             }
         }
     }

@@ -592,38 +592,12 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     .subscribe((res, err) -> handleAfterCallFavorite(res, err, selectedAlbum));
         }
         else {
-            final String password = selectedAlbum.getPassword();
-            if (password != null)
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Input your album password!");
-                final EditText input = new EditText(context);
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                builder.setView(input);
-                builder.setPositiveButton("OK", (dialog, which) -> {
-                    dialog.dismiss();
-                    if (input.getText().toString().equals(password))
-                    {
-                        Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(selectedAlbum.getName());
-                        results
-                                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
-                                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
-                                .subscribe((res, err) -> handleAfterCall(res, err, selectedAlbum));
-                    }
-                    else
-                        DialogueUtilities.showNormalDialogue(context, R.string.album_password_is_not_right, null);
-                });
-                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-                builder.show();
-            }
-            else
-            {
-                Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(selectedAlbum.getName());
-                results
-                        .observeOn(AndroidSchedulers.from(Looper.myLooper()))
-                        .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
-                        .subscribe((res, err) -> handleAfterCall(res, err, selectedAlbum));
-            }
+
+            Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(selectedAlbum.getName());
+            results
+                    .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                    .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                    .subscribe((res, err) -> handleAfterCall(res, err, selectedAlbum));
         }
     }
 

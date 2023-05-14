@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,6 +31,7 @@ import com.group_1.usege.library.service.MasterTrashServiceGenerator;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
+import com.group_1.usege.utilities.view.DialogueUtilities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -103,7 +107,35 @@ public class AlbumCardFragment extends Fragment {
                     Activity activity = (Activity) context;
                     if (activity instanceof LibraryActivity) {
                         LibraryActivity libActivity = (LibraryActivity) activity;
-                        libActivity.clickOpenAlbumImageList(lstAlbum.get(position));
+                        UserAlbum selectedAlbum = lstAlbum.get(position);
+                        final String password = selectedAlbum.getPassword();
+                        if (password != null)
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Input your album password!");
+                            final EditText input = new EditText(context);
+                            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            builder.setView(input);
+                            builder.setPositiveButton("OK", (dialog, which) -> {
+
+                                dialog.dismiss();
+                                if (input.getText().toString().equals(password))
+                                {
+                                    libActivity.clickOpenAlbumImageList(selectedAlbum);
+                                }
+                                else
+                                {
+                                    DialogueUtilities.showNormalDialogue(context, R.string.album_password_is_not_right, null);
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", (dialog, which) -> {
+                                dialog.cancel();
+                            });
+                            builder.show();
+                        }
+                        else
+                            libActivity.clickOpenAlbumImageList(selectedAlbum);
+
                         System.out.println("Album size: " + lstAlbum.size());
                     }
                 }
