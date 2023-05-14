@@ -22,12 +22,14 @@ public class UserAlbum implements Parcelable {
     private String name;
     private String createdDate;
     private int imgCount;
+    private String password;
 
     protected UserAlbum(Parcel in) {
         userId = in.readString();
         name = in.readString();
         createdDate = in.readString();
         imgCount = in.readInt();
+        password = in.readString();
     }
 
     public static final Creator<UserAlbum> CREATOR = new Creator<UserAlbum>() {
@@ -53,5 +55,6 @@ public class UserAlbum implements Parcelable {
         parcel.writeString(name);
         parcel.writeString(createdDate);
         parcel.writeInt(imgCount);
+        parcel.writeString(password);
     }
 }

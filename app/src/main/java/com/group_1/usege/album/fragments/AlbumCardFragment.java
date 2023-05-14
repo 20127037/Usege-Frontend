@@ -2,14 +2,18 @@ package com.group_1.usege.album.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,6 +32,7 @@ import com.group_1.usege.library.service.MasterTrashServiceGenerator;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
+import com.group_1.usege.utilities.view.DialogueUtilities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,8 +57,8 @@ public class AlbumCardFragment extends Fragment {
     public AlbumAdapter albumAdapter;
     private final List<UserAlbum> lstAlbum = new ArrayList<UserAlbum>() {
         {
-            add(new UserAlbum("", "favorite", "", 0)); // favorite album
-            add(new UserAlbum("", "trash", "", 0)); // trash album
+            add(new UserAlbum("", "favorite", "", 0, null)); // favorite album
+            add(new UserAlbum("", "trash", "", 0, null)); // trash album
         }
     };
     private Context context = null;
@@ -94,33 +99,61 @@ public class AlbumCardFragment extends Fragment {
         }
 
         albumAdapter = new AlbumAdapter(lstAlbum, context, "card");
+
         albumAdapter.setOnClickListener(new AlbumAdapter.OnClickListener() {
             @Override
             public void onItemClick(int position) {
                 System.out.println("Click :" + position);
                 // Handle click event here
 
-                if (lstAlbum.get(position).getName().equals("trash")) {
+                UserAlbum album = lstAlbum.get(position);
+
+                if (album.getName().equals("trash")) {
                     Single<MasterTrashService.QueryResponse<UserFile>> results = getTrashFiles();
                     results.observeOn(AndroidSchedulers.from(Looper.myLooper()))
                             .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
                             .subscribe((res, err) -> handleAfterCallTrash(res, err, lstAlbum.get(position)));
                 }
-                else if (lstAlbum.get(position).getName().equals("favorite")){
+                else if (album.getName().equals("favorite")){
                     Single<MasterFileService.QueryResponse<UserFile>> results = getFiles();
                     results.observeOn(AndroidSchedulers.from(Looper.myLooper()))
                             .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
                             .subscribe((res, err) -> handleAfterCallFavorite(res, err, lstAlbum.get(position)));
                 }
                 else {
-                    Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(lstAlbum.get(position).getName());
-                    results
-                            .observeOn(AndroidSchedulers.from(Looper.myLooper()))
-                            .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
-                            .subscribe((res, err) -> handleAfterCall(res, err, lstAlbum.get(position)));
+                    final String password = album.getPassword();
+                    if (password != null)
+                    {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("Input your album password!");
+                        final EditText input = new EditText(context);
+                        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        builder.setView(input);
+                        builder.setPositiveButton("OK", (dialog, which) -> {
+                            dialog.dismiss();
+                            if (input.getText().toString().equals(password))
+                            {
+                                Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(lstAlbum.get(position).getName());
+                                results
+                                        .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                                        .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                                        .subscribe((res, err) -> handleAfterCall(res, err, lstAlbum.get(position)));
+                            }
+                            else
+                                DialogueUtilities.showNormalDialogue(context, R.string.album_password_is_not_right, null);
+                        });
+                        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+                        builder.show();
+                    }
+                    else
+                    {
+                        Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(lstAlbum.get(position).getName());
+                        results
+                                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                                .subscribe((res, err) -> handleAfterCall(res, err, lstAlbum.get(position)));
+                    }
                 }
-
-
             }
 
             private void handleAfterCall(MasterAlbumService.QueryResponse2<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {

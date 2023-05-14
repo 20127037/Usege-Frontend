@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="album_password_is_not_right">The password is not right! Please, retype again!</string>
     <string name="password_and_retype_not_same">The password and retype value are not the same</string>
     <string name="email_has_already_exists">Your email has been used in the system. Please, consider using another one!</string>
     <string name="filed_not_empty">This field may not be empty</string>

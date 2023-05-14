@@ -48,8 +48,8 @@ public class AlbumListFragment extends Fragment {
     public AlbumAdapter albumAdapter;
     private List<UserAlbum> lstAlbum = new ArrayList<UserAlbum>() {
         {
-            add(new UserAlbum("", "favorite", "", 0)); // favorite album
-            add(new UserAlbum("", "trash", "", 0)); // trash album
+            add(new UserAlbum("", "favorite", "", 0, null)); // favorite album
+            add(new UserAlbum("", "trash", "", 0, null)); // trash album
         }
     };
     private Context context = null;

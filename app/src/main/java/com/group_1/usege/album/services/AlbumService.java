@@ -28,7 +28,7 @@ public interface AlbumService {
     @PUT("{id}/{name}")
     Single<Response<UserAlbum>> updateAlbum(@Path("id") String id, @Path("name") String name, @Body UserAlbum newAlbum);
     @POST("{id}/{name}")
-    Single<Response<UserAlbum>> createAlbum(@Path("id") String id, @Path("name") String name);
+    Single<Response<UserAlbum>> createAlbum(@Path("id") String id, @Path("name") String name, @Body UserAlbum userAlbum);
     @DELETE("{id}/{name}")
     Single<Response<UserAlbum>> deleteAlbum(@Path("id") String id, @Path("name") String name);
     @POST("{id}/{name}/images")

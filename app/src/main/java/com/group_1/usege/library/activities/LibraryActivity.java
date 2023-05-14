@@ -526,6 +526,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
         btnConfirm.setOnClickListener(v -> {
             String title = String.valueOf(titleEditText.getText());
+            if (title.trim().isEmpty())
+                return;
             // check existed album name
             Album result = albumList.stream().filter(s -> (s.getName().equals(title))).findFirst().orElse(null);
             if (result != null) {
@@ -534,9 +536,10 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             }
 
             String password = String.valueOf(passwordEditText.getText());
-
-            Single<Response<UserAlbum>> createAlbumResult = albumServiceGenerator.getService().createAlbum(tokenRepository.getToken().getUserId(), title);
-
+            if (password.trim().isEmpty())
+                password = null;
+            Single<Response<UserAlbum>> createAlbumResult = albumServiceGenerator.getService()
+                    .createAlbum(tokenRepository.getToken().getUserId(), title, UserAlbum.builder().password(password).build());
             createAlbumResult
                     .observeOn(AndroidSchedulers.from(Looper.myLooper()))
                     .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
