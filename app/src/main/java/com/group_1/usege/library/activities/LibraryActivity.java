@@ -256,9 +256,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     break;
             }
         });
-
-        // Lấy ảnh từ Server
-        //getFilesFromServer();
     }
 
     @Override
@@ -425,7 +422,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
                 System.out.println(imageNames);
 
-                Single<Response<List<UserFileInAlbum>>> moveToAlbumResult = albumServiceGenerator.getService().moveImagesToAlbum(tokenRepository.getToken().getUserId(), currentSelectAlbum.getName(), destinationAlbum.getName(), imageNames);
+                Single<Response<List<UserFileInAlbum>>> moveToAlbumResult = albumServiceGenerator.getService().moveImagesToAlbum(tokenRepository.getToken().getUserId(), destinationAlbum.getName(), currentSelectAlbum.getName(), imageNames);
 
                 moveToAlbumResult
                         .observeOn(AndroidSchedulers.from(Looper.myLooper()))
@@ -1555,6 +1552,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     // ========== delete from album ========
     public void deleteFromAlbum(View v) {
         String[] imageNames = selectedImages.stream().map(Image::getId).toArray(String[]::new);
+        System.out.println("Delete size: " + imageNames.length);
+        System.out.println("Delete file name 0: " + imageNames[0]);
         Single<Response<List<UserFileInAlbum>>> deleteFromAlbumResult = albumServiceGenerator.getService().removeImagesFromAlbum(tokenRepository.getToken().getUserId(), currentSelectAlbum.getName(), imageNames);
 
         deleteFromAlbumResult
