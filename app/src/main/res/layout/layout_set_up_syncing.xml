@@ -31,7 +31,7 @@
 
     <RadioGroup
         android:id="@+id/radio_group_library"
-        android:checkedButton="@id/radio_button_automatic"
+        android:checkedButton="@id/radio_button_manually"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

@@ -12,7 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +26,6 @@ import com.group_1.usege.model.Image;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class ImageActivity extends AppCompatActivity {
@@ -42,6 +44,7 @@ public class ImageActivity extends AppCompatActivity {
 
     private int myTask = 0;
     private static final int UPDATE_IMAGE = 1;
+    private static final int CLONE_IMAGE = 3;
     private static final int DELETE_IMAGE = 2;
 
     @Override
@@ -160,10 +163,18 @@ public class ImageActivity extends AppCompatActivity {
                 Log.d("Text", image.getDescription());
                 // Thiết lập text view describe
                 setAlphaForDrawableInTextView(tvDescribe, 153, 1);
-
                 myTask = UPDATE_IMAGE;
             }
         });
+
+        tvPhotoshop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myTask = CLONE_IMAGE;
+                sendAndReceiveImage(image);
+            }
+        });
+
     }
 
     @Override
@@ -237,4 +248,33 @@ public class ImageActivity extends AppCompatActivity {
         // Thiết lập lại drawables cho TextView
         textView.setCompoundDrawables(drawables[0], drawable, drawables[2], drawables[3]);
     }
+
+    public void sendAndReceiveImage(Image image) {
+        Intent intent = new Intent(context, ImagePhotoshopActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("object_image", image);
+        //bundle.putSerializable("object_album", (Serializable) albumList);
+        intent.putExtras(bundle);
+        launcherSendAndReceiveImage.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> launcherSendAndReceiveImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            Intent data = result.getData();
+            Bundle bundle = data.getExtras();
+            if (bundle == null) {
+                return;
+            }
+
+            Image returnedImage = bundle.getParcelable("returnedImage");
+            image = returnedImage;
+            Glide.with(this)
+                    .load(image.getUri())
+                    .into(ivImage);
+
+        } else {
+            Toast.makeText(this, "Something wrong happened.", Toast.LENGTH_LONG).show();
+        }
+    });
+
 }
