@@ -2,6 +2,7 @@ package com.group_1.usege.library.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -63,6 +64,10 @@ import com.group_1.usege.library.fragment.EmptyAlbumImageFragment;
 import com.group_1.usege.library.fragment.EmptyFragment;
 import com.group_1.usege.library.service.MasterAlbumService;
 import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
+import com.group_1.usege.library.service.MasterFileService;
+import com.group_1.usege.library.service.MasterFileServiceGenerator;
+import com.group_1.usege.library.service.MasterTrashService;
+import com.group_1.usege.library.service.MasterTrashServiceGenerator;
 import com.group_1.usege.library.service.TrashServiceGenerator;
 import com.group_1.usege.manipulation.activities.ImageActivity;
 import com.group_1.usege.model.Album;
@@ -112,6 +117,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     AlbumListFragment albumListFragment;
     EmptyFragment emptyFragment = new EmptyFragment();
     @Inject
+    public MasterFileServiceGenerator masterFileServiceGenerator;
+    @Inject
     public MasterUserServiceGenerator masterServiceGenerator;
     @Inject
     public UserInfoRepository userInfoRepository;
@@ -119,6 +126,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     public FileServiceGenerator fileServiceGenerator;
     @Inject
     public TrashServiceGenerator trashServiceGenerator;
+    @Inject
+    public MasterTrashServiceGenerator masterTrashServiceGeneratior;
     EmptyAlbumImageFragment emptyAlbumImageFragment = new EmptyAlbumImageFragment();
     EmptyAlbumFragment emptyAlbumFragment = new EmptyAlbumFragment();
     EmptyFilteringResultFragment emptyFilteringResultFragment = new EmptyFilteringResultFragment();
@@ -127,6 +136,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     // card list mode: image, album, imageInAlbum
     public static final String imageMode = "image";
     public static final String albumMode = "album";
+
+    public int LIMIT = 999;
     public static final String imageInAlbumMode = "imageInAlbum";
     public TextView moveToAlbum, addToAlbum, deleteImage, cutImage;
     public Album isOpeningAlbum;
@@ -159,6 +170,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
     RelativeLayout layoutLibFunctions;
 
+    Button libraryCancelButton;
 
     private static final int UPDATE_IMAGE = 1;
     private static final int DELETE_IMAGE = 2;
@@ -192,6 +204,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         addToAlbum = findViewById(R.id.text_view_add_to_album);
         deleteImage = findViewById(R.id.text_view_delete_in_file);
         cutImage = findViewById(R.id.text_view_delete_in_album);
+        libraryCancelButton = findViewById(R.id.library_cancel_button);
 
         imgViewCard.setEnabled(false);
         imgViewCard.setAlpha((float) 0.5);
@@ -256,9 +269,6 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     break;
             }
         });
-
-        // Lấy ảnh từ Server
-        //getFilesFromServer();
     }
 
     @Override
@@ -425,7 +435,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
                 System.out.println(imageNames);
 
-                Single<Response<List<UserFileInAlbum>>> moveToAlbumResult = albumServiceGenerator.getService().moveImagesToAlbum(tokenRepository.getToken().getUserId(), currentSelectAlbum.getName(), destinationAlbum.getName(), imageNames);
+                Single<Response<List<UserFileInAlbum>>> moveToAlbumResult = albumServiceGenerator.getService().moveImagesToAlbum(tokenRepository.getToken().getUserId(), destinationAlbum.getName(), currentSelectAlbum.getName(), imageNames);
 
                 moveToAlbumResult
                         .observeOn(AndroidSchedulers.from(Looper.myLooper()))
@@ -446,6 +456,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         else {
             Toast.makeText(this, "Move images to album success", Toast.LENGTH_SHORT).show();
             List<UserFileInAlbum> album = response.body();
+            clickOpenAlbumImageList(currentSelectAlbum);
+            libraryCancelButton.performClick();
+            System.out.println("Album open name: " + currentSelectAlbum.getName());
         }
     }
 
@@ -559,24 +572,95 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         }
     }
 
-    public void clickOpenAlbumImageList(List<UserFile> files, UserAlbum selectedAlbum) {
+    public void clickOpenAlbumImageList(UserAlbum selectedAlbum) {
 //        isOpeningAlbum = album;
         mode = imageInAlbumMode;
         layoutLibFunctions.setVisibility(View.GONE);
-//        if(selectedAlbum.getName() != "favorite" && selectedAlbum.getName() != "trash") {
-//            layoutLibFunctions.setVisibility(View.GONE);
-//        }
-        if (files.size() > 0) {
+        if (selectedAlbum.getName().equals("trash")) {
+            Single<MasterTrashService.QueryResponse<UserFile>> results = getTrashFiles();
+            results.observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                    .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                    .subscribe((res, err) -> handleAfterCallTrash(res, err, selectedAlbum));
+        }
+        else if (selectedAlbum.getName().equals("favorite")){
+            Single<MasterFileService.QueryResponse<UserFile>> results = getFiles();
+            results.observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                    .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                    .subscribe((res, err) -> handleAfterCallFavorite(res, err, selectedAlbum));
+        }
+        else {
+            Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(selectedAlbum.getName());
+            results
+                    .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                    .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                    .subscribe((res, err) -> handleAfterCall(res, err, selectedAlbum));
+        }
+    }
+
+    private void handleAfterCall(MasterAlbumService.QueryResponse2<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
+        if (throwable != null)
+            System.out.println("Get file in album error!");
+        else {
+            List<UserFile> files = response.getResponse();
+            System.out.println("File size " + files.size());
             ft = getSupportFragmentManager().beginTransaction();
             currentImagesInAlbum = files;
             currentSelectAlbum = selectedAlbum;
             AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(files, selectedAlbum, "card");
             ft.replace(R.id.layout_display_images, albumImagesList).commit();
-        } else {
-            ft = getSupportFragmentManager().beginTransaction();
-            EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
-            ft.replace(R.id.layout_display_images, emptyFragment).commit();
         }
+    }
+
+    private void handleAfterCallTrash(MasterTrashService.QueryResponse<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
+        if (throwable != null)
+            System.out.println("Get file in album error!");
+        else {
+            List<UserFile> files = response.getResponse();
+            System.out.println("File size " + files.size());
+            ft = getSupportFragmentManager().beginTransaction();
+            currentImagesInAlbum = files;
+            currentSelectAlbum = selectedAlbum;
+            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(files, selectedAlbum, "card");
+            ft.replace(R.id.layout_display_images, albumImagesList).commit();
+        }
+    }
+
+    private void handleAfterCallFavorite(MasterFileService.QueryResponse<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
+        if (throwable != null)
+            System.out.println("Get file in album error!");
+        else {
+            List<UserFile> files = response.getResponse();
+            System.out.println("File size " + files.size());
+            ft = getSupportFragmentManager().beginTransaction();
+            currentImagesInAlbum = files;
+            currentSelectAlbum = selectedAlbum;
+            AlbumImageListFragment albumImagesList = AlbumImageListFragment.newInstance(files, selectedAlbum, "card");
+            ft.replace(R.id.layout_display_images, albumImagesList).commit();
+        }
+    }
+
+    private Single<MasterAlbumService.QueryResponse2<UserFile>> getAlbumFiles(String albumName) {
+        return masterAlbumServiceGenerator
+                .getService()
+                .getAlbumFiles(tokenRepository.getToken().getUserId(), albumName, LIMIT);
+    }
+
+    private Single<MasterTrashService.QueryResponse<UserFile>> getTrashFiles() {
+        return masterTrashServiceGeneratior
+                .getService()
+                .getTrashFiles(tokenRepository.getToken().getUserId(), LIMIT, null);
+    }
+
+    private Single<MasterFileService.QueryResponse<UserFile>> getFiles() {
+        return masterFileServiceGenerator
+                .getService()
+                .getFiles(tokenRepository.getToken().getUserId(), true, LIMIT, null, null);
+    }
+
+    public void showEmptyImagesInAlbum() {
+        ft = getSupportFragmentManager().beginTransaction();
+        EmptyFragment emptyFragment = EmptyFragment.newInstance(mode, true);
+        ft.replace(R.id.layout_display_images, emptyFragment).commit();
     }
 
     public void setShowLayoutLibFuntions() {
@@ -1558,6 +1642,8 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
     // ========== delete from album ========
     public void deleteFromAlbum(View v) {
         String[] imageNames = selectedImages.stream().map(Image::getId).toArray(String[]::new);
+        System.out.println("Delete size: " + imageNames.length);
+        System.out.println("Delete file name 0: " + imageNames[0]);
         Single<Response<List<UserFileInAlbum>>> deleteFromAlbumResult = albumServiceGenerator.getService().removeImagesFromAlbum(tokenRepository.getToken().getUserId(), currentSelectAlbum.getName(), imageNames);
 
         deleteFromAlbumResult
@@ -1572,6 +1658,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
         else {
             Toast.makeText(this, "Remove images from album success", Toast.LENGTH_SHORT).show();
             List<UserFileInAlbum> album = response.body();
+            libraryCancelButton.performClick();
+            clickOpenAlbumImageList(currentSelectAlbum);
+            System.out.println("Album open name: " + currentSelectAlbum.getName());
         }
     }
 

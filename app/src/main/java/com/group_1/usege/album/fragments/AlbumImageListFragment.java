@@ -27,6 +27,10 @@ import com.group_1.usege.authen.repository.TokenRepository;
 import com.group_1.usege.library.activities.LibraryActivity;
 import com.group_1.usege.library.service.MasterAlbumService;
 import com.group_1.usege.library.service.MasterAlbumServiceGenerator;
+import com.group_1.usege.library.service.MasterFileService;
+import com.group_1.usege.library.service.MasterFileServiceGenerator;
+import com.group_1.usege.library.service.MasterTrashService;
+import com.group_1.usege.library.service.MasterTrashServiceGenerator;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.Image;
 import com.group_1.usege.layout.adapter.CardAdapter;
@@ -71,6 +75,7 @@ public class AlbumImageListFragment extends Fragment {
     private int currentPage = 1;
     ImageView backImageView;
     private String albumName = "fake name";
+    public int LIMIT = 999;
 
     private static final int countItemInPage = 5;
 
@@ -112,6 +117,11 @@ public class AlbumImageListFragment extends Fragment {
         if (getArguments() != null) {
             album = (UserAlbum) getArguments().getParcelable("album");
             albumName = album.getName();
+
+            // ====== cal API ======
+
+            // =====================
+
             Image[] files = (Image[]) getArguments().getParcelableArray("files");
             mode = (String) getArguments().getSerializable("album_mode");
 
@@ -272,6 +282,5 @@ public class AlbumImageListFragment extends Fragment {
     private void onClickGoToDetails(Image image, int position) {
        // libraryActivity.sendAndReceiveImageInAlbum(image, position, album);
     }
-
 
 }

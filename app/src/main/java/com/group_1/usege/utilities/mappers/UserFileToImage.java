@@ -21,7 +21,7 @@ public class UserFileToImage implements Mapper<UserFile, Image> {
             remain = value.getRemainingDays();
         }
         return Image.builder()
-            .id(value.getUserId())
+            .id(value.getFileName())
             .tags(value.getTags())
             .description(value.getDescription())
             .date(value.getDate())
