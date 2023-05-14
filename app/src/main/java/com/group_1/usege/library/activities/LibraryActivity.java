@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -82,6 +84,7 @@ import com.group_1.usege.userInfo.services.MasterUserServiceGenerator;
 import com.group_1.usege.utilities.activities.NavigatedAuthApiCallerActivity;
 import com.group_1.usege.utilities.interfaces.ClickItemReceiver;
 import com.group_1.usege.utilities.interfaces.LongClickItemReceiver;
+import com.group_1.usege.utilities.view.DialogueUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -589,11 +592,38 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     .subscribe((res, err) -> handleAfterCallFavorite(res, err, selectedAlbum));
         }
         else {
-            Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(selectedAlbum.getName());
-            results
-                    .observeOn(AndroidSchedulers.from(Looper.myLooper()))
-                    .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
-                    .subscribe((res, err) -> handleAfterCall(res, err, selectedAlbum));
+            final String password = selectedAlbum.getPassword();
+            if (password != null)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Input your album password!");
+                final EditText input = new EditText(context);
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(input);
+                builder.setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    if (input.getText().toString().equals(password))
+                    {
+                        Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(selectedAlbum.getName());
+                        results
+                                .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                                .subscribe((res, err) -> handleAfterCall(res, err, selectedAlbum));
+                    }
+                    else
+                        DialogueUtilities.showNormalDialogue(context, R.string.album_password_is_not_right, null);
+                });
+                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+                builder.show();
+            }
+            else
+            {
+                Single<MasterAlbumService.QueryResponse2<UserFile>> results = getAlbumFiles(selectedAlbum.getName());
+                results
+                        .observeOn(AndroidSchedulers.from(Looper.myLooper()))
+                        .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
+                        .subscribe((res, err) -> handleAfterCall(res, err, selectedAlbum));
+            }
         }
     }
 

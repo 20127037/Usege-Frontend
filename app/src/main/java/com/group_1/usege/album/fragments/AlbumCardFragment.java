@@ -2,18 +2,14 @@ package com.group_1.usege.album.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Looper;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -32,7 +28,6 @@ import com.group_1.usege.library.service.MasterTrashServiceGenerator;
 import com.group_1.usege.model.Album;
 import com.group_1.usege.model.UserAlbum;
 import com.group_1.usege.model.UserFile;
-import com.group_1.usege.utilities.view.DialogueUtilities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -99,46 +94,11 @@ public class AlbumCardFragment extends Fragment {
         }
 
         albumAdapter = new AlbumAdapter(lstAlbum, context, "card");
-
         albumAdapter.setOnClickListener(new AlbumAdapter.OnClickListener() {
             @Override
             public void onItemClick(int position) {
                 System.out.println("Click :" + position);
                 // Handle click event here
-
-                UserAlbum album = lstAlbum.get(position);
-
-                if (album.getName().equals("trash")) {
-                    Single<MasterTrashService.QueryResponse<UserFile>> results = getTrashFiles();
-                    results.observeOn(AndroidSchedulers.from(Looper.myLooper()))
-                            .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
-                            .subscribe((res, err) -> handleAfterCallTrash(res, err, lstAlbum.get(position)));
-                }
-                else if (album.getName().equals("favorite")){
-                    Single<MasterFileService.QueryResponse<UserFile>> results = getFiles();
-                    results.observeOn(AndroidSchedulers.from(Looper.myLooper()))
-                            .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(getLifecycle())))
-                            .subscribe((res, err) -> handleAfterCallFavorite(res, err, lstAlbum.get(position)));
-                }
-                else {
-
-                }
-            }
-
-            private void handleAfterCall(MasterAlbumService.QueryResponse2<UserFile> response, Throwable throwable, UserAlbum selectedAlbum) {
-                if (throwable != null)
-                    System.out.println("Get file in album error!");
-                else {
-                    List<UserFile> files = response.getResponse();
-                    System.out.println("File size " + files.size());
-
-                    if (context.getClass().equals(LibraryActivity.class)) {
-                        Activity activity = (Activity) context;
-                        if (activity instanceof LibraryActivity) {
-                            LibraryActivity libActivity = (LibraryActivity) activity;
-                            libActivity.clickOpenAlbumImageList(files, selectedAlbum);
-                            System.out.println("Album size: " + lstAlbum);
-                        }
                 if (context.getClass().equals(LibraryActivity.class)) {
                     Activity activity = (Activity) context;
                     if (activity instanceof LibraryActivity) {
