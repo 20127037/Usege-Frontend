@@ -1591,7 +1591,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     // Do something when the "Compress" item is clicked
                     return true;
                 case R.id.make_a_presentation_menu_item:
-                    // Do something when the "Make a presentation" item is clicked
+                    presentImages();
                     return true;
                 default:
                     return super.onMenuItemSelected(0, item);
@@ -1599,6 +1599,14 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
             }
         });
         popupMenu.show();
+    }
+
+    private void presentImages() {
+        Intent intent = new Intent(this, ImagePresentationActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("data", (ArrayList<? extends Parcelable>) selectedImages);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private final ActivityResultLauncher<Intent> imageCombinationLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
