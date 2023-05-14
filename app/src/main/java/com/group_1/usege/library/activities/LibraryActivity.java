@@ -602,6 +602,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                     if (err != null || !res.isSuccessful())
                         return;
 
+                    startCallApi(masterServiceGenerator.getService().getUserInfo(tokenRepository.getToken().getUserId()));
                     updateImageViewDisplay();
                 });
     }
@@ -626,6 +627,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                 .subscribe((res, err) -> {
                     if (err != null || !res.isSuccessful())
                         return;
+
+                    startCallApi(masterServiceGenerator.getService().getUserInfo(tokenRepository.getToken().getUserId()));
+                    updateImageViewDisplay();
                     Toast.makeText(context, "Restore all image successfully!", Toast.LENGTH_SHORT).show();
 
                 });
@@ -651,6 +655,9 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
                 .subscribe((res, err) -> {
                     if (err != null || !res.isSuccessful())
                         return;
+
+                    startCallApi(masterServiceGenerator.getService().getUserInfo(tokenRepository.getToken().getUserId()));
+                    updateImageInAlbumViewDisplay();
                     Toast.makeText(context, "Clear trash bin successfully!", Toast.LENGTH_SHORT).show();
                 });
     }
@@ -933,6 +940,7 @@ public class LibraryActivity extends NavigatedAuthApiCallerActivity<UserInfo> im
 
     @SuppressLint("NotifyDataSetChanged")
     public void updateImageViewDisplay() {
+        layoutLibFunctions.setVisibility(View.VISIBLE);
         if (!filtered) {
             clonedImgList = new ArrayList<>(imgList);
         }
